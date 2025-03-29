@@ -1,3 +1,5 @@
+"use client";
+
 import BarChart from "./BarChart";
 import Image from "next/image";
 

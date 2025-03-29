@@ -15,71 +15,87 @@ const Menu = () => {
           title: "Dashboard",
           icon: "/home.png",
           link: `/${role}`,
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Teachers",
           icon: "/teacher.png",
-          link: "/teacher",
+          link: "/list/teachers",
+          visible: ["admin"],
         },
         {
           title: "Students",
           icon: "/student.png",
-          link: "/student",
+          link: "/list/students",
+          visible: ["admin", "teacher"],
         },
         {
           title: "Parents",
           icon: "/parent.png",
-          link: "/parent",
+          link: "/list/parents",
+          visible: ["admin", "teacher"],
         },
         {
           title: "Subjects",
           icon: "/subject.png",
-          link: "/subject",
+          link: "/list/subjects",
+          visible: ["admin", "teacher"],
         },
         {
           title: "Classes",
           icon: "/class.png",
-          link: "/classes",
+          link: "/list/classes",
+          visible: ["admin", "teacher"],
         },
         {
           title: "Attendance",
           icon: "/attendance.png",
-          link: "/attendance",
+          link: "/list/attendance",
+          visible: ["admin", "teacher"],
         },
         {
           title: "Events",
           icon: "/calendar.png",
-          link: "/events",
+          link: "/list/events",
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Messages",
           icon: "/message.png",
-          link: "/messages",
+          link: "/list/messages",
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Announcements",
           icon: "/announcement.png",
-          link: "/announcements",
+          link: "/list/announcements",
+          visible: ["admin", "teacher", "student", "parent"],
         },
       ],
     },
-    { title: "OTHERS", items: [
-      {
+    { 
+      title: "OTHERS", 
+      items: [
+        {
           title: "Profile",
           icon: "/profile.png",
           link: "/profile",
+          visible: ["admin", "teacher", "student", "parent"],
         },
-      {
+        {
           title: "Settings",
           icon: "/setting.png",
           link: "/settings",
+          visible: ["admin", "teacher", "student", "parent"],
         },
-      {
+        {
           title: "Logout",
           icon: "/logout.png",
           link: "/logout",
+          visible: ["admin", "teacher", "student", "parent"],
         },
-    ] },
+      ],
+    },
   ];
   return (
     <div className="flex flex-col h-full bg-white group-hover:w-[60vw] group-hover:absolute group-hover:top-0 group-hover:left-0 group-hover:z-10 group-hover:md:static group-hover:md:w-[unset] p-2 overflow-scroll mb-4">
@@ -97,20 +113,22 @@ const Menu = () => {
               {x.title}
             </h1>
               {x.items.map((y, index) => (
-                <Link
-                  key={index}
-                  href={y.link}
-                  className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-sky-light"
-                >
-                  <Image
-                    src={y.icon}
-                    alt={y.title}
-                    width={20}
-                    height={20}
-                    className="text-transparent w-[20px] h-[20px] max-w-[20px]"
-                  />
-                  <span className="hidden md:block group-hover:block">{y.title}</span>
-                </Link>
+                y.visible.includes(role) && (
+                  <Link
+                    key={index}
+                    href={y.link}
+                    className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-sky-light"
+                  >
+                    <Image
+                      src={y.icon}
+                      alt={y.title}
+                      width={20}
+                      height={20}
+                      className="text-transparent w-[20px] h-[20px] max-w-[20px]"
+                    />
+                    <span className="hidden md:block group-hover:block">{y.title}</span>
+                  </Link>
+                )
               ))}
             </div>
           </div>
