@@ -19,7 +19,7 @@ const AttendanceLineChart = () => {
     { name: "December", present: 300, absent: 400 - 300 },
   ];
   return (
-    <div className="h-full w-full flex flex-col bg-white rounded-xl p-4 gap-4">
+    <div className="h-[450px] lg:h-full w-full flex flex-col bg-white rounded-xl p-3 lg:p-4 gap-4">
       <div className="w-full justify-between flex items-center">
         <h1 className="font-bold text-lg">Monthly Attendance</h1>
         <Image src="/moreDark.png" alt="more" width={20} height={20} />

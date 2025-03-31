@@ -21,13 +21,11 @@ const LineChart = ({ data }: { data: DataType[] }) => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChartRoot
-        width={500}
-        height={300}
         data={data}
         margin={{
           top: 5,
-          right: 30,
-          left: 20,
+          right: 5,
+          left: 5,
           bottom: 5,
         }}
       >

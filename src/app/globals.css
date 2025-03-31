@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 /* Custom scrollbar styles */
-/* For WebKit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
   width: 6px;
   padding: 2px;
@@ -26,12 +25,88 @@
   width: 100% !important;
   border: 0 !important;
 }
+
 .react-calendar__navigation__label {
   font-weight: bold !important;
 }
-.react-calendar__tile--now{
+
+.react-calendar__tile--now {
   @apply !bg-yellow;
 }
-.react-calendar__tile--active{
+
+.react-calendar__tile--active {
   @apply !bg-sky;
+}
+
+.rbc-calendar {
+  @apply !text-[12px];
+}
+
+.rbc-btn-group:first-child {
+  @apply !hidden;
+}
+
+.rbc-toolbar-label {
+  @apply !text-right !font-semibold;
+}
+
+.rbc-btn-group {
+  @apply !text-sm !border-none;
+}
+
+.rbc-btn-group button {
+  @apply !bg-[#f1f0ff] !shadow-none !border-none;
+}
+
+.rbc-btn-group > .rbc-active {
+  @apply !bg-purple;
+}
+
+.rbc-time-view {
+  @apply !border-[#eee];
+}
+
+.rbc-time-content {
+  @apply !border-none;
+}
+
+.rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
+  @apply !px-[20px];
+}
+
+.rbc-timeslot-group,
+.rbc-time-header {
+  @apply !bg-[#f7fdff];
+}
+
+.rbc-event-label {
+  @apply !text-[10px] !text-gray-400;
+}
+
+.rbc-event-content {
+  @apply !font-bold;
+}
+
+.rbc-today,
+.rbc-today > .rbc-timeslot-group {
+  @apply !bg-[#f1f8fd];
+}
+
+.rbc-event {
+  @apply !text-black !p-[10px] !m-[5px] !w-[99%] !border-none;
+}
+
+.rbc-event:nth-child(odd) {
+  @apply !bg-[#e2f8ff];
+}
+
+.rbc-event:nth-child(even) {
+  @apply !bg-[#fefce8];
+}
+.rbc-event:nth-child(3n) {
+  @apply !bg-[#f2f1ff];
+}
+
+.rbc-event:nth-child(4n) {
+  @apply !bg-[#fdf2fb];
 }

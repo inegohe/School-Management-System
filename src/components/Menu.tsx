@@ -98,7 +98,7 @@ const Menu = () => {
     },
   ];
   return (
-    <div className="flex flex-col h-full bg-white group-hover:w-[60vw] group-hover:absolute group-hover:top-0 group-hover:left-0 group-hover:z-10 group-hover:md:static group-hover:md:w-[unset] p-2 overflow-scroll mb-4">
+    <div className="flex flex-col h-full bg-white group-hover:w-[70vw] group-hover:sm:w-[30vw] group-hover:absolute group-hover:top-0 group-hover:left-0 group-hover:z-10 group-hover:md:static group-hover:md:w-[unset] p-2 overflow-scroll mb-4">
       <div className="flex items-center justify-center md:justify-start group-hover:justify-start gap-2 mt-2">
         <Image src="/logo.png" width={32} height={32} alt="logo" className="text-transparent" />
         <h1 className="font-bold hidden md:block group-hover:block">

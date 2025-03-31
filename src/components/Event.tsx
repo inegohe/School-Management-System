@@ -27,7 +27,7 @@ const Event = () => {
         <Image src="/moreDark.png" alt="more" width={20} height={20} />
       </div>
       {data.map((event, index) => (
-        <div key={index} className="w-full p-5 rounded-md border-2 border-t-4 border-gray-100 h-fit bg-white gap-2 odd:border-t-sky even:border-t-purple">
+        <div key={index} className="w-full p-3 lg:p-5 rounded-md border-2 border-t-4 border-gray-100 h-fit bg-white gap-2 odd:border-t-sky even:border-t-purple">
           <div className="w-full justify-between flex items-center">
             <h3 className="font-semibold text-lg">{event.title}</h3>
             <p className="text-sm text-gray-400">{event.time}</p>

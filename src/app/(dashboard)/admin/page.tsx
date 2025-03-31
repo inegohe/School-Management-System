@@ -7,7 +7,6 @@ import Calender from "@/components/Calender"
 import Cards from "@/components/Cards"
 import CountChart from "@/components/CountChart"
 import Event from "@/components/Event";
-import Header from "@/components/Header"
 import { useRole } from "@/store"
 import { useEffect } from "react"
 
@@ -17,18 +16,17 @@ const AdminPage = () => {
     setRole("admin");
   });
   return (
-    <main className="flex flex-col overflow-scroll gap-4">
-      <Header />
-      <section className="w-full flex gap-2 flex-col md:flex-row">
-        <div className="md:w-2/3 flex flex-col gap-4 p-2">
+    <>
+      <section className="w-full flex gap-2 flex-col xl:flex-row h-full">
+        <div className="xl:w-2/3 flex flex-col gap-4 p-2 h-full">
           <Cards />
-          <div className="flex gap-2 w-full flex-col md:flex-row">
+          <div className="flex gap-2 w-full flex-col xl:flex-row">
             <CountChart />
             <AttendanceChart />
           </div>
           <AttendanceLineChart />
         </div>
-        <div className="md:w-1/3 flex flex-col gap-4 p-2">
+        <div className="xl:w-1/3 flex flex-col gap-4 p-2 h-full">
           <div className="w-full rounded-md bg-white flex flex-col gap-4 p-2">
             <Calender />
             <Event />
@@ -36,7 +34,7 @@ const AdminPage = () => {
           <Announcement />
         </div>
       </section>
-    </main>
+    </>
   )
 }
 

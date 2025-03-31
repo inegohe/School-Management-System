@@ -14,7 +14,7 @@ const Cards = () => {
       {data.map((item, index) => (
         <div
           key={index}
-          className="flex flex-col flex-1 p-4 odd:bg-sky even:bg-yellow rounded-2xl text-start min-w-[130px]"
+          className="flex flex-col flex-1 p-3 lg:p-4 odd:bg-sky even:bg-yellow rounded-2xl text-start min-w-[130px]"
         >
             <div className="flex justify-between items-center">
                 <p className="rounded-full px-2 py-1 bg-white font-bold text-xs">2025/05</p>
