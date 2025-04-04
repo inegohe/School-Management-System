@@ -76,7 +76,7 @@
 
 .rbc-timeslot-group,
 .rbc-time-header {
-  @apply !bg-[#f7fdff];
+  @apply !bg-[#f6fafc];
 }
 
 .rbc-event-label {
@@ -97,7 +97,7 @@
 }
 
 .rbc-event:nth-child(odd) {
-  @apply !bg-[#e2f8ff];
+  @apply !bg-[#ddf6fd];
 }
 
 .rbc-event:nth-child(even) {

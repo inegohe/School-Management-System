@@ -21,7 +21,7 @@ const Menu = () => {
           title: "Teachers",
           icon: "/teacher.png",
           link: "/list/teachers",
-          visible: ["admin"],
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Students",
@@ -39,13 +39,13 @@ const Menu = () => {
           title: "Subjects",
           icon: "/subject.png",
           link: "/list/subjects",
-          visible: ["admin", "teacher"],
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Classes",
           icon: "/class.png",
           link: "/list/classes",
-          visible: ["admin", "teacher"],
+          visible: ["admin", "teacher", "student", "parent"],
         },
         {
           title: "Attendance",
