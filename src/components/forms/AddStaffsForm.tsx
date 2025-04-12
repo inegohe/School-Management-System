@@ -118,11 +118,11 @@ const AddStaffsForm = ({
       <button
         onClick={() => {
           const a = document.createElement("a");
-          a.download = "Teacher's Excel Template";
+          a.download = "Staff's Excel Template";
           a.href = "/staffExcelTemp.xlsx";
           a.click();
         }}
-        className="w-full bg-sky text-black p-2 rounded font-bold flex gap-2 items-center"
+        className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
       >
         <Download/> Download Excel Template
       </button>
@@ -130,7 +130,7 @@ const AddStaffsForm = ({
         type="file"
         accept=".xlsx,.xls,.xlsm"
         onChange={handleFileUpload}
-        className="flex w-full text-sm text-black p-2 bg-sky hover:bg-sky-light rounded file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-sky-light file:text-black hover:file:bg-sky file:cursor-pointer cursor-pointer"
+        className="flex w-full text-sm text-secondary p-2 bg-primary rounded file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
       />
       </div>
       {fileLoading && (
@@ -173,14 +173,14 @@ const AddStaffsForm = ({
       <div className="w-full flex gap-4">
         <button
           onClick={() => setPage((prev) => prev - 1)}
-          className="w-full bg-sky text-black p-2 rounded font-bold flex gap-2 items-center"
+          className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
         >
           <ArrowLeft /> Prev
         </button>
         <button
           disabled={staffsData.length < 0}
           onClick={() => setPage((prev) => prev + 1)}
-          className="w-full bg-sky disabled:opacity-50 text-black p-2 rounded font-bold flex gap-2 justify-end items-center"
+          className="w-full bg-primary disabled:opacity-50 text-secondary p-2 rounded font-bold flex gap-2 justify-end items-center"
         >
           Next <ArrowRight />
         </button>

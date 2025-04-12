@@ -4,6 +4,7 @@ type SchoolInfo = {
   principal: string;
   vicePrincipal: string;
   slogan: string;
+  schoolType: "Primary" | "Junior" | "Senior";
   startHour: string;
   closeHour: string;
   primaryColor: string;
@@ -66,11 +67,5 @@ type TotalData = {
   studentsData: StudentData[] | [];
   subjects: Subject[] | [];
   classes: ClassData[] | [];
-  timetable: {
-    monday: Timetable[];
-    tuesday: Timetable[];
-    wednesday: Timetable[];
-    thursday: Timetable[];
-    friday: Timetable[];
-  } | {};
+  timetable: Timetable[] | [];
 };

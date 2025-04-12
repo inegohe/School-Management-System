@@ -14,6 +14,10 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
+        "primary": "var(--primary)",
+        "secondary": "var(--secondary)",
+        "accent": "var(--accent)",
+        "muted": "var(--muted)",
         "sky": "#ceebfa",
         "sky-light": "#edf9fb",
         "purple": "#cfceff",

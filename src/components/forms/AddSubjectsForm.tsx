@@ -53,7 +53,7 @@ const AddSubjectsForm = ({
               value={subject}
               onChange={(e) => handleSubjectChange(index, e.target.value)}
               placeholder={`Subject ${index + 1}`}
-              className="p-2 border rounded-md w-full md:w-1/3 outline-none focus:ring-2 focus:ring-sky"
+              className="p-2 border rounded-md w-full md:w-1/3 outline-none ring-2 ring-primary"
             />
           ))}
         </div>
@@ -61,14 +61,14 @@ const AddSubjectsForm = ({
         <button
           type="button"
           onClick={handleRemoveSubject}
-          className="w-full bg-sky text-white py-2 rounded-md font-semibold"
+          className="w-full bg-primary text-white py-2 rounded-md font-semibold"
         >
           Remove Subject
         </button>
         <button
           type="button"
           onClick={handleAddSubject}
-          className="w-full bg-sky text-white py-2 rounded-md font-semibold"
+          className="w-full bg-primary text-white py-2 rounded-md font-semibold"
         >
           Add Subject
         </button>
@@ -76,14 +76,14 @@ const AddSubjectsForm = ({
         <div className="w-full flex gap-4">
           <button
             onClick={() => setPage((prev) => prev - 1)}
-            className="w-full bg-sky text-black p-2 rounded font-bold flex gap-2 items-center"
+            className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
           >
             <ArrowLeft /> Prev
           </button>
           <button
             disabled={subjects.length < 0}
             type="submit"
-            className="w-full bg-sky disabled:opacity-50 text-black p-2 rounded font-bold flex gap-2 justify-end items-center"
+            className="w-full bg-primary disabled:opacity-50 text-secondary p-2 rounded font-bold flex gap-2 justify-end items-center"
           >
             Next <ArrowRight />
           </button>

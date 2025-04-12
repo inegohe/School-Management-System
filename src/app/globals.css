@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --primary: black;
+  --secondary: white;
+  --accent: #007bff;
+  --muted: #6B7280;
+}
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 6px;

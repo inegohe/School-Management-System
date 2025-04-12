@@ -13,6 +13,7 @@ const schema = z.object({
   principal: z.string().min(3, { message: "Principal name is required!" }),
   vicePrincipal: z.string().min(3, { message: "Vice Principal name is required!" }),
   slogan: z.string().min(3, { message: "Slogan is required!" }),
+  schoolType: z.enum(["Primary", "Junior", "Senior"], { message: "School Type can either be Primary, Junior or Senior" }),
   startHour: z.string().min(4, { message: "Start Hour is required!" }),
   closeHour: z.string().min(4, { message: "Close Hour is required!" }),
   primaryColor: z.string().min(6, { message: "Primary color is required!" }),
@@ -87,7 +88,7 @@ const SchoolInfoForm = ({
           {Object.keys(schema.shape).map((key) => (
             <div className="w-full md:w-1/4" key={key}>
               <label className="block text-sm font-medium capitalize">
-                School's {key.replace(/([A-Z])/g, " $1")}
+                School&apos;s {key.replace(/([A-Z])/g, " $1")}
               </label>
               {key === "logoImage" && (
                 <>
@@ -138,7 +139,7 @@ const SchoolInfoForm = ({
         </div>
         <button
           type="submit"
-          className="w-full bg-sky text-black p-2 rounded font-bold flex gap-2 justify-center"
+          className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 justify-center"
         >
           Next <ArrowRight />
         </button>
