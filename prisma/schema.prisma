@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String   @unique
+  password String
+  school   School?  @relation("AdminToSchool") // Define the relation name
+}
+
+model School {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  address          String
+  adminId          String   @unique @db.ObjectId // Add @unique for one-to-one
+  admin            Admin    @relation("AdminToSchool", fields: [adminId], references: [id])
+  primaryColor     String
+  secondaryColor   String
+  mutedColor       String
+  accentColor      String
+  logo             String   // Image URL
+  missionStatement String
+  visionStatement  String
+  principal        String
+  vicePrincipal    String
+  slogan           String
+  teachers         Teacher[]
+  students         Student[]
+  classes          Class[]
+  events           Event[]
+  subjects         Subject[]
+  announcements    Announcement[]
+}
+
+model Teacher {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String     @unique
+  password  String
+  schoolId  String     @db.ObjectId
+  school    School     @relation(fields: [schoolId], references: [id])
+  subjects  Subject[]  // A teacher can teach multiple subjects
+  classes   Class[]    // A teacher can be assigned to multiple classes
+  timetable Timetable[] // A teacher's timetable based on subjects taught
+}
+
+model Student {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String     @unique
+  password  String
+  schoolId  String     @db.ObjectId
+  school    School     @relation(fields: [schoolId], references: [id])
+  parentId  String     @db.ObjectId
+  parent    Parent     @relation(fields: [parentId], references: [id])
+  classId   String     @db.ObjectId
+  class     Class      @relation(fields: [classId], references: [id])
+  attendance Attendance[] // Attendance records for the student
+}
+
+model Parent {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String     @unique
+  password  String
+  students  Student[]  // A parent can have multiple children
+}
+
+model Class {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  schoolId  String     @db.ObjectId
+  school    School     @relation(fields: [schoolId], references: [id])
+  teacherId String     @db.ObjectId
+  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  students  Student[]  // A class can have multiple students
+  subjects  ClassSubject[] // Explicit many-to-many relationship
+  timetable Timetable[] // Timetable for the class
+}
+
+model Subject {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  schoolId  String     @db.ObjectId
+  school    School     @relation(fields: [schoolId], references: [id])
+  teacherId String     @db.ObjectId
+  teacher   Teacher    @relation(fields: [teacherId], references: [id])
+  classes   ClassSubject[] // Explicit many-to-many relationship
+}
+
+model ClassSubject {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  classId   String     @db.ObjectId
+  class     Class      @relation(fields: [classId], references: [id])
+  subjectId String     @db.ObjectId
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+}
+
+model Timetable {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  day       String     // e.g., Monday, Tuesday
+  startTime DateTime
+  endTime   DateTime
+  classId   String?    @db.ObjectId
+  class     Class?     @relation(fields: [classId], references: [id]) // Timetable for a class
+  teacherId String?    @db.ObjectId
+  teacher   Teacher?   @relation(fields: [teacherId], references: [id]) // Timetable for a teacher
+  subjectId String     @db.ObjectId
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+}
+
+model Attendance {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime
+  status    String     // e.g., Present, Absent
+  studentId String     @db.ObjectId
+  student   Student    @relation(fields: [studentId], references: [id])
+  classId   String     @db.ObjectId
+  class     Class      @relation(fields: [classId], references: [id])
+}
