@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 
-const AddClasssForm = ({
+const AddClassesForm = ({
   setTotalData,
   setPage,
   defaultValues,
@@ -12,7 +12,7 @@ const AddClasssForm = ({
   setPage: React.Dispatch<React.SetStateAction<number>>;
   defaultValues: ClassData[] | [];
 }) => {
-  const [classsData, setClasssData] =
+  const [classesData, setClassesData] =
     useState<ClassData[]>(defaultValues);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
@@ -69,9 +69,9 @@ const AddClasssForm = ({
           totalStudent: row["TOTAL STUDENT"] || 0,
         }));
 
-        console.log(classsData);
-        setTotalData((prev) => ({ ...prev, classsData: parsedData }));
-        setClasssData(parsedData);
+        console.log(classesData);
+        setTotalData((prev) => ({ ...prev, classes: parsedData }));
+        setClassesData(parsedData);
       };
 
       reader.readAsBinaryString(file);
@@ -90,8 +90,8 @@ const AddClasssForm = ({
       transition={{ duration: 0.6 }}
       className="p-6 bg-white rounded-lg shadow-lg w-[90%] min-h-[90%] md:min-h-[70%] md:w-3/4 flex flex-col gap-4 mb-4"
     >
-      <h1 className="text-2xl font-bold mb-4">Add Classs</h1>
-      {classsData.length < 1 && (
+      <h1 className="text-2xl font-bold mb-4">Add Classes</h1>
+      {classesData.length < 1 && (
         <div className="flex flex-col gap-2 w-full">
           <h2 className="text-xl font-bold">File Sample</h2>
           <FileFormatSample requiredColumns={requiredColumns} />
@@ -120,7 +120,7 @@ const AddClasssForm = ({
         <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
-      {classsData.length > 0 && (
+      {classesData.length > 0 && (
         <div className="w-full overflow-x-scroll mx-auto">
           <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
             <thead>
@@ -136,7 +136,7 @@ const AddClasssForm = ({
               </tr>
             </thead>
             <tbody>
-              {classsData.map((c, index) => (
+              {classesData.map((c, index) => (
                 <tr key={index} className="odd:bg-white even:bg-gray-50">
                   {Object.keys(c).map((col, i) => (
                     <td key={i} className="border border-gray-300 px-4 py-2">
@@ -157,7 +157,7 @@ const AddClasssForm = ({
           <ArrowLeft /> Prev
         </button>
         <button
-          disabled={classsData.length < 0}
+          disabled={classesData.length < 0}
           onClick={() => setPage((prev) => prev + 1)}
           className="w-full bg-sky disabled:opacity-50 text-black p-2 rounded font-bold flex gap-2 justify-end items-center"
         >
@@ -168,7 +168,7 @@ const AddClasssForm = ({
   );
 };
 
-export default AddClasssForm;
+export default AddClassesForm;
 
 const FileFormatSample = ({
   requiredColumns,

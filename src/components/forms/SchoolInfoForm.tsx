@@ -80,7 +80,7 @@ const SchoolInfoForm = ({
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded-lg shadow-lg w-[90%] min-h-[90%] md:min-h-[70%] md:w-3/4 flex flex-col gap-4 mb-4"
+        className="p-6 bg-white rounded-lg shadow-lg w-full md:w-3/4 flex flex-col gap-4 mb-4"
       >
         <h1 className="text-2xl font-bold mb-4">Register Your School</h1>
         <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex">
