@@ -155,7 +155,7 @@ const AddTimeTableForm = ({
             {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 6 ? "bg-secondary":"bg-transparent")}/>)}
           </div>
           <button
-            disabled={studentsData.length < 0}
+            disabled={timetableData.length < 0}
             onClick={submit}
             className="justify-end"
           >
