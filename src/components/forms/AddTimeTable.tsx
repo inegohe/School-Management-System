@@ -1,18 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 
 const AddTimeTableForm = ({
   setTotalData,
   setPage,
   defaultValues,
+  submit,
 }: {
   setTotalData: React.Dispatch<React.SetStateAction<TotalData>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  defaultValues: Timetable[] | [];
+  defaultValues: { timetableData: Timetable[] | []; timetableHtml: string };
+  submit: () => Promise<boolean | null>;
 }) => {
-  const [timetableData, setTimetableData] = useState<Timetable[]>(defaultValues);
+  const [timetableData, setTimetableData] = useState<Timetable[]>(
+    defaultValues.timetableData
+  );
+  const [timetableHtml, setTimetableHtml] = useState<string>(
+    defaultValues.timetableHtml
+  );
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
 
@@ -42,34 +49,49 @@ const AddTimeTableForm = ({
         const jsonData: any[] = XLSX.utils.sheet_to_json(sheet, {
           header: 1,
         });
-
-        console.log(jsonData, sheet["!merge"], sheet);
-
+        const htmlData: string = XLSX.utils.sheet_to_html(sheet);
         const extractedData: Timetable[] = [];
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        const periods = jsonData[0]?.slice(1) || [];
+        let lastDay = "";
+        const periods = jsonData[0]?.slice(2) || [];
 
         jsonData.forEach((row, rowIndex) => {
           if (rowIndex === 0) return;
-          const day = days.find((d) => row[0]?.toString().toLowerCase().includes(d.toLowerCase()));
+          let day = lastDay;
+          if (row[0]) {
+            day = row[0];
+            lastDay = row[0];
+          }
+
           if (day) {
-            row.slice(1).forEach((subject: string | undefined, colIndex: number) => {
-              if (subject) {
+            let period = 1;
+            const subjects = row.slice(2);
+
+            for (let colIndex = 0; colIndex < subjects.length; colIndex++) {
+              if (subjects[colIndex]) {
                 extractedData.push({
-                  class: row[0].toString().split(" ")[0],
+                  class: row[1],
                   day,
-                  period: colIndex + 1,
-                  subject: subject.toString(),
+                  period: period++,
+                  periodSpan: 1,
+                  subject: subjects[colIndex].toString(),
                   startTime: periods[colIndex]?.split(" - ")[0] || "",
                   endTime: periods[colIndex]?.split(" - ")[1] || "",
                 });
+              } else {
+                extractedData[extractedData.length - 1].endTime =
+                  periods[colIndex]?.split(" - ")[1] || "";
+                extractedData[extractedData.length - 1].periodSpan += 1;
               }
-            });
+            }
           }
         });
-        console.log(extractedData);
         setTimetableData(extractedData);
-        setTotalData((prev) => ({ ...prev, timetable: extractedData }));
+        setTimetableHtml(htmlData);
+        setTotalData((prev) => ({
+          ...prev,
+          timetable: extractedData,
+          timetableHtml: htmlData,
+        }));
       };
 
       reader.readAsBinaryString(file);
@@ -83,141 +105,78 @@ const AddTimeTableForm = ({
 
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 bg-white rounded-lg shadow-lg w-[90%] min-h-[90%] md:min-h-[70%] md:w-3/4 flex flex-col gap-4 mb-4"
+      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <h1 className="text-2xl font-bold mb-4">Add Timetable</h1>
-      <div className="w-full flex gap-4 flex-col md:flex-row">
+      {timetableData.length < 1 && (
+        <div className="flex flex-col gap-2 w-full">
+          <h2 className="text-xl font-bold">File Sample</h2>
+          <FileFormatSample />
+        </div>
+      )}
+      <div className="w-full md:justify-between px-2 flex gap-4 flex-col md:flex-row">
+        <button
+          onClick={() => {
+            const a = document.createElement("a");
+            a.download = "Timetable's Excel Template";
+            a.href = "/timetableExcelTemp.xlsx";
+            a.click();
+          }}
+        >
+          <Download /> Download Excel Template
+        </button>
         <input
           type="file"
           accept=".xlsx,.xls,.xlsm"
           onChange={handleFileUpload}
-          className="flex w-full text-sm text-secondary p-2 bg-primary rounded file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          className="flex w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
         />
       </div>
       {fileLoading && (
         <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
-      {timetableData.length > 0 && (
-        <div className="w-full overflow-x-scroll mx-auto">
-          <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2">Class</th>
-                <th className="border border-gray-300 px-4 py-2">Day</th>
-                <th className="border border-gray-300 px-4 py-2">Period</th>
-                <th className="border border-gray-300 px-4 py-2">Subject</th>
-                <th className="border border-gray-300 px-4 py-2">Start Time</th>
-                <th className="border border-gray-300 px-4 py-2">End Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {timetableData.map((entry, index) => (
-                <tr key={index} className="odd:bg-white even:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{entry.class}</td>
-                  <td className="border border-gray-300 px-4 py-2">{entry.day}</td>
-                  <td className="border border-gray-300 px-4 py-2">{entry.period}</td>
-                  <td className="border border-gray-300 px-4 py-2">{entry.subject}</td>
-                  <td className="border border-gray-300 px-4 py-2">{entry.startTime}</td>
-                  <td className="border border-gray-300 px-4 py-2">{entry.endTime}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {timetableHtml && (
+        <div
+          className="html-sheet w-full overflow-x-scroll mx-auto bg-black rounded-md p-2"
+          dangerouslySetInnerHTML={{ __html: timetableHtml }}
+        />
       )}
-      <div className="w-full flex gap-4">
-        <button
-          onClick={() => setPage((prev) => prev - 1)}
-          className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
-        >
-          <ArrowLeft /> Prev
-        </button>
-        <button
-          disabled={timetableData.length < 1}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="w-full bg-primary disabled:opacity-50 text-secondary p-2 rounded font-bold flex gap-2 justify-end items-center"
-        >
-          Next <ArrowRight />
-        </button>
-      </div>
+      <div className="w-full flex gap-4 justify-between px-2">
+          <button
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            <ArrowLeft /> Prev
+          </button>
+          <div className="flex gap-2 items-center">
+            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 6 ? "bg-secondary":"bg-transparent")}/>)}
+          </div>
+          <button
+            disabled={studentsData.length < 0}
+            onClick={submit}
+            className="justify-end"
+          >
+            Finish <ArrowRight />
+          </button>
+        </div>
     </motion.div>
   );
 };
 
 export default AddTimeTableForm;
 
-const FileFormatSample = ({
-  requiredColumns,
-}: {
-  requiredColumns: string[];
-}) => {
-  const mockStaffData: StaffData[] = [
-    {
-      name: "John Doe",
-      email: "john.doe@example.com",
-      oracleNo: "OR12345",
-      registrationNo: "REG67890",
-      designation: "Senior Teacher",
-      post: "Teacher",
-      payrollNo: "PAY001",
-      level: "Level 10",
-      yearOfExit: "2025",
-      address: "123 Main Street, Cityville",
-      phoneNo: "123-456-7890",
-      yearOfService: "10",
-      teaching: true,
-    },
-    {
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      oracleNo: "OR54321",
-      registrationNo: "REG09876",
-      designation: "Assistant Teacher",
-      post: "Counsellor",
-      payrollNo: "PAY002",
-      level: "Level 8",
-      yearOfExit: "2028",
-      address: "456 Elm Street, Townsville",
-      phoneNo: "987-654-3210",
-      yearOfService: "5",
-      teaching: false,
-    },
-  ];
+const FileFormatSample = () => {
   return (
-    <div className="w-full overflow-x-scroll mx-auto">
-      <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
-        <thead>
-          <tr className="bg-gray-100">
-            {requiredColumns.map((col, i) => (
-              <th
-                key={i}
-                className="border border-gray-300 px-4 py-2 capitalize"
-              >
-                {col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {mockStaffData.map((staff, index) => (
-            <tr key={index} className="odd:bg-white even:bg-gray-50">
-              {Object.keys(staff).map((col, i) => (
-                <td key={i} className="border border-gray-300 px-4 py-2">
-                  {col === "teaching"
-                    ? (staff[col as keyof StaffData] as boolean)
-                        .toString()
-                        .toUpperCase()
-                    : staff[col as keyof StaffData]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <div
+      className="html-sheet w-full overflow-x-scroll mx-auto"
+      dangerouslySetInnerHTML={{ __html: htmlSampleTable }}
+    />
   );
 };
+
+/*  Sample HTML Table */
+const htmlSampleTable: string = `<html><head><meta charset="utf-8"/><title>SheetJS Table Export</title></head><body><table><tr><td data-t="s" data-v="TIMETABLE" id="sjs-A1">TIMETABLE</td><td id="sjs-B1"></td><td data-t="s" data-v="8:10AM - 8:50AM" id="sjs-C1">8:10AM - 8:50AM</td><td data-t="s" data-v="8:50AM - 9:30AM" id="sjs-D1">8:50AM - 9:30AM</td><td data-t="s" data-v="9:30AM - 10:10AM" id="sjs-E1">9:30AM - 10:10AM</td><td data-t="s" data-v="10:10AM - 10:50AM" id="sjs-F1">10:10AM - 10:50AM</td><td data-t="s" data-v="10:50AM - 11:30AM" id="sjs-G1">10:50AM - 11:30AM</td><td data-t="s" data-v="12:00PM - 12:40PM" id="sjs-H1">12:00PM - 12:40PM</td><td data-t="s" data-v="12:40PM - 1:20PM" id="sjs-I1">12:40PM - 1:20PM</td><td data-t="s" data-v="1:20PM - 2:00PM" id="sjs-J1">1:20PM - 2:00PM</td></tr><tr><td rowspan="2" data-t="s" data-v="MONDAY" id="sjs-A2">MONDAY</td><td data-t="s" data-v="1A" id="sjs-B2">1A</td><td colspan="2" data-t="s" data-v="MATHEMATICS" id="sjs-C2">MATHEMATICS</td><td data-t="s" data-v="CHEMISTRY" id="sjs-E2">CHEMISTRY</td><td colspan="2" data-t="s" data-v="PHYSICS" id="sjs-F2">PHYSICS</td><td colspan="2" data-t="s" data-v="FURTHER MATHS" id="sjs-H2">FURTHER MATHS</td><td data-t="s" data-v="ANIMAL HUSBANDARY" id="sjs-J2">ANIMAL HUSBANDARY</td></tr><tr><td data-t="s" data-v="1B" id="sjs-B3">1B</td><td data-t="s" data-v="MARKETING" id="sjs-C3">MARKETING</td><td colspan="2" data-t="s" data-v="COMPUTER" id="sjs-D3">COMPUTER</td><td colspan="2" data-t="s" data-v="ACCOUNTING" id="sjs-F3">ACCOUNTING</td><td colspan="2" data-t="s" data-v="COMMERCE" id="sjs-H3">COMMERCE</td><td data-t="s" data-v="CIVIC" id="sjs-J3">CIVIC</td></tr><tr><td rowspan="2" data-t="s" data-v="TUESDAY" id="sjs-A4">TUESDAY</td><td data-t="s" data-v="1A" id="sjs-B4">1A</td><td colspan="2" data-t="s" data-v="MATHEMATICS" id="sjs-C4">MATHEMATICS</td><td data-t="s" data-v="CHEMISTRY" id="sjs-E4">CHEMISTRY</td><td colspan="2" data-t="s" data-v="PHYSICS" id="sjs-F4">PHYSICS</td><td colspan="2" data-t="s" data-v="FURTHER MATHS" id="sjs-H4">FURTHER MATHS</td><td data-t="s" data-v="ANIMAL HUSBANDARY" id="sjs-J4">ANIMAL HUSBANDARY</td></tr><tr><td data-t="s" data-v="1B" id="sjs-B5">1B</td><td data-t="s" data-v="MARKETING" id="sjs-C5">MARKETING</td><td colspan="2" data-t="s" data-v="COMPUTER" id="sjs-D5">COMPUTER</td><td colspan="2" data-t="s" data-v="ACCOUNTING" id="sjs-F5">ACCOUNTING</td><td colspan="2" data-t="s" data-v="COMMERCE" id="sjs-H5">COMMERCE</td><td data-t="s" data-v="CIVIC" id="sjs-J5">CIVIC</td></tr><tr><td rowspan="2" data-t="s" data-v="WEDNESDAY" id="sjs-A6">WEDNESDAY</td><td data-t="s" data-v="1A" id="sjs-B6">1A</td><td colspan="2" data-t="s" data-v="MATHEMATICS" id="sjs-C6">MATHEMATICS</td><td data-t="s" data-v="CHEMISTRY" id="sjs-E6">CHEMISTRY</td><td colspan="2" data-t="s" data-v="PHYSICS" id="sjs-F6">PHYSICS</td><td colspan="2" data-t="s" data-v="FURTHER MATHS" id="sjs-H6">FURTHER MATHS</td><td data-t="s" data-v="ANIMAL HUSBANDARY" id="sjs-J6">ANIMAL HUSBANDARY</td></tr><tr><td data-t="s" data-v="1B" id="sjs-B7">1B</td><td data-t="s" data-v="MARKETING" id="sjs-C7">MARKETING</td><td colspan="2" data-t="s" data-v="COMPUTER" id="sjs-D7">COMPUTER</td><td colspan="2" data-t="s" data-v="ACCOUNTING" id="sjs-F7">ACCOUNTING</td><td colspan="2" data-t="s" data-v="COMMERCE" id="sjs-H7">COMMERCE</td><td data-t="s" data-v="CIVIC" id="sjs-J7">CIVIC</td></tr><tr><td rowspan="2" data-t="s" data-v="THURSDAY" id="sjs-A8">THURSDAY</td><td data-t="s" data-v="1A" id="sjs-B8">1A</td><td colspan="2" data-t="s" data-v="MATHEMATICS" id="sjs-C8">MATHEMATICS</td><td data-t="s" data-v="CHEMISTRY" id="sjs-E8">CHEMISTRY</td><td colspan="2" data-t="s" data-v="PHYSICS" id="sjs-F8">PHYSICS</td><td colspan="2" data-t="s" data-v="FURTHER MATHS" id="sjs-H8">FURTHER MATHS</td><td data-t="s" data-v="ANIMAL HUSBANDARY" id="sjs-J8">ANIMAL HUSBANDARY</td></tr><tr><td data-t="s" data-v="1B" id="sjs-B9">1B</td><td data-t="s" data-v="MARKETING" id="sjs-C9">MARKETING</td><td colspan="2" data-t="s" data-v="COMPUTER" id="sjs-D9">COMPUTER</td><td colspan="2" data-t="s" data-v="ACCOUNTING" id="sjs-F9">ACCOUNTING</td><td colspan="2" data-t="s" data-v="COMMERCE" id="sjs-H9">COMMERCE</td><td data-t="s" data-v="CIVIC" id="sjs-J9">CIVIC</td></tr><tr><td rowspan="2" data-t="s" data-v="FRIDAY" id="sjs-A10">FRIDAY</td><td data-t="s" data-v="1A" id="sjs-B10">1A</td><td colspan="2" data-t="s" data-v="MATHEMATICS" id="sjs-C10">MATHEMATICS</td><td data-t="s" data-v="CHEMISTRY" id="sjs-E10">CHEMISTRY</td><td colspan="2" data-t="s" data-v="PHYSICS" id="sjs-F10">PHYSICS</td><td colspan="2" data-t="s" data-v="FURTHER MATHS" id="sjs-H10">FURTHER MATHS</td><td data-t="s" data-v="ANIMAL HUSBANDARY" id="sjs-J10">ANIMAL HUSBANDARY</td></tr><tr><td data-t="s" data-v="1B" id="sjs-B11">1B</td><td data-t="s" data-v="MARKETING" id="sjs-C11">MARKETING</td><td colspan="2" data-t="s" data-v="COMPUTER" id="sjs-D11">COMPUTER</td><td colspan="2" data-t="s" data-v="ACCOUNTING" id="sjs-F11">ACCOUNTING</td><td colspan="2" data-t="s" data-v="COMMERCE" id="sjs-H11">COMMERCE</td><td data-t="s" data-v="CIVIC" id="sjs-J11">CIVIC</td></tr></table></body></html>
+`;

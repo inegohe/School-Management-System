@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -77,11 +77,11 @@ const SchoolInfoForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="flex items-start md:items-center justify-center min-h-screen h-full py-10 p-4"
+      className="flex items-center justify-center"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded-lg shadow-lg w-full md:w-3/4 flex flex-col gap-4 mb-4"
+        className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
       >
         <h1 className="text-2xl font-bold mb-4">Register Your School</h1>
         <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex">
@@ -137,12 +137,23 @@ const SchoolInfoForm = ({
             </div>
           ))}
         </div>
-        <button
-          type="submit"
-          className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 justify-center"
-        >
-          Next <ArrowRight />
-        </button>
+        <div className="w-full flex gap-4 justify-between px-2">
+          <button
+          disabled
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            <ArrowLeft /> Prev
+          </button>
+          <div className="flex gap-2 items-center">
+            {[1,2,3,4,5].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 1 ? "bg-secondary":"bg-transparent")}/>)}
+          </div>
+          <button
+            type="submit"
+            className="justify-end"
+          >
+            Next <ArrowRight />
+          </button>
+        </div>
       </form>
     </motion.div>
   );

@@ -104,10 +104,10 @@ const AddStaffsForm = ({
 
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 bg-white rounded-lg shadow-lg w-[90%] min-h-[90%] md:min-h-[70%] md:w-3/4 flex flex-col gap-4 mb-4"
+      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <h1 className="text-2xl font-bold mb-4">Add Staffs</h1>
       {staffsData.length < 1 && <div className="flex flex-col gap-2 w-full">
@@ -122,7 +122,6 @@ const AddStaffsForm = ({
           a.href = "/staffExcelTemp.xlsx";
           a.click();
         }}
-        className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
       >
         <Download/> Download Excel Template
       </button>
@@ -130,7 +129,7 @@ const AddStaffsForm = ({
         type="file"
         accept=".xlsx,.xls,.xlsm"
         onChange={handleFileUpload}
-        className="flex w-full text-sm text-secondary p-2 bg-primary rounded file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+        className="flex w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
       />
       </div>
       {fileLoading && (
@@ -170,21 +169,23 @@ const AddStaffsForm = ({
           </table>
         </div>
       )}
-      <div className="w-full flex gap-4">
-        <button
-          onClick={() => setPage((prev) => prev - 1)}
-          className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
-        >
-          <ArrowLeft /> Prev
-        </button>
-        <button
-          disabled={staffsData.length < 0}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="w-full bg-primary disabled:opacity-50 text-secondary p-2 rounded font-bold flex gap-2 justify-end items-center"
-        >
-          Next <ArrowRight />
-        </button>
-      </div>
+      <div className="w-full flex gap-4 justify-between px-2">
+          <button
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            <ArrowLeft /> Prev
+          </button>
+          <div className="flex gap-2 items-center">
+            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 2 ? "bg-secondary":"bg-transparent")}/>)}
+          </div>
+          <button
+            disabled={staffsData.length < 0}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="justify-end"
+          >
+            Next <ArrowRight />
+          </button>
+        </div>
     </motion.div>
   );
 };

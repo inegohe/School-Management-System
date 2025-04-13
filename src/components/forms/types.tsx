@@ -54,6 +54,7 @@ interface Timetable {
   class: string;
   day: string;
   period: number;
+  periodSpan: number;
   subject: string;
   startTime: string;
   endTime: string;
@@ -68,4 +69,5 @@ type TotalData = {
   subjects: Subject[] | [];
   classes: ClassData[] | [];
   timetable: Timetable[] | [];
+  timetableHtml: string;
 };

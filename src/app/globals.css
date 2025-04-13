@@ -8,6 +8,18 @@
   --accent: #007bff;
   --muted: #6B7280;
 }
+
+* {
+  @apply text-secondary;
+}
+
+input {
+  @apply bg-transparent text-secondary;
+}
+
+button {
+  @apply bg-primary text-secondary py-2 px-3 rounded-lg font-bold flex gap-2 items-center w-fit;
+}
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 6px;
@@ -116,4 +128,17 @@
 
 .rbc-event:nth-child(4n) {
   @apply !bg-[#fdf2fb];
+}
+
+/* HtmlSheet Table Styling */
+table{
+  @apply bg-black table-auto w-full border-collapse text-sm font-bold text-left rounded-lg;
+}
+
+tr{
+  @apply text-center;
+}
+
+td, th{
+  @apply border border-slate-900 px-4 py-2 text-center;
 }

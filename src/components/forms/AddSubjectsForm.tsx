@@ -38,14 +38,14 @@ const AddSubjectsForm = ({
 
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 bg-white rounded-lg shadow-lg w-[90%] min-h-[90%] md:min-h-[70%] md:w-3/4 flex flex-col gap-4 mb-4"
+      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
         <h1 className="text-2xl font-bold mb-4">Add Subjects</h1>
-        <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex justify-center">
+        <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex justify-center min-h-[70%]">
           {subjects.map((subject, index) => (
             <input
               key={index}
@@ -58,32 +58,30 @@ const AddSubjectsForm = ({
           ))}
         </div>
         <div className="w-full flex gap-4">
-        <button
-          type="button"
-          onClick={handleRemoveSubject}
-          className="w-full bg-primary text-white py-2 rounded-md font-semibold"
-        >
-          Remove Subject
-        </button>
-        <button
-          type="button"
-          onClick={handleAddSubject}
-          className="w-full bg-primary text-white py-2 rounded-md font-semibold"
-        >
-          Add Subject
-        </button>
+          <button
+            type="button"
+            onClick={handleRemoveSubject}
+            className="w-full"
+          >
+            Remove Subject
+          </button>
+          <button type="button" onClick={handleAddSubject} className="w-full">
+            Add Subject
+          </button>
         </div>
-        <div className="w-full flex gap-4">
+        <div className="w-full flex gap-4 justify-between px-2">
           <button
             onClick={() => setPage((prev) => prev - 1)}
-            className="w-full bg-primary text-secondary p-2 rounded font-bold flex gap-2 items-center"
           >
             <ArrowLeft /> Prev
           </button>
+          <div className="flex gap-2 items-center">
+            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 5 ? "bg-secondary":"bg-transparent")}/>)}
+          </div>
           <button
             disabled={subjects.length < 0}
             type="submit"
-            className="w-full bg-primary disabled:opacity-50 text-secondary p-2 rounded font-bold flex gap-2 justify-end items-center"
+            className="justify-end"
           >
             Next <ArrowRight />
           </button>
