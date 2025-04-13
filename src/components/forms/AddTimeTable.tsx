@@ -141,7 +141,7 @@ const AddTimeTableForm = ({
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
       {timetableHtml && (
         <div
-          className="html-sheet w-full overflow-x-scroll mx-auto bg-black rounded-md p-2"
+          className="w-full overflow-x-scroll mx-auto bg-black rounded-md p-2"
           dangerouslySetInnerHTML={{ __html: timetableHtml }}
         />
       )}
@@ -171,7 +171,7 @@ export default AddTimeTableForm;
 const FileFormatSample = () => {
   return (
     <div
-      className="html-sheet w-full overflow-x-scroll mx-auto"
+      className="w-full overflow-x-scroll mx-auto"
       dangerouslySetInnerHTML={{ __html: htmlSampleTable }}
     />
   );

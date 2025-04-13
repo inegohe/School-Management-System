@@ -138,13 +138,13 @@ const AddStaffsForm = ({
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
       {staffsData.length > 0 && (
         <div className="w-full overflow-x-scroll mx-auto">
-          <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
+          <table>
             <thead>
-              <tr className="bg-gray-100">
+              <tr>
                 {requiredColumns.map((col, i) => (
                   <th
                     key={i}
-                    className="border border-gray-300 px-4 py-2 capitalize"
+                    className="capitalize"
                   >
                     {col}
                   </th>
@@ -153,9 +153,9 @@ const AddStaffsForm = ({
             </thead>
             <tbody>
               {staffsData.map((teacher, index) => (
-                <tr key={index} className="odd:bg-white even:bg-gray-50">
+                <tr key={index}>
                   {Object.keys(teacher).map((col, i) => (
-                    <td key={i} className="border border-gray-300 px-4 py-2">
+                    <td key={i}>
                       {col === "teaching"
                         ? (teacher[col as keyof StaffData] as boolean)
                             .toString()
