@@ -1,15 +1,9 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { PrismaClient } from "@prisma/client";
 
-const users = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    password: await bcrypt.hash("password123", 10), // Pre-hashed password
-    role: "admin",
-  },
-];
+//const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -20,9 +14,25 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const user = users.find((u) => u.email === credentials?.email);
-        if (user && credentials?.password && (await bcrypt.compare(credentials.password, user.password))) {
-          return { id: user.id, email: user.email, role: user.role };
+        // const user = await prisma.users.findUnique({
+        //   where: {
+        //     email: credentials?.email,
+        //   },
+        // });
+        const user = {
+          email: "nifemiolaniyi4@gmail.com",
+          password: "helloworld",
+          role: "admin",
+        };
+        if (
+          user &&
+          credentials?.password &&
+          user.password === credentials?.password
+          //(await bcrypt.compare(credentials.password, user.password))
+        ) {
+          return user as any;
+        } else if (user && user.password === "") {
+          return { error: "PNS" }; //Password Not Set
         }
         return null;
       },
@@ -30,7 +40,11 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      session.user = token.user as { name?: string | null; email?: string | null; image?: string | null };
+      session.user = token.user as {
+        name?: string | null;
+        email?: string | null;
+        image?: string | null;
+      };
       return session;
     },
     async jwt({ token, user }) {
