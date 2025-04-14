@@ -137,7 +137,7 @@ const SchoolInfoForm = ({
             </div>
           ))}
         </div>
-        <div className="w-full flex gap-4 justify-between px-2">
+        <div className="w-full flex gap-4 justify-between">
           <button
           disabled
             onClick={() => setPage((prev) => prev - 1)}
@@ -145,7 +145,7 @@ const SchoolInfoForm = ({
             <ArrowLeft /> Prev
           </button>
           <div className="flex gap-2 items-center">
-            {[1,2,3,4,5].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 1 ? "bg-secondary":"bg-transparent")}/>)}
+            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " + (x === 1 ? "bg-secondary":"bg-transparent")}/>)}
           </div>
           <button
             type="submit"

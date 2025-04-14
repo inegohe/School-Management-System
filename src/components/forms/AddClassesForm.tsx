@@ -12,16 +12,11 @@ const AddClassesForm = ({
   setPage: React.Dispatch<React.SetStateAction<number>>;
   defaultValues: ClassData[] | [];
 }) => {
-  const [classesData, setClassesData] =
-    useState<ClassData[]>(defaultValues);
+  const [classesData, setClassesData] = useState<ClassData[]>(defaultValues);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
 
-  const requiredColumns = [
-    "name",
-    "class teacher",
-    "total student",
-  ];
+  const requiredColumns = ["name", "class teacher", "total student"];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFileLoading(true);
@@ -88,83 +83,89 @@ const AddClassesForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 w-full h-full flex flex-col gap-4 mb-4 mt-5"
+      className="p-6 w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
     >
-      <h1 className="text-2xl font-bold mb-4">Add Classes</h1>
-      {classesData.length < 1 && (
-        <div className="flex flex-col gap-2 w-full">
-          <h2 className="text-xl font-bold">File Sample</h2>
-          <FileFormatSample requiredColumns={requiredColumns} />
+      <div className="w-full flex flex-col gap-4">
+        <h1 className="text-2xl font-bold mb-4">Add Classes</h1>
+        {classesData.length < 1 && (
+          <div className="flex flex-col gap-2 w-full">
+            <h2 className="text-xl font-bold">File Sample</h2>
+            <FileFormatSample requiredColumns={requiredColumns} />
+          </div>
+        )}
+        <div className="w-full items-center md:justify-between flex gap-2 flex-col md:flex-row">
+          <button
+            onClick={() => {
+              const a = document.createElement("a");
+              a.download = "Class's Excel Template";
+              a.href = "/classExcelTemp.xlsx";
+              a.click();
+            }}
+            className="w-full md:w-fit"
+          >
+            <Download /> Download Excel Template
+          </button>
+          <input
+            type="file"
+            accept=".xlsx,.xls,.xlsm"
+            onChange={handleFileUpload}
+            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          />
         </div>
-      )}
-      <div className="w-full flex gap-4 flex-col md:flex-row">
-        <button
-          onClick={() => {
-            const a = document.createElement("a");
-            a.download = "Class's Excel Template";
-            a.href = "/classExcelTemp.xlsx";
-            a.click();
-          }}
-        >
-          <Download /> Download Excel Template
-        </button>
-        <input
-          type="file"
-          accept=".xlsx,.xls,.xlsm"
-          onChange={handleFileUpload}
-          className="flex w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
-        />
-      </div>
-      {fileLoading && (
-        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
-      )}
-      {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
-      {classesData.length > 0 && (
-        <div className="w-full overflow-x-scroll mx-auto">
-          <table>
-            <thead>
-              <tr>
-                {requiredColumns.map((col, i) => (
-                  <th
-                    key={i}
-                    className="capitalize"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {classesData.map((c, index) => (
-                <tr key={index}>
-                  {Object.keys(c).map((col, i) => (
-                    <td key={i}>
-                      {c[col as keyof ClassData]}
-                    </td>
+        {fileLoading && (
+          <p className="text-green-500 text-sm mb-4 animate-pulse">
+            Loading...
+          </p>
+        )}
+        {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+        {classesData.length > 0 && (
+          <div className="w-full overflow-x-scroll mx-auto">
+            <table>
+              <thead>
+                <tr>
+                  {requiredColumns.map((col, i) => (
+                    <th key={i} className="capitalize">
+                      {col}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <div className="w-full flex gap-4 justify-between px-2">
-          <button
-            onClick={() => setPage((prev) => prev - 1)}
-          >
-            <ArrowLeft /> Prev
-          </button>
-          <div className="flex gap-2 items-center">
-            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 4 ? "bg-secondary":"bg-transparent")}/>)}
+              </thead>
+              <tbody>
+                {classesData.map((c, index) => (
+                  <tr key={index}>
+                    {Object.keys(c).map((col, i) => (
+                      <td key={i}>{c[col as keyof ClassData]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <button
-            disabled={classesData.length < 0}
-            onClick={() => setPage((prev) => prev + 1)}
-            className="justify-end"
-          >
-            Next <ArrowRight />
-          </button>
+        )}
+      </div>
+      <div className="w-full flex gap-4 justify-between">
+        <button onClick={() => setPage((prev) => prev - 1)}>
+          <ArrowLeft /> Prev
+        </button>
+        <div className="flex gap-2 items-center">
+          {[1, 2, 3, 4, 5, 6].map((x, i) => (
+            <div
+              key={i}
+              className={
+                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                (x === 4 ? "bg-secondary" : "bg-transparent")
+              }
+            />
+          ))}
         </div>
+        <button
+          disabled={classesData.length < 0}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="justify-end"
+        >
+          Next <ArrowRight />
+        </button>
+      </div>
     </motion.div>
   );
 };
@@ -190,14 +191,11 @@ const FileFormatSample = ({
   ];
   return (
     <div className="w-full overflow-x-scroll mx-auto">
-      <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
+      <table>
         <thead>
-          <tr className="bg-gray-100">
+          <tr>
             {requiredColumns.map((col, i) => (
-              <th
-                key={i}
-                className="border border-gray-300 px-4 py-2 capitalize"
-              >
+              <th key={i} className="capitalize">
                 {col}
               </th>
             ))}
@@ -205,11 +203,9 @@ const FileFormatSample = ({
         </thead>
         <tbody>
           {mockClassData.map((mockClass, index) => (
-            <tr key={index} className="odd:bg-white even:bg-gray-50">
+            <tr key={index}>
               {Object.keys(mockClass).map((col, i) => (
-                <td key={i} className="border border-gray-300 px-4 py-2">
-                  {mockClass[col as keyof ClassData]}
-                </td>
+                <td key={i}>{mockClass[col as keyof ClassData]}</td>
               ))}
             </tr>
           ))}

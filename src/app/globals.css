@@ -18,7 +18,7 @@ input {
 }
 
 button {
-  @apply bg-primary text-secondary py-2 px-3 rounded-lg font-bold flex gap-2 items-center w-fit;
+  @apply bg-primary text-secondary py-2 px-3 rounded-lg font-bold flex gap-2 items-center w-fit disabled:opacity-50 active:scale-95 transition duration-500 ease-in-out;
 }
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
@@ -132,7 +132,7 @@ button {
 
 /* HtmlSheet Table Styling */
 table{
-  @apply bg-black table-auto w-full border-collapse text-sm font-bold text-left rounded-lg;
+  @apply bg-[#000000aa] table-auto w-full border-collapse border-gray-300 text-sm font-bold text-left;
 }
 
 tr{
@@ -140,5 +140,5 @@ tr{
 }
 
 td, th{
-  @apply border border-slate-900 px-4 py-2 text-center;
+  @apply border border-gray-300 px-4 py-2 text-center;
 }

@@ -107,85 +107,95 @@ const AddStaffsForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
+      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
     >
-      <h1 className="text-2xl font-bold mb-4">Add Staffs</h1>
-      {staffsData.length < 1 && <div className="flex flex-col gap-2 w-full">
-        <h2 className="text-xl font-bold">File Sample</h2>
-        <FileFormatSample requiredColumns={requiredColumns}/>
-      </div>}
-      <div className="w-full flex gap-4 flex-col md:flex-row">
-      <button
-        onClick={() => {
-          const a = document.createElement("a");
-          a.download = "Staff's Excel Template";
-          a.href = "/staffExcelTemp.xlsx";
-          a.click();
-        }}
-      >
-        <Download/> Download Excel Template
-      </button>
-      <input
-        type="file"
-        accept=".xlsx,.xls,.xlsm"
-        onChange={handleFileUpload}
-        className="flex w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
-      />
-      </div>
-      {fileLoading && (
-        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
-      )}
-      {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
-      {staffsData.length > 0 && (
-        <div className="w-full overflow-x-scroll mx-auto">
-          <table>
-            <thead>
-              <tr>
-                {requiredColumns.map((col, i) => (
-                  <th
-                    key={i}
-                    className="capitalize"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {staffsData.map((teacher, index) => (
-                <tr key={index}>
-                  {Object.keys(teacher).map((col, i) => (
-                    <td key={i}>
-                      {col === "teaching"
-                        ? (teacher[col as keyof StaffData] as boolean)
-                            .toString()
-                            .toUpperCase()
-                        : teacher[col as keyof StaffData]}
-                    </td>
+      <div className="w-full flex flex-col gap-4">
+        <h1 className="text-2xl font-bold mb-4">Add Staffs</h1>
+        {staffsData.length < 1 && (
+          <div className="flex flex-col gap-2 w-full">
+            <h2 className="text-xl font-bold">File Sample</h2>
+            <FileFormatSample requiredColumns={requiredColumns} />
+          </div>
+        )}
+        <div className="w-full items-center md:justify-between flex gap-2 flex-col md:flex-row">
+          <button
+            onClick={() => {
+              const a = document.createElement("a");
+              a.download = "Staff's Excel Template";
+              a.href = "/staffExcelTemp.xlsx";
+              a.click();
+            }}
+            className="w-full md:w-fit"
+          >
+            <Download /> Download Excel Template
+          </button>
+          <input
+            type="file"
+            accept=".xlsx,.xls,.xlsm"
+            onChange={handleFileUpload}
+            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          />
+        </div>
+        {fileLoading && (
+          <p className="text-green-500 text-sm mb-4 animate-pulse">
+            Loading...
+          </p>
+        )}
+        {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+        {staffsData.length > 0 && (
+          <div className="w-full overflow-x-scroll mx-auto">
+            <table>
+              <thead>
+                <tr>
+                  {requiredColumns.map((col, i) => (
+                    <th key={i} className="capitalize">
+                      {col}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <div className="w-full flex gap-4 justify-between px-2">
-          <button
-            onClick={() => setPage((prev) => prev - 1)}
-          >
-            <ArrowLeft /> Prev
-          </button>
-          <div className="flex gap-2 items-center">
-            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 2 ? "bg-secondary":"bg-transparent")}/>)}
+              </thead>
+              <tbody>
+                {staffsData.map((teacher, index) => (
+                  <tr key={index}>
+                    {Object.keys(teacher).map((col, i) => (
+                      <td key={i}>
+                        {col === "teaching"
+                          ? (teacher[col as keyof StaffData] as boolean)
+                              .toString()
+                              .toUpperCase()
+                          : teacher[col as keyof StaffData]}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <button
-            disabled={staffsData.length < 0}
-            onClick={() => setPage((prev) => prev + 1)}
-            className="justify-end"
-          >
-            Next <ArrowRight />
-          </button>
+        )}
+      </div>
+      <div className="w-full flex gap-4 justify-between">
+        <button onClick={() => setPage((prev) => prev - 1)}>
+          <ArrowLeft /> Prev
+        </button>
+        <div className="flex gap-2 items-center">
+          {[1, 2, 3, 4, 5, 6].map((x, i) => (
+            <div
+              key={i}
+              className={
+                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                (x === 2 ? "bg-secondary" : "bg-transparent")
+              }
+            />
+          ))}
         </div>
+        <button
+          disabled={staffsData.length < 0}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="justify-end"
+        >
+          Next <ArrowRight />
+        </button>
+      </div>
     </motion.div>
   );
 };
@@ -231,14 +241,11 @@ const FileFormatSample = ({
   ];
   return (
     <div className="w-full overflow-x-scroll mx-auto">
-      <table className="table-auto w-full border-collapse border border-gray-300 text-sm text-left">
+      <table>
         <thead>
-          <tr className="bg-gray-100">
+          <tr>
             {requiredColumns.map((col, i) => (
-              <th
-                key={i}
-                className="border border-gray-300 px-4 py-2 capitalize"
-              >
+              <th key={i} className="capitalize">
                 {col}
               </th>
             ))}
@@ -246,9 +253,9 @@ const FileFormatSample = ({
         </thead>
         <tbody>
           {mockStaffData.map((staff, index) => (
-            <tr key={index} className="odd:bg-white even:bg-gray-50">
+            <tr key={index}>
               {Object.keys(staff).map((col, i) => (
-                <td key={i} className="border border-gray-300 px-4 py-2">
+                <td key={i}>
                   {col === "teaching"
                     ? (staff[col as keyof StaffData] as boolean)
                         .toString()

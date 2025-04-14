@@ -12,7 +12,7 @@ const AddTimeTableForm = ({
   setTotalData: React.Dispatch<React.SetStateAction<TotalData>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   defaultValues: { timetableData: Timetable[] | []; timetableHtml: string };
-  submit: () => Promise<boolean | null>;
+  submit: () => Promise<boolean | undefined>;
 }) => {
   const [timetableData, setTimetableData] = useState<Timetable[]>(
     defaultValues.timetableData
@@ -111,13 +111,13 @@ const AddTimeTableForm = ({
       className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <h1 className="text-2xl font-bold mb-4">Add Timetable</h1>
-      {timetableData.length < 1 && (
+      {!timetableHtml && (
         <div className="flex flex-col gap-2 w-full">
           <h2 className="text-xl font-bold">File Sample</h2>
           <FileFormatSample />
         </div>
       )}
-      <div className="w-full md:justify-between px-2 flex gap-4 flex-col md:flex-row">
+      <div className="w-full items-center md:justify-between px-2 flex gap-2 flex-col md:flex-row">
         <button
           onClick={() => {
             const a = document.createElement("a");
@@ -125,6 +125,7 @@ const AddTimeTableForm = ({
             a.href = "/timetableExcelTemp.xlsx";
             a.click();
           }}
+          className="w-full md:w-fit"
         >
           <Download /> Download Excel Template
         </button>
@@ -132,36 +133,44 @@ const AddTimeTableForm = ({
           type="file"
           accept=".xlsx,.xls,.xlsm"
           onChange={handleFileUpload}
-          className="flex w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
-        />
+          className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          />
       </div>
       {fileLoading && (
-        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
+        <p className="text-green-500 text-sm mb-4 animate-pulse">
+          Loading...
+        </p>
       )}
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
       {timetableHtml && (
         <div
-          className="w-full overflow-x-scroll mx-auto bg-black rounded-md p-2"
+          className="w-full overflow-x-scroll mx-auto"
           dangerouslySetInnerHTML={{ __html: timetableHtml }}
         />
       )}
-      <div className="w-full flex gap-4 justify-between px-2">
-          <button
-            onClick={() => setPage((prev) => prev - 1)}
-          >
-            <ArrowLeft /> Prev
-          </button>
-          <div className="flex gap-2 items-center">
-            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-5 h-5 border border-secondary rounded-full " + (x === 6 ? "bg-secondary":"bg-transparent")}/>)}
-          </div>
-          <button
-            disabled={timetableData.length < 0}
-            onClick={submit}
-            className="justify-end"
-          >
-            Finish <ArrowRight />
-          </button>
+      <div className="w-full flex gap-4 justify-between">
+        <button onClick={() => setPage((prev) => prev - 1)}>
+          <ArrowLeft /> Prev
+        </button>
+        <div className="flex gap-2 items-center">
+          {[1, 2, 3, 4, 5, 6].map((x, i) => (
+            <div
+              key={i}
+              className={
+                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                (x === 6 ? "bg-secondary" : "bg-transparent")
+              }
+            />
+          ))}
         </div>
+        <button
+          disabled={timetableData.length < 0}
+          onClick={submit}
+          className="justify-end"
+        >
+          Finish <ArrowRight />
+        </button>
+      </div>
     </motion.div>
   );
 };
