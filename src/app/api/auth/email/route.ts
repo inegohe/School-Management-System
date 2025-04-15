@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { v4 } from "uuid";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
@@ -14,10 +17,31 @@ const transporter = nodemailer.createTransport({
 
 export const POST = async (req: Request) => {
   try {
-    const getToken = v4();
-    NextResponse.json({ status: 200 });
+    const { email, password } = await req.json();
+    const token = v4();
+
+    // Save token and password to the user's document
+    await prisma.user.update({
+      where: { email },
+      data: {
+        password, // Save the password temporarily (hashed in production)
+        resetToken: token,
+        resetTokenExpiry: new Date(Date.now() + 3600 * 1000), // 1-hour expiry
+      },
+    });
+
+    // Send confirmation email
+    const confirmationUrl = `${process.env.NEXTAUTH_URL}/api/auth/confirm?token=${token}`;
+    await transporter.sendMail({
+      to: email,
+      subject: "Set Your Password",
+      text: `Click the link to confirm your password: ${confirmationUrl}`,
+      html: `<a href="${confirmationUrl}">Confirm Password</a>`,
+    });
+
+    return NextResponse.json({ status: 200, message: "Email sent" });
   } catch (err) {
-    console.log(JSON.stringify(err), err);
-    NextResponse.json({ status: 500 });
+    console.error(err);
+    return NextResponse.json({ status: 500, message: "Internal Server Error" });
   }
 };

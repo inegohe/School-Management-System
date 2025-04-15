@@ -8,103 +8,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String  @unique
-  password String
-  school   School? @relation("AdminToSchool") // Define the relation name
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String    @unique
+  password       String
+  role           Role // Enum to distinguish user roles
+  schoolId       String?   @db.ObjectId
+  classId        String?   @db.ObjectId
+  parentId       String?   @db.ObjectId
+  oracleNo       String? // Staff-specific property
+  registrationNo String? // Student-specific property
+  designation    String? // Staff-specific property
+  post           String? // Staff-specific property
+  payrollNo      String? // Staff-specific property
+  level          String? // Staff-specific property
+  yearOfExit     String? // Staff-specific property
+  address        String?
+  phoneNo        String?
+  yearOfService  String? // Staff-specific property
+  teaching       Boolean? // Staff-specific property
+  parentNo       String? // Student-specific property
+  parentName     String? // Student-specific property
+  DOA            DateTime? // Date of Admission (Student-specific)
+  birthdate      DateTime? // Student-specific property
+  admissionNo    String? // Student-specific property
+  gender         String? // Student-specific property
 }
 
 model School {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  address       String
-  adminId       String         @unique @db.ObjectId // Add @unique for one-to-one
-  admin         Admin          @relation("AdminToSchool", fields: [adminId], references: [id])
-  teachers      Teacher[]
-  students      Student[]
-  classes       Class[]
-  events        Event[]
-  subjects      Subject[]
-  announcements Announcement[]
-}
-
-model Teacher {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String    @unique
-  password String
-  schoolId String    @db.ObjectId
-  school   School    @relation(fields: [schoolId], references: [id])
-  subjects Subject[] // A teacher can teach multiple subjects
-  classes  Class[] // A teacher can be assigned to multiple classes
-}
-
-model Student {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String @unique
-  password String
-  schoolId String @db.ObjectId
-  school   School @relation(fields: [schoolId], references: [id])
-  parentId String @db.ObjectId
-  parent   Parent @relation(fields: [parentId], references: [id])
-  classId  String @db.ObjectId
-  class    Class  @relation(fields: [classId], references: [id])
-}
-
-model Parent {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String    @unique
-  password String
-  students Student[] // A parent can have multiple children
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  address          String
+  primaryColor     String
+  secondaryColor   String
+  mutedColor       String
+  accentColor      String
+  logo             String // Image URL
+  missionStatement String
+  visionStatement  String
+  principal        String
+  vicePrincipal    String
+  slogan           String
+  subjects         String[]
 }
 
 model Class {
-  id        String         @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  schoolId  String         @db.ObjectId
-  school    School         @relation(fields: [schoolId], references: [id])
-  teacherId String         @db.ObjectId
-  teacher   Teacher        @relation(fields: [teacherId], references: [id])
-  students  Student[] // A class can have multiple students
-  subjects  ClassSubject[] // Explicit many-to-many relationship
-}
-
-model Subject {
-  id        String         @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  schoolId  String         @db.ObjectId
-  school    School         @relation(fields: [schoolId], references: [id])
-  teacherId String         @db.ObjectId
-  teacher   Teacher        @relation(fields: [teacherId], references: [id])
-  classes   ClassSubject[] // Explicit many-to-many relationship
-}
-
-model ClassSubject {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  classId   String  @db.ObjectId
-  class     Class   @relation(fields: [classId], references: [id])
-  subjectId String  @db.ObjectId
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  name      String
+  schoolId  String  @db.ObjectId
+  teacherId String? @db.ObjectId
 }
 
-model Event {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  date        DateTime
-  schoolId    String   @db.ObjectId
-  school      School   @relation(fields: [schoolId], references: [id])
-  description String?
+model Timetable {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  day        String // e.g., Monday, Tuesday
+  startTime  DateTime
+  endTime    DateTime
+  subject    String
+  class      String
+  period     Int
+  periodSpan Int
+  schoolId   String   @db.ObjectId
 }
 
-model Announcement {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  title    String
-  content  String
-  date     DateTime @default(now())
-  schoolId String   @db.ObjectId
-  school   School   @relation(fields: [schoolId], references: [id])
+model Attendance {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime
+  status    String // e.g., Present, Absent
+  schoolId  String   @db.ObjectId
+  studentId String   @db.ObjectId
+  classId   String   @db.ObjectId
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENT
 }

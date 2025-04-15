@@ -17,11 +17,11 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.5.0
+ * Prisma Client JS version: 6.6.0
  * Query Engine version: 173f8d54f8d52e692c7e27e72a88314ec7aeff60
  */
 Prisma.prismaVersion = {
-  client: "6.5.0",
+  client: "6.6.0",
   engine: "173f8d54f8d52e692c7e27e72a88314ec7aeff60"
 }
 
@@ -110,43 +110,49 @@ Prisma.NullTypes = {
  * Enums
  */
 
-exports.Prisma.AdminScalarFieldEnum = {
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  password: 'password'
+  password: 'password',
+  role: 'role',
+  schoolId: 'schoolId',
+  classId: 'classId',
+  parentId: 'parentId',
+  oracleNo: 'oracleNo',
+  registrationNo: 'registrationNo',
+  designation: 'designation',
+  post: 'post',
+  payrollNo: 'payrollNo',
+  level: 'level',
+  yearOfExit: 'yearOfExit',
+  address: 'address',
+  phoneNo: 'phoneNo',
+  yearOfService: 'yearOfService',
+  teaching: 'teaching',
+  parentNo: 'parentNo',
+  parentName: 'parentName',
+  DOA: 'DOA',
+  birthdate: 'birthdate',
+  admissionNo: 'admissionNo',
+  gender: 'gender'
 };
 
 exports.Prisma.SchoolScalarFieldEnum = {
   id: 'id',
   name: 'name',
   address: 'address',
-  adminId: 'adminId'
-};
-
-exports.Prisma.TeacherScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  password: 'password',
-  schoolId: 'schoolId'
-};
-
-exports.Prisma.StudentScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  password: 'password',
-  schoolId: 'schoolId',
-  parentId: 'parentId',
-  classId: 'classId'
-};
-
-exports.Prisma.ParentScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  password: 'password'
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  mutedColor: 'mutedColor',
+  accentColor: 'accentColor',
+  logo: 'logo',
+  missionStatement: 'missionStatement',
+  visionStatement: 'visionStatement',
+  principal: 'principal',
+  vicePrincipal: 'vicePrincipal',
+  slogan: 'slogan',
+  subjects: 'subjects'
 };
 
 exports.Prisma.ClassScalarFieldEnum = {
@@ -156,33 +162,25 @@ exports.Prisma.ClassScalarFieldEnum = {
   teacherId: 'teacherId'
 };
 
-exports.Prisma.SubjectScalarFieldEnum = {
+exports.Prisma.TimetableScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  schoolId: 'schoolId',
-  teacherId: 'teacherId'
-};
-
-exports.Prisma.ClassSubjectScalarFieldEnum = {
-  id: 'id',
-  classId: 'classId',
-  subjectId: 'subjectId'
-};
-
-exports.Prisma.EventScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  date: 'date',
-  schoolId: 'schoolId',
-  description: 'description'
-};
-
-exports.Prisma.AnnouncementScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content',
-  date: 'date',
+  day: 'day',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  subject: 'subject',
+  class: 'class',
+  period: 'period',
+  periodSpan: 'periodSpan',
   schoolId: 'schoolId'
+};
+
+exports.Prisma.AttendanceScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  status: 'status',
+  schoolId: 'schoolId',
+  studentId: 'studentId',
+  classId: 'classId'
 };
 
 exports.Prisma.SortOrder = {
@@ -194,19 +192,19 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  TEACHER: 'TEACHER',
+  STUDENT: 'STUDENT',
+  PARENT: 'PARENT'
+};
 
 exports.Prisma.ModelName = {
-  Admin: 'Admin',
+  User: 'User',
   School: 'School',
-  Teacher: 'Teacher',
-  Student: 'Student',
-  Parent: 'Parent',
   Class: 'Class',
-  Subject: 'Subject',
-  ClassSubject: 'ClassSubject',
-  Event: 'Event',
-  Announcement: 'Announcement'
+  Timetable: 'Timetable',
+  Attendance: 'Attendance'
 };
 
 /**
@@ -226,7 +224,7 @@ class PrismaClient {
         } else {
           message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
         }
-        
+
         message += `
 If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
 

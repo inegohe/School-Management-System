@@ -40,7 +40,8 @@ const LoginPage = () => {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    toast("Check your email inbox to confirm new password request");
+    setError("");
+  
     if (!pns) {
       try {
         const result = await signIn("credentials", {
@@ -48,32 +49,38 @@ const LoginPage = () => {
           email: data.email,
           password: data.password,
         });
+  
         if (result?.error) {
-          console.log(result);
-          if (result?.error === "PNS") {
+          if (result.error === "PNS") {
             setValue("password", "");
             setError(
-              "Password not set, type in your desired password and click the set password button"
+              "Password not set. Type your desired password and click 'Set Password'."
             );
             setPNS(true);
-          } else setError(result.error);
+          } else {
+            setError(result.error);
+          }
         } else {
-          router.push("admin");
+          router.push("/admin");
         }
       } catch (err: any) {
-        setError(err?.message);
-        console.log(err);
+        setError(err.message || "An error occurred");
       }
     } else {
-      const res = await axios.post("/api/auth/email", {
-        email: data.email,
-        password: data.password,
-      });
-      if (res.status === 200) {
-        toast("Check your email inbox to confirm new password request");
+      try {
+        const res = await axios.post("/api/auth/email", {
+          email: data.email,
+          password: data.password,
+        });
+  
+        if (res.status === 200) {
+          toast("Check your email inbox to confirm your password setup.");
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || "An error occurred");
       }
-      toast("Check your email inbox to confirm new password request");
     }
+  
     setLoading(false);
   };
 
