@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 
-//const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -14,36 +14,52 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // const user = await prisma.users.findUnique({
-        //   where: {
-        //     email: credentials?.email,
-        //   },
-        // });
-        const user = {
-          email: "nifemiolaniyi4@gmail.com",
-          password: "helloworld",
-          role: "admin",
-        };
-        if (
-          user &&
-          credentials?.password &&
-          user.password === credentials?.password
-          //(await bcrypt.compare(credentials.password, user.password))
-        ) {
-          return user as any;
-        } else if (user && user.password === "") {
-          return { error: "PNS" }; //Password Not Set
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
         }
-        return null;
+
+        // Fetch user from the database
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user) {
+          throw new Error("No user found with this email");
+        }
+
+        // Check if the password is correct
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid password");
+        }
+
+        // Handle case where password is not set
+        if (user.password === "") {
+          throw new Error("PNS"); // Password Not Set
+        }
+
+        // Return user object
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
       },
     }),
   ],
   callbacks: {
     async session({ session, token }) {
+      // Attach user data to the session
       session.user = token.user as {
+        id: string;
         name?: string | null;
         email?: string | null;
-        image?: string | null;
+        role?: string;
       };
       return session;
     },
@@ -55,6 +71,9 @@ const handler = NextAuth({
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/login", // Redirect to custom login page
+    error: "/login", // Redirect to login page on error
+  },
 });
-
 export { handler as GET, handler as POST };
