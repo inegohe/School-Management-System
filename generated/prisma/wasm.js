@@ -110,6 +110,13 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
+  Serializable: 'Serializable'
+});
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -117,7 +124,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   schoolId: 'schoolId',
-  classId: 'classId',
+  class: 'class',
   parentId: 'parentId',
   oracleNo: 'oracleNo',
   registrationNo: 'registrationNo',
@@ -167,8 +174,8 @@ exports.Prisma.TimetableScalarFieldEnum = {
   day: 'day',
   startTime: 'startTime',
   endTime: 'endTime',
-  subject: 'subject',
   class: 'class',
+  subject: 'subject',
   period: 'period',
   periodSpan: 'periodSpan',
   schoolId: 'schoolId'
@@ -191,6 +198,11 @@ exports.Prisma.SortOrder = {
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',

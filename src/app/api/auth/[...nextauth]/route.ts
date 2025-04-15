@@ -54,7 +54,6 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      // Attach user data to the session
       session.user = token.user as {
         id: string;
         name?: string | null;
@@ -71,9 +70,5 @@ const handler = NextAuth({
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/login", // Redirect to custom login page
-    error: "/login", // Redirect to login page on error
-  },
 });
 export { handler as GET, handler as POST };

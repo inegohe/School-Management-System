@@ -4,19 +4,19 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("VERCEL_DATABASE_URL")
 }
 
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  id             String    @id @default(uuid()) // Use UUID for primary key
   name           String
   email          String    @unique
   password       String
   role           Role // Enum to distinguish user roles
-  schoolId       String?   @db.ObjectId
-  classId        String?   @db.ObjectId
-  parentId       String?   @db.ObjectId
+  schoolId       String?
+  class          String?
+  parentId       String?
   oracleNo       String? // Staff-specific property
   registrationNo String? // Student-specific property
   designation    String? // Staff-specific property
@@ -34,10 +34,17 @@ model User {
   birthdate      DateTime? // Student-specific property
   admissionNo    String? // Student-specific property
   gender         String? // Student-specific property
+
+  // Relations
+  school     School?      @relation(fields: [schoolId], references: [id])
+  parent     User?        @relation("ParentToChildren", fields: [parentId], references: [id])
+  children   User[]       @relation("ParentToChildren") // Opposite relation field
+  Class      Class[]
+  Attendance Attendance[]
 }
 
 model School {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  id               String       @id @default(uuid()) // Use UUID for primary key
   name             String
   address          String
   primaryColor     String
@@ -51,34 +58,51 @@ model School {
   vicePrincipal    String
   slogan           String
   subjects         String[]
+  User             User[]
+  Class            Class[]
+  Timetable        Timetable[]
+  Attendance       Attendance[]
 }
 
 model Class {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  id        String @id @default(uuid()) // Use UUID for primary key
   name      String
-  schoolId  String  @db.ObjectId
-  teacherId String? @db.ObjectId
+  schoolId  String
+  teacherId String
+
+  // Relations
+  school     School       @relation(fields: [schoolId], references: [id])
+  teacher    User         @relation(fields: [teacherId], references: [id])
+  Attendance Attendance[]
 }
 
 model Timetable {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(uuid()) // Use UUID for primary key
   day        String // e.g., Monday, Tuesday
   startTime  DateTime
   endTime    DateTime
-  subject    String
   class      String
+  subject    String
   period     Int
   periodSpan Int
-  schoolId   String   @db.ObjectId
+  schoolId   String
+
+  //Relations
+  school School @relation(fields: [schoolId], references: [id])
 }
 
 model Attendance {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid()) // Use UUID for primary key
   date      DateTime
   status    String // e.g., Present, Absent
-  schoolId  String   @db.ObjectId
-  studentId String   @db.ObjectId
-  classId   String   @db.ObjectId
+  schoolId  String
+  studentId String
+  classId   String
+
+  // Relations
+  school  School? @relation(fields: [schoolId], references: [id])
+  student User    @relation(fields: [studentId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
 }
 
 enum Role {
