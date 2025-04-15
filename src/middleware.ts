@@ -15,7 +15,12 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   })) as UserToken | null;
   const url = req.nextUrl.clone();
 
-  if (!token) {
+  if (
+    !token &&
+    (!(url.pathname === "/") ||
+      !url.pathname.startsWith("/login") ||
+      !url.pathname.startsWith("/create"))
+  ) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
