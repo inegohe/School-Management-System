@@ -99,7 +99,8 @@ export const POST = async (req: Request) => {
     let ipAddress =
       forwardedFor?.split(",")[0].trim() ||
       headersList.get("x-vercel-forwarded-for") ||
-      headersList.get("x-real-ip");
+      headersList.get("x-real-ip") ||
+      "Unknown";
 
     console.log("Detected IP Address:", ipAddress || "Could not determine IP");
     const userAgent = headersList.get("user-agent") || "Unknown";
