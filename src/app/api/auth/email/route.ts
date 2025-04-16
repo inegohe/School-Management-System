@@ -37,9 +37,12 @@ export const POST = async (req: Request) => {
       html: `<a href="${confirmationUrl}">Confirm Password</a>`,
     });
 
-    return NextResponse.json({ message: "Email sent" }, { status: 200});
+    return NextResponse.json({ message: "Email sent" }, { status: 200 });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500});
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 };

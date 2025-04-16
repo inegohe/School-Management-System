@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
 
 export const POST = async (req: Request) => {
   try {
@@ -41,7 +42,7 @@ export const POST = async (req: Request) => {
     }
 
     // Generate JWT
-    const token = jwt.sign(
+    const accesstoken = jwt.sign(
       {
         id: user.id,
         email: user.email,
@@ -52,14 +53,14 @@ export const POST = async (req: Request) => {
     );
 
     // Generate refresh token
-    const token2 = jwt.sign(
+    const refreshtoken = jwt.sign(
       {
         id: user.id,
         email: user.email,
         role: user.role,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "4W" }
+      { expiresIn: "1W" }
     );
 
     // Set the token in an HTTP-only cookie
@@ -70,23 +71,52 @@ export const POST = async (req: Request) => {
     });
 
     const cookiesStore = await cookies();
+
     // Set the cookie with the token
     // Delete the old token if it exists
-    cookiesStore.delete("accesstoken"); 
+    cookiesStore.delete("accesstoken");
     cookiesStore.delete("refreshtoken");
-    cookiesStore.set("accesstoken", token, {
+
+    cookiesStore.set("accesstoken", accesstoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
       maxAge: 10 * 60, // 10 mins
     });
-    cookiesStore.set("refreshtoken", token2, {
+
+    cookiesStore.set("refreshtoken", refreshtoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 30 * 24 * 60 * 60, // 1 month
+      maxAge: 7 * 24 * 60 * 60, // 1 W
+    });
+
+    const headersList = await headers();
+
+    const forwardedFor = headersList.get("x-forwarded-for");
+    let ipAddress =
+      forwardedFor?.split(",")[0].trim() ||
+      headersList.get("x-vercel-forwarded-for") ||
+      headersList.get("x-real-ip");
+
+    console.log("Detected IP Address:", ipAddress || "Could not determine IP");
+    const userAgent = headersList.get("user-agent") || "Unknown";
+    console.log("Detected User Agent:", userAgent);
+
+    await prisma.refreshTokens.create({
+      data: {
+        userId: user.id,
+        deviceInfo: userAgent,
+        ipAddress: ipAddress,
+        tokenHash: crypto
+          .createHash("sha256")
+          .update(refreshtoken)
+          .digest("hex"),
+        expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        lastUsed: new Date(Date.now()),
+      },
     });
 
     return response;

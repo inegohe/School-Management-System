@@ -35,8 +35,8 @@ export const GET = async (req: Request) => {
       where: { email: user.email },
       data: {
         password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiry: null,
+        resetToken: "",
+        resetTokenExpiry: "",
       },
     });
 
