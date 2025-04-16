@@ -43,10 +43,11 @@ const LoginPage = () => {
   
     if (!pns) {
       try {
-        const { status, data: result } = await apiClient.post("/api/auth/login", {
+        const { status, data: result } = await apiClient.post("/auth/login", {
           email: data.email,
           password: data.password,
         });
+        console.log(result);
   
         if (status !== 200) {
           if (result.error === "PNS") {
@@ -62,11 +63,12 @@ const LoginPage = () => {
           router.push(`${result.role}`);
         }
       } catch (err: any) {
-        setError(err.message || "An error occurred");
+        console.log(err);
+        setError(err.response?.data?.error || err.message || "An error occurred");
       }
     } else {
       try {
-        const res = await apiClient.post("/api/auth/email", {
+        const res = await apiClient.post("/auth/email", {
           email: data.email,
           password: data.password,
         });
@@ -75,7 +77,8 @@ const LoginPage = () => {
           toast("Check your email inbox to confirm your password setup.");
         }
       } catch (err: any) {
-        setError(err.response?.data?.message || "An error occurred");
+        console.log(err.response);
+        setError(err.response?.data?.error || err.message || "An error occurred");
       }
     }
   

@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-
-const prisma = new PrismaClient();
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);

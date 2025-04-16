@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { v4 } from "uuid";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
@@ -39,9 +37,9 @@ export const POST = async (req: Request) => {
       html: `<a href="${confirmationUrl}">Confirm Password</a>`,
     });
 
-    return NextResponse.json({ status: 200, message: "Email sent" });
+    return NextResponse.json({ message: "Email sent" }, { status: 200});
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ status: 500, message: "Internal Server Error" });
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500});
   }
 };

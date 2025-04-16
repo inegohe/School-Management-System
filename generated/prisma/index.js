@@ -240,7 +240,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../.env",
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
@@ -250,11 +250,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "VERCEL_DATABASE_URL",
-        "value": "postgres://neondb_owner:npg_AbUkoxP3l0KL@ep-black-king-ab8wmgmf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+        "value": null
       }
     }
   },
