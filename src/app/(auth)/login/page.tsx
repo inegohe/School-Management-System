@@ -1,16 +1,15 @@
 "use client";
 
 import toast, { Toaster } from "react-hot-toast";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { BACKGROUND_IMAGES } from "@/store";
+import apiClient from "@/lib/apiclient";
 
 const schema = z.object({
   email: z.string().email("Input a valid email").trim(),
@@ -44,13 +43,12 @@ const LoginPage = () => {
   
     if (!pns) {
       try {
-        const result = await signIn("credentials", {
-          redirect: false,
+        const { status, data: result } = await apiClient.post("/api/auth/login", {
           email: data.email,
           password: data.password,
         });
   
-        if (result?.error) {
+        if (status !== 200) {
           if (result.error === "PNS") {
             setValue("password", "");
             setError(
@@ -61,14 +59,14 @@ const LoginPage = () => {
             setError(result.error);
           }
         } else {
-          router.push("/admin");
+          router.push(`${result.role}`);
         }
       } catch (err: any) {
         setError(err.message || "An error occurred");
       }
     } else {
       try {
-        const res = await axios.post("/api/auth/email", {
+        const res = await apiClient.post("/api/auth/email", {
           email: data.email,
           password: data.password,
         });

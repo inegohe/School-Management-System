@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 6.6.0
- * Query Engine version: 173f8d54f8d52e692c7e27e72a88314ec7aeff60
+ * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
  */
 Prisma.prismaVersion = {
   client: "6.6.0",
-  engine: "173f8d54f8d52e692c7e27e72a88314ec7aeff60"
+  engine: "f676762280b54cd07c770017ed3711ddde35f37a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -119,30 +119,47 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  name: 'name',
   email: 'email',
-  password: 'password',
   role: 'role',
-  schoolId: 'schoolId',
-  class: 'class',
-  parentId: 'parentId',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.StaffScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
   oracleNo: 'oracleNo',
-  registrationNo: 'registrationNo',
   designation: 'designation',
   post: 'post',
   payrollNo: 'payrollNo',
   level: 'level',
-  yearOfExit: 'yearOfExit',
-  address: 'address',
-  phoneNo: 'phoneNo',
   yearOfService: 'yearOfService',
   teaching: 'teaching',
-  parentNo: 'parentNo',
-  parentName: 'parentName',
-  DOA: 'DOA',
-  birthdate: 'birthdate',
+  address: 'address',
+  phoneNo: 'phoneNo',
+  yearOfExit: 'yearOfExit',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.ParentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phoneNo: 'phoneNo',
+  address: 'address',
+  schoolId: 'schoolId'
+};
+
+exports.Prisma.StudentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  parentId: 'parentId',
+  registrationNo: 'registrationNo',
   admissionNo: 'admissionNo',
-  gender: 'gender'
+  birthdate: 'birthdate',
+  gender: 'gender',
+  DOA: 'DOA',
+  classId: 'classId',
+  address: 'address',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.SchoolScalarFieldEnum = {
@@ -165,8 +182,8 @@ exports.Prisma.SchoolScalarFieldEnum = {
 exports.Prisma.ClassScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  schoolId: 'schoolId',
-  teacherId: 'teacherId'
+  teacherId: 'teacherId',
+  schoolId: 'schoolId'
 };
 
 exports.Prisma.TimetableScalarFieldEnum = {
@@ -174,7 +191,7 @@ exports.Prisma.TimetableScalarFieldEnum = {
   day: 'day',
   startTime: 'startTime',
   endTime: 'endTime',
-  class: 'class',
+  classId: 'classId',
   subject: 'subject',
   period: 'period',
   periodSpan: 'periodSpan',
@@ -213,6 +230,9 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Staff: 'Staff',
+  Parent: 'Parent',
+  Student: 'Student',
   School: 'School',
   Class: 'Class',
   Timetable: 'Timetable',

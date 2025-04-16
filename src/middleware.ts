@@ -1,39 +1,47 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
 
-interface UserToken {
-  user?: {
-    role?: string;
-  };
-}
-
 export async function middleware(req: NextRequest): Promise<NextResponse> {
-  const token = (await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  })) as UserToken | null;
+  const token = req.cookies.get("accesstoken")?.value;
   const url = req.nextUrl.clone();
 
-  if (
-    !token &&
-    (!(url.pathname === "/") ||
-      !url.pathname.startsWith("/login") ||
-      !url.pathname.startsWith("/create"))
-  ) {
+  if (!token) {
+    if (
+      url.pathname !== "/" &&
+      url.pathname !== "/login" &&
+      url.pathname !== "/create" &&
+      !url.pathname.startsWith("/api")
+    ) {
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string, email: string, role: string};
+
+    // Example: Restrict access for authenticated users
+    if (
+      url.pathname === "/" ||
+      url.pathname === "/login" ||
+      url.pathname == "/create" ||
+      url.pathname.startsWith("/api")
+    ) {
+      url.pathname = `/${decoded.role}`;
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  } catch (error) {
+    console.error("JWT Verification Error:", error);
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
-
-  // Example: Restrict access to `/admin` for non-admin users
-  if (!url.pathname.startsWith(`/${token?.user?.role}`)) {
-    url.pathname = `/${token?.user?.role}`;
-    return NextResponse.redirect(url);
-  }
-
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*"],
+  // Your matcher config...
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)'],
 };

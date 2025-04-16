@@ -9,42 +9,75 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid()) // Use UUID for primary key
-  name           String
-  email          String    @unique
-  password       String
-  role           Role // Enum to distinguish user roles
-  schoolId       String?
-  class          String?
-  parentId       String?
-  oracleNo       String? // Staff-specific property
-  registrationNo String? // Student-specific property
-  designation    String? // Staff-specific property
-  post           String? // Staff-specific property
-  payrollNo      String? // Staff-specific property
-  level          String? // Staff-specific property
-  yearOfExit     String? // Staff-specific property
-  address        String?
-  phoneNo        String?
-  yearOfService  String? // Staff-specific property
-  teaching       Boolean? // Staff-specific property
-  parentNo       String? // Student-specific property
-  parentName     String? // Student-specific property
-  DOA            DateTime? // Date of Admission (Student-specific)
-  birthdate      DateTime? // Student-specific property
-  admissionNo    String? // Student-specific property
-  gender         String? // Student-specific property
+  id       String @id @default(uuid()) // Use UUID for primary key
+  email    String @unique
+  role     Role
+  schoolId String
 
   // Relations
-  school     School?      @relation(fields: [schoolId], references: [id])
-  parent     User?        @relation("ParentToChildren", fields: [parentId], references: [id])
-  children   User[]       @relation("ParentToChildren") // Opposite relation field
-  Class      Class[]
+  school School @relation(fields: [schoolId], references: [id])
+
+  Parent Parent[] @relation("ParentToChildren")
+}
+
+model Staff {
+  id            String  @id @default(uuid()) // Use UUID for primary key
+  name          String
+  oracleNo      String
+  designation   String
+  post          String
+  payrollNo     String
+  level         String
+  yearOfService String
+  teaching      Boolean
+  address       String
+  phoneNo       String
+  yearOfExit    String?
+  schoolId      String
+
+  // Relations
+  school School @relation(fields: [schoolId], references: [id])
+
+  Class Class[]
+}
+
+model Parent {
+  id       String @id @default(uuid()) // Use UUID for primary key
+  name     String
+  phoneNo  String
+  address  String
+  schoolId String
+
+  // Relations
+  school   School @relation(fields: [schoolId], references: [id])
+  children User[] @relation("ParentToChildren")
+
+  Student Student[]
+}
+
+model Student {
+  id             String   @id @default(uuid()) // Use UUID for primary key
+  name           String
+  parentId       String?
+  registrationNo String
+  admissionNo    String
+  birthdate      DateTime
+  gender         String
+  DOA            DateTime // Date of Admission
+  classId        String
+  address        String
+  schoolId       String
+
+  // Relations
+  school School  @relation(fields: [schoolId], references: [id])
+  parent Parent? @relation(fields: [parentId], references: [id])
+  class  Class   @relation(fields: [classId], references: [id])
+
   Attendance Attendance[]
 }
 
 model School {
-  id               String       @id @default(uuid()) // Use UUID for primary key
+  id               String   @id @default(uuid()) // Use UUID for primary key
   name             String
   address          String
   primaryColor     String
@@ -58,22 +91,30 @@ model School {
   vicePrincipal    String
   slogan           String
   subjects         String[]
-  User             User[]
-  Class            Class[]
-  Timetable        Timetable[]
-  Attendance       Attendance[]
+
+  // Relations
+  users       User[]
+  staffs      Staff[]
+  parents     Parent[]
+  students    Student[]
+  classes     Class[]
+  timetables  Timetable[]
+  attendances Attendance[]
 }
 
 model Class {
   id        String @id @default(uuid()) // Use UUID for primary key
   name      String
-  schoolId  String
   teacherId String
+  schoolId  String
 
   // Relations
   school     School       @relation(fields: [schoolId], references: [id])
-  teacher    User         @relation(fields: [teacherId], references: [id])
+  teacher    Staff        @relation(fields: [teacherId], references: [id])
+  students   Student[]
   Attendance Attendance[]
+
+  Timetable Timetable[]
 }
 
 model Timetable {
@@ -81,14 +122,15 @@ model Timetable {
   day        String // e.g., Monday, Tuesday
   startTime  DateTime
   endTime    DateTime
-  class      String
+  classId    String
   subject    String
   period     Int
   periodSpan Int
   schoolId   String
 
-  //Relations
+  // Relations
   school School @relation(fields: [schoolId], references: [id])
+  class  Class  @relation(fields: [classId], references: [id])
 }
 
 model Attendance {
@@ -100,8 +142,8 @@ model Attendance {
   classId   String
 
   // Relations
-  school  School? @relation(fields: [schoolId], references: [id])
-  student User    @relation(fields: [studentId], references: [id])
+  school  School  @relation(fields: [schoolId], references: [id])
+  student Student @relation(fields: [studentId], references: [id])
   class   Class   @relation(fields: [classId], references: [id])
 }
 

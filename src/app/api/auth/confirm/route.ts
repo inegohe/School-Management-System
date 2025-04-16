@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { signIn } from "next-auth/react";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -41,20 +42,50 @@ export const GET = async (req: Request) => {
       },
     });
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: user.email,
-      password: user.password,
+    // Generate JWT
+    const accesstoken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: "1H" }
+    );
+
+    // Generate refresh token
+    const refreshtoken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: "4W" }
+    );
+
+    // Set the token in an HTTP-only cookie
+    const cookiesStore = await cookies();
+    // Set the cookie with the token
+    // Delete the old token if it exists
+    cookiesStore.delete("accesstoken");
+    cookiesStore.delete("refreshtoken");
+    cookiesStore.set("accesstoken", accesstoken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 10 * 60, // 10 mins
+    });
+    cookiesStore.set("refreshtoken", refreshtoken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60, // 1 month
     });
 
-    if (result?.error) {
-      // Redirect to the login page with a success message
-      return NextResponse.redirect(
-        `${process.env.NEXTAUTH_URL}/login?success=false`
-      );
-    } else {
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/${user.role}`);
-    }
+    return NextResponse.redirect(`${process.env.BASE_URL}/${user.role}`);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ status: 500, message: "Internal Server Error" });
