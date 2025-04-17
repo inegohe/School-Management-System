@@ -53,7 +53,7 @@ const LoginPage = () => {
 
         if (status === 200) {
           console.log(result);
-          router.push(`/dashboard?role=${result.role}`);
+          router.push(`/${result.role}`);
         }
       } catch (err: any) {
         console.log(err);
@@ -123,7 +123,7 @@ const LoginPage = () => {
                 <input
                   {...(key === "password" && { type: key })}
                   {...register(key as keyof FormData)}
-                  className="w-full p-2 border rounded-lg outline-none"
+                  className="input w-full p-2 border rounded-lg outline-none"
                 />
                 {errors[key as keyof FormData] && (
                   <p className="text-red-500 text-xs">
@@ -137,7 +137,7 @@ const LoginPage = () => {
           {pns && pnsNote && (
             <p className="text-green-600 font-semibold text-xs">{pnsNote}</p>
           )}
-          <button type="submit" className="w-full justify-center">
+          <button type="submit" className="button w-full justify-center">
             {loading && <LoaderCircle className="animate-spin" />}
             {pns ? "Set Password" : "Login"}
           </button>

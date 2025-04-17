@@ -51,7 +51,7 @@ const Menu = () => {
           title: "Attendance",
           icon: "/attendance.png",
           link: "/list/attendance",
-          visible: ["admin", "teacher"],
+          visible: ["teacher"],
         },
         {
           title: "Events",
@@ -73,8 +73,8 @@ const Menu = () => {
         },
       ],
     },
-    { 
-      title: "OTHERS", 
+    {
+      title: "OTHERS",
       items: [
         {
           title: "Profile",
@@ -86,7 +86,7 @@ const Menu = () => {
           title: "Settings",
           icon: "/setting.png",
           link: "/settings",
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["admin"],
         },
         {
           title: "Logout",
@@ -98,9 +98,15 @@ const Menu = () => {
     },
   ];
   return (
-    <div className="flex flex-col h-full bg-white group-hover:w-[70vw] group-hover:sm:w-[30vw] group-hover:absolute group-hover:top-0 group-hover:left-0 group-hover:z-10 group-hover:md:static group-hover:md:w-[unset] p-2 overflow-scroll mb-4">
+    <div className="flex flex-col h-full bg-primary-light group-hover:w-[70vw] group-hover:sm:w-[30vw] group-hover:absolute group-hover:top-0 group-hover:left-0 group-hover:z-10 group-hover:md:static group-hover:md:w-[unset] p-2 overflow-scroll mb-4">
       <div className="flex items-center justify-center md:justify-start group-hover:justify-start gap-2 mt-2">
-        <Image src="/logo.png" width={32} height={32} alt="logo" className="text-transparent" />
+        <Image
+          src="/logo.png"
+          width={32}
+          height={32}
+          alt="logo"
+          className="text-transparent"
+        />
         <h1 className="font-bold hidden md:block group-hover:block">
           School Name
         </h1>
@@ -110,26 +116,29 @@ const Menu = () => {
           <div key={i} className="mt-4 text-sm">
             <div className="flex flex-col gap-2">
               <h1 className="capitalize text-gray-400 hidden md:block group-hover:block">
-              {x.title}
-            </h1>
-              {x.items.map((y, index) => (
-                y.visible.includes(role) && (
-                  <Link
-                    key={index}
-                    href={y.link}
-                    className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-sky-light"
-                  >
-                    <Image
-                      src={y.icon}
-                      alt={y.title}
-                      width={20}
-                      height={20}
-                      className="text-transparent w-[20px] h-[20px] max-w-[20px]"
-                    />
-                    <span className="hidden md:block group-hover:block">{y.title}</span>
-                  </Link>
-                )
-              ))}
+                {x.title}
+              </h1>
+              {x.items.map(
+                (y, index) =>
+                  y.visible.includes(role) && (
+                    <Link
+                      key={index}
+                      href={y.link}
+                      className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-primary"
+                    >
+                      <Image
+                        src={y.icon}
+                        alt={y.title}
+                        width={20}
+                        height={20}
+                        className="text-transparent w-[20px] h-[20px] max-w-[20px] bg-transparent"
+                      />
+                      <span className="hidden md:block group-hover:block">
+                        {y.title}
+                      </span>
+                    </Link>
+                  )
+              )}
             </div>
           </div>
         );

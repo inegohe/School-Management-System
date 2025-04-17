@@ -17,7 +17,7 @@ const CountChart = () => {
     },
     {
       name: "Gender",
-      count: (1234 * 2) + 100,
+      count: 1234 * 2 + 100,
       fill: "white",
     },
   ];
@@ -37,16 +37,16 @@ const CountChart = () => {
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         />
       </div>
-      <div className="flex w-full gap-2 justify-between items-center mt-4"> 
+      <div className="flex w-full gap-2 justify-between items-center mt-4">
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
-            <p className="p-4 bg-sky rounded-full w-7 h-7"/>
-            <p className="font-semibold">1,234</p>
-            <p className="text-gray-400">Boys({55}%)</p>
+          <p className="p-4 bg-sky rounded-full w-7 h-7" />
+          <p className="font-semibold">1,234</p>
+          <p className="text-gray-400">Boys({55}%)</p>
         </div>
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
-            <p className="p-4 bg-yellow rounded-full w-7 h-7"/>
-            <p className="font-semibold">1,234</p>
-            <p className="text-gray-400">Girls({55}%)</p>
+          <p className="p-4 bg-yellow rounded-full w-7 h-7" />
+          <p className="font-semibold">1,234</p>
+          <p className="text-gray-400">Girls({55}%)</p>
         </div>
       </div>
     </div>

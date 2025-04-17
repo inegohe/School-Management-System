@@ -122,7 +122,7 @@ const AddStudentsForm = ({
             a.href = "/studentExcelTemp.xlsx";
             a.click();
           }}
-          className="w-full md:w-fit p-3"
+          className="button w-full md:w-fit p-3"
         >
           <Download /> Download Excel Template
         </button>
@@ -170,6 +170,7 @@ const AddStudentsForm = ({
       <div className="w-full flex gap-4 justify-between">
           <button
             onClick={() => setPage((prev) => prev - 1)}
+            className="button"
           >
             <ArrowLeft /> Prev
           </button>
@@ -179,7 +180,7 @@ const AddStudentsForm = ({
           <button
             disabled={studentsData.length < 0}
             onClick={() => setPage((prev) => prev + 1)}
-            className="justify-end"
+            className="button justify-end"
           >
             Next <ArrowRight />
           </button>

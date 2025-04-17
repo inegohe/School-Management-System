@@ -49,7 +49,7 @@ export const GET = async (req: Request) => {
         role: user.role,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "1H" }
+      { expiresIn: "10M" }
     );
 
     // Generate refresh token
@@ -66,9 +66,6 @@ export const GET = async (req: Request) => {
     // Set the token in an HTTP-only cookie
     const cookiesStore = await cookies();
     // Set the cookie with the token
-    // Delete the old token if it exists
-    cookiesStore.delete("accesstoken");
-    cookiesStore.delete("refreshtoken");
 
     cookiesStore.set("accesstoken", accesstoken, {
       httpOnly: true,
@@ -77,6 +74,7 @@ export const GET = async (req: Request) => {
       path: "/",
       maxAge: 10 * 60, // 10 mins
     });
+
     cookiesStore.set("refreshtoken", refreshtoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

@@ -73,9 +73,6 @@ export const POST = async (req: Request) => {
     const cookiesStore = await cookies();
 
     // Set the cookie with the token
-    // Delete the old token if it exists
-    cookiesStore.delete("accesstoken");
-    cookiesStore.delete("refreshtoken");
 
     cookiesStore.set("accesstoken", accesstoken, {
       httpOnly: true,

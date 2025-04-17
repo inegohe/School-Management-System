@@ -2,22 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
+:root {
   --primary: black;
+  --primary-light: rgb(31, 30, 30);
   --secondary: white;
-  --accent: #007bff;
-  --muted: #6B7280;
+  --secondary-light: rgba(255, 255, 255, 0.938);
+  --accent-1: #ceebfa;
+  --accent-1-light: #edf9fb;
+  --accent-2: #cfceff;
+  --accent-2-light: #f1f0ff;
+  --accent-3: #fae27c;
+  --accent-3-light: #fefce8;
 }
 
 * {
   @apply text-secondary;
 }
 
-input {
+.input {
   @apply bg-transparent text-secondary;
 }
 
-button {
+.button {
   @apply bg-primary text-secondary py-2 px-3 rounded-lg font-bold flex gap-2 items-center w-fit disabled:opacity-50 active:scale-95 transition duration-500 ease-in-out;
 }
 /* Custom scrollbar styles */
@@ -41,20 +47,27 @@ button {
 }
 
 .react-calendar {
-  width: 100% !important;
-  border: 0 !important;
+  @apply !w-full !border-none !bg-primary !text-secondary !text-center !rounded-md;
 }
 
 .react-calendar__navigation__label {
-  font-weight: bold !important;
+  @apply !font-bold;
+}
+
+.react-calendar__month-view__days {
+  @apply !gap-2;
+}
+
+.react-calendar__tile {
+  @apply !rounded-md m-2;
 }
 
 .react-calendar__tile--now {
-  @apply !bg-yellow;
+  @apply !bg-accent-3;
 }
 
 .react-calendar__tile--active {
-  @apply !bg-sky;
+  @apply !bg-accent-1;
 }
 
 .rbc-calendar {
@@ -74,11 +87,11 @@ button {
 }
 
 .rbc-btn-group button {
-  @apply !bg-[#f1f0ff] !shadow-none !border-none;
+  @apply !bg-secondary !text-primary !shadow-none !border-none;
 }
 
 .rbc-btn-group > .rbc-active {
-  @apply !bg-purple;
+  @apply !bg-accent-2;
 }
 
 .rbc-time-view {
@@ -95,7 +108,7 @@ button {
 
 .rbc-timeslot-group,
 .rbc-time-header {
-  @apply !bg-[#f6fafc];
+  @apply !bg-primary;
 }
 
 .rbc-event-label {
@@ -108,7 +121,7 @@ button {
 
 .rbc-today,
 .rbc-today > .rbc-timeslot-group {
-  @apply !bg-[#f1f8fd];
+  @apply !bg-primary-light;
 }
 
 .rbc-event {
@@ -131,14 +144,15 @@ button {
 }
 
 /* HtmlSheet Table Styling */
-table{
+table {
   @apply bg-[#000000aa] table-auto w-full border-collapse border-gray-300 text-sm font-bold text-left;
 }
 
-tr{
+tr {
   @apply text-center;
 }
 
-td, th{
+td,
+th {
   @apply border border-gray-300 px-4 py-2 text-center;
 }

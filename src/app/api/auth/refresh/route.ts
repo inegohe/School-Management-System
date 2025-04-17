@@ -18,6 +18,7 @@ export const POST = async () => {
 
     // Verify the refresh token
     let decoded;
+
     try {
       decoded = jwt.verify(refreshToken, process.env.JWT_SECRET!) as {
         id: string;

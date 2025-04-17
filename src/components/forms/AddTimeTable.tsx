@@ -125,7 +125,7 @@ const AddTimeTableForm = ({
             a.href = "/timetableExcelTemp.xlsx";
             a.click();
           }}
-          className="w-full md:w-fit"
+          className="button w-full md:w-fit"
         >
           <Download /> Download Excel Template
         </button>
@@ -133,13 +133,11 @@ const AddTimeTableForm = ({
           type="file"
           accept=".xlsx,.xls,.xlsm"
           onChange={handleFileUpload}
-          className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
-          />
+          className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+        />
       </div>
       {fileLoading && (
-        <p className="text-green-500 text-sm mb-4 animate-pulse">
-          Loading...
-        </p>
+        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
       {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
       {timetableHtml && (
@@ -149,7 +147,7 @@ const AddTimeTableForm = ({
         />
       )}
       <div className="w-full flex gap-4 justify-between">
-        <button onClick={() => setPage((prev) => prev - 1)}>
+        <button onClick={() => setPage((prev) => prev - 1)} className="button">
           <ArrowLeft /> Prev
         </button>
         <div className="flex gap-2 items-center">
@@ -166,7 +164,7 @@ const AddTimeTableForm = ({
         <button
           disabled={timetableData.length < 0}
           onClick={submit}
-          className="justify-end"
+          className="button justify-end"
         >
           Finish <ArrowRight />
         </button>

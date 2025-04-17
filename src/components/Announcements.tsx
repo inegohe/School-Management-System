@@ -23,7 +23,7 @@ const data = [
 
 const Announcement = () => {
   return (
-    <div className="flex flex-col gap-4 p-2 bg-white w-full rounded-md">
+    <div className="flex flex-col gap-4 p-2 bg-primary-light w-full rounded-md">
       <div className="w-full justify-between flex items-center">
         <h1 className="font-bold text-lg">Announcements</h1>
         <Link className="text-sm text-gray-400" href="/list/announcements">
@@ -33,7 +33,7 @@ const Announcement = () => {
       {data.map((announcement, index) => (
         <div
           key={index}
-          className="w-full p-3 lg:p-5 rounded-md h-fit bg-white gap-2 odd:bg-sky-light even:bg-purple-light"
+          className="w-full p-3 lg:p-5 rounded-md h-fit bg-primary gap-2 border-2 odd:border-sky-light even:border-purple-light"
         >
           <div className="w-full justify-between flex items-center">
             <h3 className="font-semibold text-lg">{announcement.title}</h3>

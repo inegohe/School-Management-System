@@ -57,22 +57,29 @@ const AddSubjectsForm = ({
                 value={subject}
                 onChange={(e) => handleSubjectChange(index, e.target.value)}
                 placeholder={`Subject ${index + 1}`}
-                className="p-2 border rounded-md w-full md:w-1/3 outline-none ring-2 ring-primary"
+                className="input p-2 border rounded-md w-full md:w-1/3 outline-none ring-2 ring-primary"
               />
             ))}
           </div>
         </div>
         <div className="w-full flex flex-col gap-4">
           <div className="w-full justify-between flex gap-4">
-            <button type="button" onClick={handleRemoveSubject}>
+            <button
+              type="button"
+              onClick={handleRemoveSubject}
+              className="button"
+            >
               Remove Subject
             </button>
-            <button type="button" onClick={handleAddSubject}>
+            <button type="button" onClick={handleAddSubject} className="button">
               Add Subject
             </button>
           </div>
           <div className="w-full flex gap-4 justify-between self-end">
-            <button onClick={() => setPage((prev) => prev - 1)}>
+            <button
+              onClick={() => setPage((prev) => prev - 1)}
+              className="button"
+            >
               <ArrowLeft /> Prev
             </button>
             <div className="flex gap-2 items-center">
@@ -89,7 +96,7 @@ const AddSubjectsForm = ({
             <button
               disabled={subjects.length < 0}
               type="submit"
-              className="justify-end"
+              className="button justify-end"
             >
               Next <ArrowRight />
             </button>

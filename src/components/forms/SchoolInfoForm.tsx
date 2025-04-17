@@ -11,16 +11,24 @@ const schema = z.object({
   name: z.string().min(3, { message: "School name is required!" }),
   address: z.string().min(3, { message: "Address is required!" }),
   principal: z.string().min(3, { message: "Principal name is required!" }),
-  vicePrincipal: z.string().min(3, { message: "Vice Principal name is required!" }),
+  vicePrincipal: z
+    .string()
+    .min(3, { message: "Vice Principal name is required!" }),
   slogan: z.string().min(3, { message: "Slogan is required!" }),
-  schoolType: z.enum(["Primary", "Junior", "Senior"], { message: "School Type can either be Primary, Junior or Senior" }),
+  schoolType: z.enum(["Primary", "Junior", "Senior"], {
+    message: "School Type can either be Primary, Junior or Senior",
+  }),
   startHour: z.string().min(4, { message: "Start Hour is required!" }),
   closeHour: z.string().min(4, { message: "Close Hour is required!" }),
   primaryColor: z.string().min(6, { message: "Primary color is required!" }),
-  secondaryColor: z.string().min(6, { message: "Secondary color is required!" }),
+  secondaryColor: z
+    .string()
+    .min(6, { message: "Secondary color is required!" }),
   mutedColor: z.string().min(6, { message: "Muted color is required!" }),
   accentColor: z.string().min(6, { message: "Accent color is required!" }),
-  logoImage: z.string().min(1, { message: "Logo must be a valid Base64 string!" }),
+  logoImage: z
+    .string()
+    .min(1, { message: "Logo must be a valid Base64 string!" }),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -46,7 +54,7 @@ const SchoolInfoForm = ({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onBlur",
-    defaultValues
+    defaultValues,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +112,7 @@ const SchoolInfoForm = ({
                     id={key}
                     hidden
                     onChange={handleFileChange}
+                    className="input"
                   />
                   {logoBase64 && (
                     <img
@@ -124,7 +133,7 @@ const SchoolInfoForm = ({
                       : "text"
                   }
                   {...register(key as keyof FormData)}
-                  className={`p-2 border rounded-md outline-none ${
+                  className={`input p-2 border rounded-md outline-none ${
                     key.includes("Color") ? "h-10 w-full" : "w-full"
                   }`}
                 />
@@ -139,18 +148,24 @@ const SchoolInfoForm = ({
         </div>
         <div className="w-full flex gap-4 justify-between">
           <button
-          disabled
+            disabled
             onClick={() => setPage((prev) => prev - 1)}
+            className="button"
           >
             <ArrowLeft /> Prev
           </button>
           <div className="flex gap-2 items-center">
-            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " + (x === 1 ? "bg-secondary":"bg-transparent")}/>)}
+            {[1, 2, 3, 4, 5, 6].map((x, i) => (
+              <div
+                key={i}
+                className={
+                  "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                  (x === 1 ? "bg-secondary" : "bg-transparent")
+                }
+              />
+            ))}
           </div>
-          <button
-            type="submit"
-            className="justify-end"
-          >
+          <button type="submit" className="button justify-end">
             Next <ArrowRight />
           </button>
         </div>

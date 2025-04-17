@@ -125,7 +125,7 @@ const AddStaffsForm = ({
               a.href = "/staffExcelTemp.xlsx";
               a.click();
             }}
-            className="w-full md:w-fit"
+            className="button w-full md:w-fit"
           >
             <Download /> Download Excel Template
           </button>
@@ -133,7 +133,7 @@ const AddStaffsForm = ({
             type="file"
             accept=".xlsx,.xls,.xlsm"
             onChange={handleFileUpload}
-            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+            className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
           />
         </div>
         {fileLoading && (
@@ -174,7 +174,7 @@ const AddStaffsForm = ({
         )}
       </div>
       <div className="w-full flex gap-4 justify-between">
-        <button onClick={() => setPage((prev) => prev - 1)}>
+        <button onClick={() => setPage((prev) => prev - 1)} className="button">
           <ArrowLeft /> Prev
         </button>
         <div className="flex gap-2 items-center">
@@ -191,7 +191,7 @@ const AddStaffsForm = ({
         <button
           disabled={staffsData.length < 0}
           onClick={() => setPage((prev) => prev + 1)}
-          className="justify-end"
+          className="button justify-end"
         >
           Next <ArrowRight />
         </button>
