@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddTimeTableForm = ({
   setTotalData,
@@ -32,6 +33,7 @@ const AddTimeTableForm = ({
       const validExtensions = [".xlsx", ".xls", ".xlsm"];
       const fileExtension = file.name.slice(file.name.lastIndexOf("."));
       if (!validExtensions.includes(fileExtension)) {
+        toast("File is not a valid Excel.");
         setFileError("Invalid file type. Please upload an Excel file.");
         return;
       }
@@ -139,7 +141,7 @@ const AddTimeTableForm = ({
       {fileLoading && (
         <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
-      {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+      {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
       {timetableHtml && (
         <div
           className="w-full overflow-x-scroll mx-auto"
@@ -162,7 +164,7 @@ const AddTimeTableForm = ({
           ))}
         </div>
         <button
-          disabled={timetableData.length < 0}
+          // disabled={timetableData.length < 5}
           onClick={submit}
           className="button justify-end"
         >

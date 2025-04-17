@@ -15,9 +15,6 @@ const processQueue = (error: unknown, token: string | null = null) => {
     if (error) {
       prom.reject(error);
     } else {
-      // Assuming the new token is now automatically handled via cookie
-      // If the token needed to be added manually to headers:
-      // prom.config.headers['Authorization'] = 'Bearer ' + token;
       prom.resolve(apiClient(prom.config)); // Retry the request
     }
   });
@@ -50,12 +47,7 @@ apiClient.interceptors.response.use(
 
       try {
         console.log('Access token expired. Attempting refresh...');
-        // Make the refresh token request
-        // The HttpOnly refresh token cookie is sent automatically due to withCredentials: true
         const refreshResponse = await apiClient.post('/auth/refresh'); // Your refresh endpoint
-
-        // If refresh is successful, the server should have set a new HttpOnly access token cookie.
-        // The refreshResponse data might be minimal (e.g., { success: true })
         console.log('Token refreshed successfully.');
 
         // Process the queue with the indication of success (no specific token needed if cookie-based)
@@ -76,9 +68,7 @@ apiClient.interceptors.response.use(
         return Promise.reject(refreshError); // Reject the original request's promise
 
       } finally {
-         // Ensure isRefreshing is reset even if something unexpected happened
-         // Although it should be covered by success/catch blocks above
-         // isRefreshing = false; // Potentially move reset inside success/catch is cleaner
+         isRefreshing = false;
       }
     }
 

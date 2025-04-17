@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --primary: black;
   --primary-light: rgb(31, 30, 30);
@@ -156,3 +152,8 @@ td,
 th {
   @apply border border-gray-300 px-4 py-2 text-center;
 }
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -93,16 +93,25 @@ model School {
   id               String       @id @default(uuid()) // Use UUID for primary key
   name             String
   address          String
-  primaryColor     String
-  secondaryColor   String
-  mutedColor       String
-  accentColor      String
+  primaryColor     String       @default("")
+  primaryColorLight String       @default("")
+  secondaryColor   String       @default("")
+  secondaryColorLight String       @default("")
+  accentColor1     String       @default("")
+  accentColor1Light String       @default("")
+  accentColor2     String       @default("")
+  accentColor2Light String       @default("")
+  accentColor3     String       @default("")
+  accentColor3Light String       @default("")
   logo             String // Image URL
-  missionStatement String
-  visionStatement  String
+  missionStatement String       @default("")
+  visionStatement  String       @default("")
   principal        String
   vicePrincipal    String
   slogan           String
+  type             SchoolType
+  startHour        String
+  closeHour        String
   subjects         String[]
 
   // Relations
@@ -118,6 +127,7 @@ model School {
 model Class {
   id        String @id @default(uuid()) // Use UUID for primary key
   name      String
+  totalStudent Int @default(0)
   teacherId String
   schoolId  String
 
@@ -164,4 +174,10 @@ enum Role {
   TEACHER
   STUDENT
   PARENT
+}
+
+enum SchoolType {
+  PRIMARY
+  JUNIOR
+  SENIOR
 }

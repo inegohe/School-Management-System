@@ -94,7 +94,7 @@ const AddSubjectsForm = ({
               ))}
             </div>
             <button
-              disabled={subjects.length < 0}
+              // disabled={subjects.length < 6}
               type="submit"
               className="button justify-end"
             >

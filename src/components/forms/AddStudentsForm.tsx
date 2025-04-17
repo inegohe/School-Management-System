@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddStudentsForm = ({
   setTotalData,
@@ -40,6 +41,7 @@ const AddStudentsForm = ({
       const validExtensions = [".xlsx", ".xls", ".xlsm"];
       const fileExtension = file.name.slice(file.name.lastIndexOf("."));
       if (!validExtensions.includes(fileExtension)) {
+        toast("File is not a valid Excel.");
         setFileError(
           "Invalid file type. Please upload an Excel file with the above format."
         );
@@ -63,6 +65,7 @@ const AddStudentsForm = ({
         );
 
         if (missingColumns.length > 0) {
+          toast("File Error");
           setFileError(
             `Missing required columns: ${missingColumns
               .join(", ")
@@ -136,7 +139,7 @@ const AddStudentsForm = ({
       {fileLoading && (
         <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
-      {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+      {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
       {studentsData.length > 0 && (
         <div className="w-full overflow-x-scroll mx-auto">
           <table>
@@ -178,7 +181,7 @@ const AddStudentsForm = ({
             {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " + (x === 3 ? "bg-secondary":"bg-transparent")}/>)}
           </div>
           <button
-            disabled={studentsData.length < 0}
+            // disabled={studentsData.length < 1}
             onClick={() => setPage((prev) => prev + 1)}
             className="button justify-end"
           >

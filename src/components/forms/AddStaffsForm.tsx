@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import toast from "react-hot-toast";
+
 
 const AddStaffsForm = ({
   setTotalData,
@@ -30,6 +32,7 @@ const AddStaffsForm = ({
     "phone no",
     "year of service",
     "teaching",
+    "admin"
   ];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +44,7 @@ const AddStaffsForm = ({
       const validExtensions = [".xlsx", ".xls", ".xlsm"];
       const fileExtension = file.name.slice(file.name.lastIndexOf("."));
       if (!validExtensions.includes(fileExtension)) {
+        toast("File is not a valid Excel.");
         setFileError(
           "Invalid file type. Please upload an Excel file with the above format."
         );
@@ -64,6 +68,7 @@ const AddStaffsForm = ({
         );
 
         if (missingColumns.length > 0) {
+          toast("File Error.");
           setFileError(
             `Missing required columns: ${missingColumns
               .join(", ")
@@ -86,11 +91,19 @@ const AddStaffsForm = ({
           phoneNo: row["PHONE NO"] || "",
           yearOfService: row["YEAR OF SERVICE"] || "",
           teaching: row["TEACHING"] === "TRUE",
+          admin: row["ADMIN"] === "TRUE",
         }));
 
         console.log(staffsData);
-        setTotalData((prev) => ({ ...prev, staffsData: parsedData }));
-        setStaffsData(parsedData);
+        const admins = staffsData.filter(staff => staff.admin);
+        if(admins.length > 3){
+          toast("Total admins must be 3 or less");
+        } else if(admins.length < 1){
+          toast("A school must have atleast one admin");
+        } else {
+          setTotalData((prev) => ({ ...prev, staffsData: parsedData, admins }));
+          setStaffsData(parsedData);
+        }
       };
 
       reader.readAsBinaryString(file);
@@ -141,7 +154,7 @@ const AddStaffsForm = ({
             Loading...
           </p>
         )}
-        {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+        {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
         {staffsData.length > 0 && (
           <div className="w-full overflow-x-scroll mx-auto">
             <table>
@@ -159,7 +172,7 @@ const AddStaffsForm = ({
                   <tr key={index}>
                     {Object.keys(teacher).map((col, i) => (
                       <td key={i}>
-                        {col === "teaching"
+                        {["teaching", "admin"].includes(col)
                           ? (teacher[col as keyof StaffData] as boolean)
                               .toString()
                               .toUpperCase()
@@ -189,7 +202,7 @@ const AddStaffsForm = ({
           ))}
         </div>
         <button
-          disabled={staffsData.length < 0}
+          // disabled={staffsData.length < 1}
           onClick={() => setPage((prev) => prev + 1)}
           className="button justify-end"
         >
@@ -222,6 +235,7 @@ const FileFormatSample = ({
       phoneNo: "123-456-7890",
       yearOfService: "10",
       teaching: true,
+      admin: false
     },
     {
       name: "Jane Smith",
@@ -237,6 +251,7 @@ const FileFormatSample = ({
       phoneNo: "987-654-3210",
       yearOfService: "5",
       teaching: false,
+      admin: true
     },
   ];
   return (
@@ -256,7 +271,7 @@ const FileFormatSample = ({
             <tr key={index}>
               {Object.keys(staff).map((col, i) => (
                 <td key={i}>
-                  {col === "teaching"
+                  {["teaching", "admin"].includes(col)
                     ? (staff[col as keyof StaffData] as boolean)
                         .toString()
                         .toUpperCase()

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddClassesForm = ({
   setTotalData,
@@ -27,6 +28,7 @@ const AddClassesForm = ({
       const validExtensions = [".xlsx", ".xls", ".xlsm"];
       const fileExtension = file.name.slice(file.name.lastIndexOf("."));
       if (!validExtensions.includes(fileExtension)) {
+        toast("File is not a valid Excel.");
         setFileError(
           "Invalid file type. Please upload an Excel file with the above format."
         );
@@ -50,6 +52,7 @@ const AddClassesForm = ({
         );
 
         if (missingColumns.length > 0) {
+          toast("File Error.");
           setFileError(
             `Missing required columns: ${missingColumns
               .join(", ")
@@ -117,7 +120,7 @@ const AddClassesForm = ({
             Loading...
           </p>
         )}
-        {fileError && <p className="text-red-500 text-sm mb-4">{fileError}</p>}
+        {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
         {classesData.length > 0 && (
           <div className="w-full overflow-x-scroll mx-auto">
             <table>
@@ -159,7 +162,7 @@ const AddClassesForm = ({
           ))}
         </div>
         <button
-          disabled={classesData.length < 0}
+          // disabled={classesData.length < 1}
           onClick={() => setPage((prev) => prev + 1)}
           className="button justify-end"
         >

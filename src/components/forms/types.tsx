@@ -65,6 +65,7 @@ type Subject = string;
 type TotalData = {
   schoolData: SchoolInfo | {};
   staffsData: StaffData[] | [];
+  admins: StaffData[] | [];
   studentsData: StudentData[] | [];
   subjects: Subject[] | [];
   classes: ClassData[] | [];
