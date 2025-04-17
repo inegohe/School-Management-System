@@ -77,6 +77,8 @@ const LoginPage = () => {
 
         if (res.status === 200) {
           toast("Check your email inbox to confirm your password setup.");
+          setPNS(false);
+          setPNSNote("");
         }
       } catch (err: any) {
         console.log(err.response);
@@ -121,7 +123,7 @@ const LoginPage = () => {
                 <input
                   {...(key === "password" && { type: key })}
                   {...register(key as keyof FormData)}
-                  className="w-full p-2 border rounded-lg"
+                  className="w-full p-2 border rounded-lg outline-none"
                 />
                 {errors[key as keyof FormData] && (
                   <p className="text-red-500 text-xs">
@@ -132,7 +134,7 @@ const LoginPage = () => {
             );
           })}
           {error && <p className="text-red-500 text-xs">{error}</p>}
-          {pnsNote && (
+          {pns && pnsNote && (
             <p className="text-green-600 font-semibold text-xs">{pnsNote}</p>
           )}
           <button type="submit" className="w-full justify-center">

@@ -36,8 +36,8 @@ export const GET = async (req: Request) => {
       where: { email: user.email },
       data: {
         password: hashedPassword,
-        resetToken: "",
-        resetTokenExpiry: new Date(Date.now()),
+        resetToken: null,
+        resetTokenExpiry: null,
       },
     });
 
@@ -113,7 +113,7 @@ export const GET = async (req: Request) => {
     });
 
     return NextResponse.redirect(
-      `${process.env.BASE_URL}/dashboard?role=${user.role.toLowerCase()}`
+      `${process.env.BASE_URL}/${user.role.toLowerCase()}`
     );
   } catch (err) {
     console.error(err);

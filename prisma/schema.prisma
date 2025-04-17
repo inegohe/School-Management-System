@@ -13,8 +13,8 @@ model User {
   password String @default("")
   role     Role
   schoolId String @unique
-  resetToken String @default("")
-  resetTokenExpiry DateTime @default(now())
+  resetToken String?
+  resetTokenExpiry DateTime?
 
   // Relations
   school School @relation(fields: [schoolId], references: [id])
@@ -71,7 +71,7 @@ model Parent {
 model Student {
   id           String   @id @default(uuid()) // Use UUID for primary key
   name         String
-  parentId     String?
+  parentId     String
   registrationNo String
   admissionNo  String
   birthdate    DateTime
@@ -83,7 +83,7 @@ model Student {
 
   // Relations
   school School @relation(fields: [schoolId], references: [id])
-  parent Parent? @relation(fields: [parentId], references: [id])
+  parent Parent @relation(fields: [parentId], references: [id])
   class  Class   @relation(fields: [classId], references: [id])
 
   Attendance Attendance[]
