@@ -4,12 +4,12 @@ import { v4 } from "uuid";
 import { prisma } from "@/lib/prisma";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false,
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.EMAIL!,
+    pass: process.env.EMAIL_PASSWORD!,
   },
 });
 
@@ -29,7 +29,7 @@ export const POST = async (req: Request) => {
     });
 
     // Send confirmation email
-    const confirmationUrl = `${process.env.NEXTAUTH_URL}/api/auth/confirm?token=${token}`;
+    const confirmationUrl = `${process.env.BASE_URL}/api/auth/confirm?token=${token}`;
     await transporter.sendMail({
       to: email,
       subject: "Set Your Password",
@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ message: "Email sent" }, { status: 200 });
   } catch (err) {
-    console.error(err);
+    console.error(err, JSON.stringify(err));
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

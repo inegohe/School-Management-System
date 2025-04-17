@@ -37,7 +37,7 @@ export const GET = async (req: Request) => {
       data: {
         password: hashedPassword,
         resetToken: "",
-        resetTokenExpiry: "",
+        resetTokenExpiry: new Date(Date.now()),
       },
     });
 
@@ -82,7 +82,7 @@ export const GET = async (req: Request) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 30 * 24 * 60 * 60, // 1 month
+      maxAge: 7 * 24 * 60 * 60, // 1 week
     });
 
     const headersList = await headers();
@@ -112,7 +112,9 @@ export const GET = async (req: Request) => {
       },
     });
 
-    return NextResponse.redirect(`${process.env.BASE_URL}/${user.role}`);
+    return NextResponse.redirect(
+      `${process.env.BASE_URL}/dashboard?role=${user.role.toLowerCase()}`
+    );
   } catch (err) {
     console.error(err);
     return NextResponse.json({ status: 500, message: "Internal Server Error" });

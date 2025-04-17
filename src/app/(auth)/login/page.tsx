@@ -10,6 +10,7 @@ import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { BACKGROUND_IMAGES } from "@/store";
 import apiClient from "@/lib/apiclient";
+import axios from "axios";
 
 const schema = z.object({
   email: z.string().email("Input a valid email").trim(),
@@ -34,54 +35,57 @@ const LoginPage = () => {
     mode: "onBlur",
   });
   const [error, setError] = useState("");
+  const [pnsNote, setPNSNote] = useState("");
   const [pns, setPNS] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     setError("");
-  
+
     if (!pns) {
       try {
-        const { status, data: result } = await apiClient.post("/auth/login", {
+        const { status, data: result } = await axios.post("/api/auth/login", {
           email: data.email,
           password: data.password,
         });
         console.log(result);
-  
-        if (status !== 200) {
-          if (result.error === "PNS") {
-            setValue("password", "");
-            setError(
-              "Password not set. Type your desired password and click 'Set Password'."
-            );
-            setPNS(true);
-          } else {
-            setError(result.error);
-          }
-        } else {
-          router.push(`${result.role}`);
+
+        if (status === 200) {
+          console.log(result);
+          router.push(`/dashboard?role=${result.role}`);
         }
       } catch (err: any) {
         console.log(err);
-        setError(err.response?.data?.error || err.message || "An error occurred");
+        setError(
+          err.response?.data?.error || err.message || "An error occurred"
+        );
+        if (err.response?.data?.error === "PNS" || err.message === "PNS") {
+          setValue("password", "");
+          setPNSNote(
+            "Password not set. Type your desired password and click 'Set Password'."
+          );
+          setPNS(true);
+        }
       }
     } else {
       try {
-        const res = await apiClient.post("/auth/email", {
+        const res = await axios.post("/api/auth/email", {
           email: data.email,
           password: data.password,
         });
-  
+
         if (res.status === 200) {
           toast("Check your email inbox to confirm your password setup.");
         }
       } catch (err: any) {
         console.log(err.response);
-        setError(err.response?.data?.error || err.message || "An error occurred");
+        setError(
+          err.response?.data?.error || err.message || "An error occurred"
+        );
       }
     }
-  
+
     setLoading(false);
   };
 
@@ -128,6 +132,9 @@ const LoginPage = () => {
             );
           })}
           {error && <p className="text-red-500 text-xs">{error}</p>}
+          {pnsNote && (
+            <p className="text-green-600 font-semibold text-xs">{pnsNote}</p>
+          )}
           <button type="submit" className="w-full justify-center">
             {loading && <LoaderCircle className="animate-spin" />}
             {pns ? "Set Password" : "Login"}
