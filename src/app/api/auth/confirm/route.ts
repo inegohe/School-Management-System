@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import crypto from "crypto";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
@@ -68,6 +69,7 @@ export const GET = async (req: Request) => {
     // Delete the old token if it exists
     cookiesStore.delete("accesstoken");
     cookiesStore.delete("refreshtoken");
+
     cookiesStore.set("accesstoken", accesstoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -81,6 +83,33 @@ export const GET = async (req: Request) => {
       sameSite: "strict",
       path: "/",
       maxAge: 30 * 24 * 60 * 60, // 1 month
+    });
+
+    const headersList = await headers();
+
+    const forwardedFor = headersList.get("x-forwarded-for");
+    let ipAddress =
+      forwardedFor?.split(",")[0].trim() ||
+      headersList.get("x-vercel-forwarded-for") ||
+      headersList.get("x-real-ip") ||
+      "Unknown";
+
+    console.log("Detected IP Address:", ipAddress || "Could not determine IP");
+    const userAgent = headersList.get("user-agent") || "Unknown";
+    console.log("Detected User Agent:", userAgent);
+
+    await prisma.refreshTokens.create({
+      data: {
+        userId: user.id,
+        deviceInfo: userAgent,
+        ipAddress: ipAddress,
+        tokenHash: crypto
+          .createHash("sha256")
+          .update(refreshtoken)
+          .digest("hex"),
+        expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        lastUsed: new Date(Date.now()),
+      },
     });
 
     return NextResponse.redirect(`${process.env.BASE_URL}/${user.role}`);

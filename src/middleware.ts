@@ -1,47 +1,39 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+
+const publicOnlyRoutes = ["/", "/login", "/create"];
+const genericAuthenticatedRoute = "/dashboard";
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
-  const token = req.cookies.get("accesstoken")?.value;
+  const accessToken = req.cookies.get("accesstoken")?.value;
   const url = req.nextUrl.clone();
+  const requestedPath = url.pathname;
 
-  if (!token) {
-    if (
-      url.pathname !== "/" &&
-      url.pathname !== "/login" &&
-      url.pathname !== "/create" &&
-      !url.pathname.startsWith("/api")
-    ) {
+  const isPublicOnlyRoute = publicOnlyRoutes.includes(requestedPath);
+
+  if (!accessToken) {
+    if (!isPublicOnlyRoute) {
+      console.log(
+        `Middleware: No token, redirecting from protected route ${requestedPath} to /login`
+      );
       url.pathname = "/login";
+      url.searchParams.set("callbackUrl", requestedPath);
       return NextResponse.redirect(url);
     }
     return NextResponse.next();
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string, email: string, role: string};
-
-    // Example: Restrict access for authenticated users
-    if (
-      url.pathname === "/" ||
-      url.pathname === "/login" ||
-      url.pathname == "/create" ||
-      url.pathname.startsWith("/api")
-    ) {
-      url.pathname = `/${decoded.role}`;
+  } else {
+    if (isPublicOnlyRoute) {
+      console.log(
+        `Middleware: Logged-in user redirected from public-only route ${requestedPath} to ${genericAuthenticatedRoute}`
+      );
+      url.pathname = genericAuthenticatedRoute;
+      url.search = "";
       return NextResponse.redirect(url);
     }
-
     return NextResponse.next();
-  } catch (error) {
-    console.error("JWT Verification Error:", error);
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
   }
 }
 
 export const config = {
-  // Your matcher config...
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

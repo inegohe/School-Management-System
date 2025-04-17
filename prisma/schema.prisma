@@ -10,11 +10,11 @@ datasource db {
 model User {
   id       String @id @default(uuid()) // Use UUID for primary key
   email    String @unique
-  password String
+  password String @default("")
   role     Role
   schoolId String @unique
-  resetToken String
-  resetTokenExpiry DateTime
+  resetToken String @default("")
+  resetTokenExpiry DateTime @default(now())
 
   // Relations
   school School @relation(fields: [schoolId], references: [id])
@@ -23,10 +23,10 @@ model User {
 
 model RefreshTokens {
   id       String @id @default(uuid()) // Use UUID for primary key
-  userId   String @unique
-  tokenHash String
-  deviceInfo String
-  ipAddress String
+  userId   String 
+  tokenHash String @unique
+  deviceInfo String @default("")
+  ipAddress String @default("")
   createdAt DateTime @default(now())
   expiresOn DateTime
   lastUsed DateTime
