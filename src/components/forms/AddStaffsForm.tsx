@@ -4,7 +4,6 @@ import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import toast from "react-hot-toast";
 
-
 const AddStaffsForm = ({
   setTotalData,
   setPage,
@@ -32,7 +31,7 @@ const AddStaffsForm = ({
     "phone no",
     "year of service",
     "teaching",
-    "admin"
+    "admin",
   ];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,14 +94,22 @@ const AddStaffsForm = ({
         }));
 
         console.log(staffsData);
-        const admins = staffsData.filter(staff => staff.admin);
-        if(admins.length > 3){
+        const admins = staffsData.filter((staff) => staff.admin);
+        if (admins.length > 3) {
           toast("Total admins must be 3 or less");
-        } else if(admins.length < 1){
+        } else if (admins.length < 1) {
           toast("A school must have atleast one admin");
         } else {
-          setTotalData((prev) => ({ ...prev, staffsData: parsedData, admins }));
-          setStaffsData(parsedData);
+          if (staffsData.filter((staff) => !staff.admin).length < 1) {
+            toast("Staff Data is empty");
+          } else {
+            setTotalData((prev) => ({
+              ...prev,
+              staffsData: parsedData,
+              admins,
+            }));
+            setStaffsData(parsedData);
+          }
         }
       };
 
@@ -154,7 +161,9 @@ const AddStaffsForm = ({
             Loading...
           </p>
         )}
-        {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
+        {fileError && (
+          <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
+        )}
         {staffsData.length > 0 && (
           <div className="w-full overflow-x-scroll mx-auto">
             <table>
@@ -202,7 +211,7 @@ const AddStaffsForm = ({
           ))}
         </div>
         <button
-          // disabled={staffsData.length < 1}
+          disabled={staffsData.length < 1}
           onClick={() => setPage((prev) => prev + 1)}
           className="button justify-end"
         >
@@ -235,7 +244,7 @@ const FileFormatSample = ({
       phoneNo: "123-456-7890",
       yearOfService: "10",
       teaching: true,
-      admin: false
+      admin: false,
     },
     {
       name: "Jane Smith",
@@ -251,7 +260,7 @@ const FileFormatSample = ({
       phoneNo: "987-654-3210",
       yearOfService: "5",
       teaching: false,
-      admin: true
+      admin: true,
     },
   ];
   return (

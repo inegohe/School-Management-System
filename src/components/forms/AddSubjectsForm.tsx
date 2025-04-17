@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AddSubjectsForm = ({
   setTotalData,
@@ -32,8 +33,12 @@ const AddSubjectsForm = ({
     const filteredSubjects = subjects.filter(
       (subject) => subject.trim() !== ""
     );
-    setTotalData((prev) => ({ ...prev, subjects: filteredSubjects }));
-    setPage((prev) => prev + 1);
+    if (filteredSubjects.length < 10) {
+      toast("A school must have atleast 10 subjects");
+    } else {
+      setTotalData((prev) => ({ ...prev, subjects: filteredSubjects }));
+      setPage((prev) => prev + 1);
+    }
   };
 
   return (
@@ -94,7 +99,7 @@ const AddSubjectsForm = ({
               ))}
             </div>
             <button
-              // disabled={subjects.length < 6}
+              disabled={subjects.length < 10}
               type="submit"
               className="button justify-end"
             >

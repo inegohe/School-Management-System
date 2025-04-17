@@ -33,7 +33,7 @@ const AddTimeTableForm = ({
       const validExtensions = [".xlsx", ".xls", ".xlsm"];
       const fileExtension = file.name.slice(file.name.lastIndexOf("."));
       if (!validExtensions.includes(fileExtension)) {
-        toast("File is not a valid Excel.");
+        toast("File is not a valid Excel");
         setFileError("Invalid file type. Please upload an Excel file.");
         return;
       }
@@ -87,13 +87,17 @@ const AddTimeTableForm = ({
             }
           }
         });
-        setTimetableData(extractedData);
-        setTimetableHtml(htmlData);
-        setTotalData((prev) => ({
-          ...prev,
-          timetable: extractedData,
-          timetableHtml: htmlData,
-        }));
+        if (extractedData.length < 1) {
+          toast("Timetable is empty");
+        } else {
+          setTimetableData(extractedData);
+          setTimetableHtml(htmlData);
+          setTotalData((prev) => ({
+            ...prev,
+            timetable: extractedData,
+            timetableHtml: htmlData,
+          }));
+        }
       };
 
       reader.readAsBinaryString(file);
@@ -141,7 +145,9 @@ const AddTimeTableForm = ({
       {fileLoading && (
         <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
       )}
-      {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
+      {fileError && (
+        <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
+      )}
       {timetableHtml && (
         <div
           className="w-full overflow-x-scroll mx-auto"
@@ -164,7 +170,7 @@ const AddTimeTableForm = ({
           ))}
         </div>
         <button
-          // disabled={timetableData.length < 5}
+          disabled={timetableData.length < 1}
           onClick={submit}
           className="button justify-end"
         >

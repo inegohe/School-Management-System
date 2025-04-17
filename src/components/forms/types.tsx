@@ -28,6 +28,7 @@ interface StaffData {
   phoneNo: string;
   yearOfService: string;
   teaching: boolean;
+  admin: boolean;
 }
 
 interface StudentData {

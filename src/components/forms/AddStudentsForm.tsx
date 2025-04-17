@@ -89,8 +89,12 @@ const AddStudentsForm = ({
         }));
 
         console.log(studentsData);
-        setTotalData((prev) => ({ ...prev, studentsData: parsedData }));
-        setStudentsData(parsedData);
+        if (studentsData.length < 1) {
+          toast("Students Data is empty");
+        } else {
+          setTotalData((prev) => ({ ...prev, studentsData: parsedData }));
+          setStudentsData(parsedData);
+        }
       };
 
       reader.readAsBinaryString(file);
@@ -110,84 +114,88 @@ const AddStudentsForm = ({
       className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
     >
       <div className="w-full flex flex-col gap-4">
-      <h1 className="text-2xl font-bold mb-4">Add Students</h1>
-      {studentsData.length < 1 && (
-        <div className="flex flex-col gap-2 w-full">
-          <h2 className="text-xl font-bold">File Sample</h2>
-          <FileFormatSample requiredColumns={requiredColumns} />
+        <h1 className="text-2xl font-bold mb-4">Add Students</h1>
+        {studentsData.length < 1 && (
+          <div className="flex flex-col gap-2 w-full">
+            <h2 className="text-xl font-bold">File Sample</h2>
+            <FileFormatSample requiredColumns={requiredColumns} />
+          </div>
+        )}
+        <div className="w-full items-center md:justify-between flex gap-2 flex-col md:flex-row">
+          <button
+            onClick={() => {
+              const a = document.createElement("a");
+              a.download = "Student's Excel Template";
+              a.href = "/studentExcelTemp.xlsx";
+              a.click();
+            }}
+            className="button w-full md:w-fit p-3"
+          >
+            <Download /> Download Excel Template
+          </button>
+          <input
+            type="file"
+            accept=".xlsx,.xls,.xlsm"
+            onChange={handleFileUpload}
+            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          />
         </div>
-      )}
-      <div className="w-full items-center md:justify-between flex gap-2 flex-col md:flex-row">
-        <button
-          onClick={() => {
-            const a = document.createElement("a");
-            a.download = "Student's Excel Template";
-            a.href = "/studentExcelTemp.xlsx";
-            a.click();
-          }}
-          className="button w-full md:w-fit p-3"
-        >
-          <Download /> Download Excel Template
-        </button>
-        <input
-          type="file"
-          accept=".xlsx,.xls,.xlsm"
-          onChange={handleFileUpload}
-          className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
-        />
-      </div>
-      {fileLoading && (
-        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
-      )}
-      {fileError && <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>}
-      {studentsData.length > 0 && (
-        <div className="w-full overflow-x-scroll mx-auto">
-          <table>
-            <thead>
-              <tr>
-                {requiredColumns.map((col, i) => (
-                  <th
-                    key={i}
-                    className="capitalize"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {studentsData.map((student, index) => (
-                <tr key={index}>
-                  {Object.keys(student).map((col, i) => (
-                    <td key={i}>
-                      {student[col as keyof StudentData]}
-                    </td>
+        {fileLoading && (
+          <p className="text-green-500 text-sm mb-4 animate-pulse">
+            Loading...
+          </p>
+        )}
+        {fileError && (
+          <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
+        )}
+        {studentsData.length > 0 && (
+          <div className="w-full overflow-x-scroll mx-auto">
+            <table>
+              <thead>
+                <tr>
+                  {requiredColumns.map((col, i) => (
+                    <th key={i} className="capitalize">
+                      {col}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {studentsData.map((student, index) => (
+                  <tr key={index}>
+                    {Object.keys(student).map((col, i) => (
+                      <td key={i}>{student[col as keyof StudentData]}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       <div className="w-full flex gap-4 justify-between">
-          <button
-            onClick={() => setPage((prev) => prev - 1)}
-            className="button"
-          >
-            <ArrowLeft /> Prev
-          </button>
-          <div className="flex gap-2 items-center">
-            {[1,2,3,4,5,6].map((x,i) => <div key={i} className={"w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " + (x === 3 ? "bg-secondary":"bg-transparent")}/>)}
-          </div>
-          <button
-            // disabled={studentsData.length < 1}
-            onClick={() => setPage((prev) => prev + 1)}
-            className="button justify-end"
-          >
-            Next <ArrowRight />
-          </button>
+        <button onClick={() => setPage((prev) => prev - 1)} className="button">
+          <ArrowLeft /> Prev
+        </button>
+        <div className="flex gap-2 items-center">
+          {[1, 2, 3, 4, 5, 6].map((x, i) => (
+            <div
+              key={i}
+              className={
+                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                (x === 3 ? "bg-secondary" : "bg-transparent")
+              }
+            />
+          ))}
         </div>
+        <button
+          disabled={studentsData.length < 1}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="button justify-end"
+        >
+          Next <ArrowRight />
+        </button>
+      </div>
     </motion.div>
   );
 };
@@ -233,10 +241,7 @@ const FileFormatSample = ({
         <thead>
           <tr>
             {requiredColumns.map((col, i) => (
-              <th
-                key={i}
-                className="capitalize"
-              >
+              <th key={i} className="capitalize">
                 {col}
               </th>
             ))}
@@ -246,9 +251,7 @@ const FileFormatSample = ({
           {mockStudentData.map((student, index) => (
             <tr key={index}>
               {Object.keys(student).map((col, i) => (
-                <td key={i}>
-                  {student[col as keyof StudentData]}
-                </td>
+                <td key={i}>{student[col as keyof StudentData]}</td>
               ))}
             </tr>
           ))}
