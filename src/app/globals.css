@@ -16,7 +16,7 @@
 }
 
 .input {
-  @apply bg-transparent text-secondary;
+  @apply bg-transparent text-secondary disabled:opacity-50;
 }
 
 .button {

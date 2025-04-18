@@ -88,9 +88,20 @@ const AddStudentsForm = ({
           address: row["ADDRESS"] || "",
         }));
 
-        console.log(studentsData);
-        if (studentsData.length < 1) {
+        const incompleteFields = parsedData
+          .filter(
+            (student) =>
+              !student.name ||
+              !student.email ||
+              !student.parentName ||
+              !student.parentNo
+          )
+          .map((x) => x.name || x.email)
+          .join();
+        if (parsedData.length < 1) {
           toast("Students Data is empty");
+        } else if (incompleteFields) {
+          toast(`Incomplete fields for: ${incompleteFields}`);
         } else {
           setTotalData((prev) => ({ ...prev, studentsData: parsedData }));
           setStudentsData(parsedData);
@@ -172,21 +183,27 @@ const AddStudentsForm = ({
             </table>
           </div>
         )}
+        <p className="text-xs font-semibold text-secondary-light">
+          Make sure that the email section holds email of student and not
+          parent!!
+        </p>
       </div>
       <div className="w-full flex gap-4 justify-between">
         <button onClick={() => setPage((prev) => prev - 1)} className="button">
           <ArrowLeft /> Prev
         </button>
         <div className="flex gap-2 items-center">
-          {[1, 2, 3, 4, 5, 6].map((x, i) => (
-            <div
-              key={i}
-              className={
-                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
-                (x === 3 ? "bg-secondary" : "bg-transparent")
-              }
-            />
-          ))}
+          {Array(7)
+            .fill("")
+            .map((_, i) => (
+              <div
+                key={i}
+                className={
+                  "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                  (i === 2 ? "bg-secondary" : "bg-transparent")
+                }
+              />
+            ))}
         </div>
         <button
           disabled={studentsData.length < 1}

@@ -4,14 +4,22 @@ type SchoolInfo = {
   principal: string;
   vicePrincipal: string;
   slogan: string;
-  schoolType: "Primary" | "Junior" | "Senior";
+  type: "Primary" | "Junior" | "Senior";
   startHour: string;
   closeHour: string;
+  missionStatement: string;
+  visionStatement: string;
   primaryColor: string;
+  primaryColorLight: string;
   secondaryColor: string;
-  mutedColor: string;
-  accentColor: string;
-  logoImage: string;
+  secondaryColorLight: string;
+  accentColor1: string;
+  accentColor1Light: string;
+  accentColor2: string;
+  accentColor2Light: string;
+  accentColor3: string;
+  accentColor3Light: string;
+  logo: string;
 };
 
 interface StaffData {
@@ -45,6 +53,13 @@ interface StudentData {
   address: string;
 }
 
+interface ParentData {
+  name: string;
+  email: string;
+  phoneNo: string;
+  address: string;
+}
+
 interface ClassData {
   name: string;
   classTeacher: string;
@@ -68,6 +83,7 @@ type TotalData = {
   staffsData: StaffData[] | [];
   admins: StaffData[] | [];
   studentsData: StudentData[] | [];
+  parentsData: ParentData[] | [];
   subjects: Subject[] | [];
   classes: ClassData[] | [];
   timetable: Timetable[] | [];

@@ -61,8 +61,14 @@ const AddSubjectsForm = ({
                 type="text"
                 value={subject}
                 onChange={(e) => handleSubjectChange(index, e.target.value)}
+                onKeyPress={(e) => {
+                  if(e.key === "Enter"){
+                    e.preventDefault();
+                    handleAddSubject();
+                  }
+                }}
                 placeholder={`Subject ${index + 1}`}
-                className="input p-2 border rounded-md w-full md:w-1/3 outline-none ring-2 ring-primary"
+                className="input p-2 border-b border-primary rounded-md w-full md:w-1/3 outline-none"
               />
             ))}
           </div>
@@ -88,15 +94,17 @@ const AddSubjectsForm = ({
               <ArrowLeft /> Prev
             </button>
             <div className="flex gap-2 items-center">
-              {[1, 2, 3, 4, 5, 6].map((x, i) => (
-                <div
-                  key={i}
-                  className={
-                    "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
-                    (x === 5 ? "bg-secondary" : "bg-transparent")
-                  }
-                />
-              ))}
+              {Array(7)
+                .fill("")
+                .map((_, i) => (
+                  <div
+                    key={i}
+                    className={
+                      "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                      (i === 5 ? "bg-secondary" : "bg-transparent")
+                    }
+                  />
+                ))}
             </div>
             <button
               disabled={subjects.length < 10}

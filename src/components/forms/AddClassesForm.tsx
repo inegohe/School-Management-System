@@ -66,10 +66,24 @@ const AddClassesForm = ({
           classTeacher: row["CLASS TEACHER"] || "",
           totalStudent: row["TOTAL STUDENT"] || 0,
         }));
-
-        console.log(classesData);
-        setTotalData((prev) => ({ ...prev, classes: parsedData }));
-        setClassesData(parsedData);
+        
+        const incompleteFields = parsedData
+          .filter(
+            (classData) =>
+              !classData.name ||
+              !classData.classTeacher ||
+              !classData.totalStudent
+          )
+          .map((x) => x.name)
+          .join();
+        if (parsedData.length < 1) {
+          toast("Class Data is empty");
+        } else if (incompleteFields) {
+          toast(`Incomplete fields for: ${incompleteFields}`);
+        } else {
+          setTotalData((prev) => ({ ...prev, classes: parsedData }));
+          setClassesData(parsedData);
+        }
       };
 
       reader.readAsBinaryString(file);
@@ -153,15 +167,17 @@ const AddClassesForm = ({
           <ArrowLeft /> Prev
         </button>
         <div className="flex gap-2 items-center">
-          {[1, 2, 3, 4, 5, 6].map((x, i) => (
-            <div
-              key={i}
-              className={
-                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
-                (x === 4 ? "bg-secondary" : "bg-transparent")
-              }
-            />
-          ))}
+          {Array(7)
+            .fill("")
+            .map((_, i) => (
+              <div
+                key={i}
+                className={
+                  "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                  (i === 4 ? "bg-secondary" : "bg-transparent")
+                }
+              />
+            ))}
         </div>
         <button
           disabled={classesData.length < 1}

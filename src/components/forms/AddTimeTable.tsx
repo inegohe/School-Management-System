@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import * as XLSX from "xlsx";
-import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 const AddTimeTableForm = ({
@@ -9,11 +9,13 @@ const AddTimeTableForm = ({
   setPage,
   defaultValues,
   submit,
+  loading,
 }: {
   setTotalData: React.Dispatch<React.SetStateAction<TotalData>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   defaultValues: { timetableData: Timetable[] | []; timetableHtml: string };
-  submit: () => Promise<boolean | undefined>;
+  submit: () => Promise<void>;
+  loading: boolean;
 }) => {
   const [timetableData, setTimetableData] = useState<Timetable[]>(
     defaultValues.timetableData
@@ -131,6 +133,7 @@ const AddTimeTableForm = ({
             a.href = "/timetableExcelTemp.xlsx";
             a.click();
           }}
+          disabled={loading}
           className="button w-full md:w-fit"
         >
           <Download /> Download Excel Template
@@ -139,6 +142,7 @@ const AddTimeTableForm = ({
           type="file"
           accept=".xlsx,.xls,.xlsm"
           onChange={handleFileUpload}
+          disabled={loading}
           className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
         />
       </div>
@@ -155,26 +159,33 @@ const AddTimeTableForm = ({
         />
       )}
       <div className="w-full flex gap-4 justify-between">
-        <button onClick={() => setPage((prev) => prev - 1)} className="button">
+        <button
+          disabled={loading}
+          onClick={() => setPage((prev) => prev - 1)}
+          className="button"
+        >
           <ArrowLeft /> Prev
         </button>
         <div className="flex gap-2 items-center">
-          {[1, 2, 3, 4, 5, 6].map((x, i) => (
-            <div
-              key={i}
-              className={
-                "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
-                (x === 6 ? "bg-secondary" : "bg-transparent")
-              }
-            />
-          ))}
+          {Array(7)
+            .fill("")
+            .map((_, i) => (
+              <div
+                key={i}
+                className={
+                  "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
+                  (i === 6 ? "bg-secondary" : "bg-transparent")
+                }
+              />
+            ))}
         </div>
         <button
-          disabled={timetableData.length < 1}
+          disabled={timetableData.length < 1 || loading}
           onClick={submit}
           className="button justify-end"
         >
-          Finish <ArrowRight />
+          {loading && <LoaderCircle className="animate-spin" />} Finish{" "}
+          <ArrowRight />
         </button>
       </div>
     </motion.div>

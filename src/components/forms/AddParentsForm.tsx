@@ -4,35 +4,20 @@ import * as XLSX from "xlsx";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import toast from "react-hot-toast";
 
-const AddStaffsForm = ({
+const AddParentsForm = ({
   setTotalData,
   setPage,
   defaultValues,
 }: {
   setTotalData: React.Dispatch<React.SetStateAction<TotalData>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  defaultValues: StaffData[] | [];
+  defaultValues: ParentData[] | [];
 }) => {
-  const [staffsData, setStaffsData] = useState<StaffData[]>(defaultValues);
+  const [parentsData, setParentsData] = useState<ParentData[]>(defaultValues);
   const [fileError, setFileError] = useState<string | null>(null);
   const [fileLoading, setFileLoading] = useState<boolean>(false);
 
-  const requiredColumns = [
-    "name",
-    "email",
-    "oracle no",
-    "registration no",
-    "designation",
-    "post",
-    "payroll no",
-    "level",
-    "year of exit",
-    "address",
-    "phone no",
-    "year of service",
-    "teaching",
-    "admin",
-  ];
+  const requiredColumns = ["name", "email", "phone no", "address"];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFileLoading(true);
@@ -67,7 +52,7 @@ const AddStaffsForm = ({
         );
 
         if (missingColumns.length > 0) {
-          toast("File Error.");
+          toast("File Error");
           setFileError(
             `Missing required columns: ${missingColumns
               .join(", ")
@@ -76,45 +61,24 @@ const AddStaffsForm = ({
           return;
         }
 
-        const parsedData: StaffData[] = jsonData.map((row) => ({
+        const parsedData: ParentData[] = jsonData.map((row) => ({
           name: row["NAME"] || "",
           email: row["EMAIL"] || "",
-          oracleNo: row["ORACLE NO"] || "",
-          registrationNo: row["REGISTRATION NO"] || "",
-          designation: row["DESIGNATION"] || "",
-          post: row["POST"] || "",
-          payrollNo: row["PAYROLL NO"] || "",
-          level: row["LEVEL"] || "",
-          yearOfExit: row["YEAR OF EXIT"] || "",
-          address: row["ADDRESS"] || "",
           phoneNo: row["PHONE NO"] || "",
-          yearOfService: row["YEAR OF SERVICE"] || "",
-          teaching: row["TEACHING"],
-          admin: row["ADMIN"],
+          address: row["ADDRESS"] || "",
         }));
 
-        const admins = parsedData.filter((staff) => staff.admin);
         const incompleteFields = parsedData
-          .filter((staff) => !staff.name || !staff.email)
+          .filter((parent) => !parent.name || !parent.phoneNo || !parent.email)
           .map((x) => x.name || x.email)
           .join();
-        if (admins.length > 3) {
-          toast("Total admins must be 3 or less");
+        if (parsedData.length < 1) {
+          toast("Parents Data is empty");
         } else if (incompleteFields) {
           toast(`Incomplete fields for: ${incompleteFields}`);
-        } else if (admins.length < 1) {
-          toast("A school must have atleast one admin");
         } else {
-          if (parsedData.filter((staff) => !staff.admin).length < 1) {
-            toast("Staff Data is empty");
-          } else {
-            setTotalData((prev) => ({
-              ...prev,
-              staffsData: parsedData,
-              admins,
-            }));
-            setStaffsData(parsedData);
-          }
+          setTotalData((prev) => ({ ...prev, parentsData: parsedData }));
+          setParentsData(parsedData);
         }
       };
 
@@ -135,8 +99,8 @@ const AddStaffsForm = ({
       className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
     >
       <div className="w-full flex flex-col gap-4">
-        <h1 className="text-2xl font-bold mb-4">Add Staffs</h1>
-        {staffsData.length < 1 && (
+        <h1 className="text-2xl font-bold mb-4">Add Parents</h1>
+        {parentsData.length < 1 && (
           <div className="flex flex-col gap-2 w-full">
             <h2 className="text-xl font-bold">File Sample</h2>
             <FileFormatSample requiredColumns={requiredColumns} />
@@ -146,11 +110,11 @@ const AddStaffsForm = ({
           <button
             onClick={() => {
               const a = document.createElement("a");
-              a.download = "Staff's Excel Template";
-              a.href = "/staffExcelTemp.xlsx";
+              a.download = "Parent's Excel Template";
+              a.href = "/parentExcelTemp.xlsx";
               a.click();
             }}
-            className="button w-full md:w-fit"
+            className="button w-full md:w-fit p-3"
           >
             <Download /> Download Excel Template
           </button>
@@ -158,7 +122,7 @@ const AddStaffsForm = ({
             type="file"
             accept=".xlsx,.xls,.xlsm"
             onChange={handleFileUpload}
-            className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
           />
         </div>
         {fileLoading && (
@@ -169,7 +133,7 @@ const AddStaffsForm = ({
         {fileError && (
           <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
         )}
-        {staffsData.length > 0 && (
+        {parentsData.length > 0 && (
           <div className="w-full overflow-x-scroll mx-auto">
             <table>
               <thead>
@@ -182,16 +146,10 @@ const AddStaffsForm = ({
                 </tr>
               </thead>
               <tbody>
-                {staffsData.map((teacher, index) => (
+                {parentsData.map((parent, index) => (
                   <tr key={index}>
-                    {Object.keys(teacher).map((col, i) => (
-                      <td key={i}>
-                        {["teaching", "admin"].includes(col)
-                          ? (teacher[col as keyof StaffData] as boolean)
-                              .toString()
-                              .toUpperCase()
-                          : teacher[col as keyof StaffData]}
-                      </td>
+                    {Object.keys(parent).map((col, i) => (
+                      <td key={i}>{parent[col as keyof ParentData]}</td>
                     ))}
                   </tr>
                 ))}
@@ -199,6 +157,10 @@ const AddStaffsForm = ({
             </table>
           </div>
         )}
+        <p className="text-xs font-semibold text-secondary-light">
+          If a parent has two or more children, Do not duplicate the parent's
+          data, Input the parent just once!!
+        </p>
       </div>
       <div className="w-full flex gap-4 justify-between">
         <button onClick={() => setPage((prev) => prev - 1)} className="button">
@@ -212,13 +174,13 @@ const AddStaffsForm = ({
                 key={i}
                 className={
                   "w-2 h-2 md:w-3 md:h-3 border border-secondary rounded-full " +
-                  (i === 1 ? "bg-secondary" : "bg-transparent")
+                  (i === 3 ? "bg-secondary" : "bg-transparent")
                 }
               />
             ))}
         </div>
         <button
-          disabled={staffsData.length < 1}
+          disabled={parentsData.length < 1}
           onClick={() => setPage((prev) => prev + 1)}
           className="button justify-end"
         >
@@ -229,45 +191,25 @@ const AddStaffsForm = ({
   );
 };
 
-export default AddStaffsForm;
+export default AddParentsForm;
 
 const FileFormatSample = ({
   requiredColumns,
 }: {
   requiredColumns: string[];
 }) => {
-  const mockStaffData: StaffData[] = [
+  const mockParentData: ParentData[] = [
     {
       name: "John Doe",
       email: "john.doe@example.com",
-      oracleNo: "OR12345",
-      registrationNo: "REG67890",
-      designation: "Senior Teacher",
-      post: "Teacher",
-      payrollNo: "PAY001",
-      level: "Level 10",
-      yearOfExit: "2025",
-      address: "123 Main Street, Cityville",
       phoneNo: "123-456-7890",
-      yearOfService: "10",
-      teaching: true,
-      admin: false,
+      address: "123 Main Street, Cityville",
     },
     {
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      oracleNo: "OR54321",
-      registrationNo: "REG09876",
-      designation: "Assistant Teacher",
-      post: "Counsellor",
-      payrollNo: "PAY002",
-      level: "Level 8",
-      yearOfExit: "2028",
-      address: "456 Elm Street, Townsville",
+      name: "Alice Smith",
+      email: "alice.smith@example.com",
       phoneNo: "987-654-3210",
-      yearOfService: "5",
-      teaching: false,
-      admin: true,
+      address: "456 Elm Street, Townsville",
     },
   ];
   return (
@@ -283,16 +225,10 @@ const FileFormatSample = ({
           </tr>
         </thead>
         <tbody>
-          {mockStaffData.map((staff, index) => (
+          {mockParentData.map((parent, index) => (
             <tr key={index}>
-              {Object.keys(staff).map((col, i) => (
-                <td key={i}>
-                  {["teaching", "admin"].includes(col)
-                    ? (staff[col as keyof StaffData] as boolean)
-                        .toString()
-                        .toUpperCase()
-                    : staff[col as keyof StaffData]}
-                </td>
+              {Object.keys(parent).map((col, i) => (
+                <td key={i}>{parent[col as keyof ParentData]}</td>
               ))}
             </tr>
           ))}
