@@ -6,8 +6,8 @@ interface UserStoreType {
 }
 
 interface RoleStoreType {
-  role: string;
-  setRole: (role: string) => void;
+  role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH";
+  setRole: (role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH") => void;
 }
 
 interface SchoolStoreType {
@@ -27,8 +27,9 @@ export const useUser = create<UserStoreType>((set) => ({
 }));
 
 export const useRole = create<RoleStoreType>((set) => ({
-  role: "admin",
-  setRole: (role: string) => set({ role }),
+  role: "AUTH",
+  setRole: (role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH") =>
+    set({ role }),
 }));
 
 export const useSchool = create<SchoolStoreType>((set) => ({

@@ -14,7 +14,7 @@ const Menu = () => {
         {
           title: "Dashboard",
           icon: "/home.png",
-          link: `/${role}`,
+          link: `/${role.toLowerCase()}`,
           visible: ["admin", "teacher", "student", "parent"],
         },
         {
@@ -120,7 +120,7 @@ const Menu = () => {
               </h1>
               {x.items.map(
                 (y, index) =>
-                  y.visible.includes(role) && (
+                  y.visible.includes(role.toLowerCase()) && (
                     <Link
                       key={index}
                       href={y.link}

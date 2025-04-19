@@ -1,5 +1,7 @@
 // TEMPORARY DATA
 
+export let role = "student";
+
 export const teachersData = [
   {
     id: 1,
