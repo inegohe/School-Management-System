@@ -9,10 +9,11 @@ datasource db {
 
 model User {
   id       String @id @default(uuid()) // Use UUID for primary key
+  name     String
   email    String @unique
   password String @default("")
   role     Role
-  schoolId String @unique
+  schoolId String
   resetToken String?
   resetTokenExpiry DateTime?
 
@@ -61,7 +62,7 @@ model Parent {
   id        String   @id @default(uuid()) // Use UUID for primary key
   email     String
   name      String
-  phoneNo   Int
+  phoneNo   String
   address   String
   schoolId  String
 
@@ -75,7 +76,7 @@ model Student {
   name         String
   email        String
   parentId     String
-  parentNo     Int
+  parentNo     String
   parentName     String
   registrationNo String
   admissionNo  String

@@ -1,18 +1,13 @@
 import { create } from "zustand";
-import "@/components/forms/types";
 
 interface RoleStoreType {
   role: string;
   setRole: (role: string) => void;
 }
 
-interface SchoolData extends SchoolInfo {
-  students: string[];
-}
-
 interface SchoolStoreType {
-  school: SchoolData | {};
-  setSchool: (school: SchoolData | {}) => void;
+  school: SchoolDataType | {};
+  setSchool: (school: SchoolDataType | {}) => void;
 }
 
 export const useRole = create<RoleStoreType>((set) => ({
@@ -22,7 +17,7 @@ export const useRole = create<RoleStoreType>((set) => ({
 
 export const useSchool = create<SchoolStoreType>((set) => ({
   school: {},
-  setSchool: (school: SchoolData | {}) => set({ school }),
+  setSchool: (school: SchoolDataType | {}) => set({ school }),
 }));
 
 export const BACKGROUND_IMAGES: string[] = [

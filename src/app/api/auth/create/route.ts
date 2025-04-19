@@ -36,11 +36,11 @@ export const POST = async (req: Request) => {
         id: v4(),
         ...student,
         schoolId,
-        parentId: parents.filter(
+        parentId: (parents.find(
           (parent: ParentData) =>
             parent.name === student.parentName &&
             parent.phoneNo === student.parentNo
-        ).id,
+        )).id,
       };
     });
 
@@ -84,7 +84,8 @@ export const POST = async (req: Request) => {
             id: staff.id,
             name: staff.name,
             email: staff.email,
-            role: staff.admin ? "ADMIN" : "TEACHER",
+            role: staff.admin ? "ADMIN" : staff.teaching ? "TEACHER" : "NONTEACHING",
+            schoolId
           };
         }),
         ...parents.map((parent: ParentData & { id: string }) => {
@@ -93,6 +94,7 @@ export const POST = async (req: Request) => {
             name: parent.name,
             email: parent.email,
             role: "PARENT",
+            schoolId
           };
         }),
         ...students.map((student: StudentData & { id: string }) => {
@@ -101,6 +103,7 @@ export const POST = async (req: Request) => {
             name: student.name,
             email: student.email,
             role: "STUDENT",
+            schoolId
           };
         }),
       ],
