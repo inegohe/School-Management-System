@@ -1,7 +1,7 @@
 "use client";
 
 import apiClient from "@/lib/apiclient";
-import { useRole } from "@/store";
+import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ const Auth = () => {
   const router = useRouter();
   const [output, setOutput] = useState("Getting user authentication...");
   const setRole = useRole((state) => state.setRole);
+  const setUser = useUser((state) => state.setUser);
 
   const getUser = async () => {
     try {
@@ -19,7 +20,8 @@ const Auth = () => {
         setOutput(
           `Authentication successful, redirecting to ${result.data.role} page`
         );
-        setRole(result.data.role.toLowerCase());
+        setUser(result.data);
+        setRole(result.data.role);
         router.push(`/${result.data.role.toLowerCase()}`);
       }
     } catch (error) {

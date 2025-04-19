@@ -45,8 +45,10 @@ export const POST = async (req: Request) => {
     const accesstoken = jwt.sign(
       {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1H" }
@@ -56,18 +58,21 @@ export const POST = async (req: Request) => {
     const refreshtoken = jwt.sign(
       {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1W" }
     );
 
-    // Set the token in an HTTP-only cookie
     const response = NextResponse.json({
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
+      schoolId: user.schoolId,
     });
 
     const cookiesStore = await cookies();

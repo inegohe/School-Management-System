@@ -21,8 +21,8 @@ const schema = z.object({
   visionStatement: z
     .string()
     .min(3, { message: "Vision statement is required!" }),
-  type: z.enum(["Primary", "Junior", "Senior"], {
-    message: "School Type can either be Primary, Junior or Senior",
+  type: z.enum(["PRIMARY", "JUNIOR", "SENIOR"], {
+    message: "School Type can either be PRIMARY, JUNIOR or SENIOR",
   }),
   startHour: z.string().min(4, { message: "Start Hour is required!" }),
   closeHour: z.string().min(4, { message: "Close Hour is required!" }),

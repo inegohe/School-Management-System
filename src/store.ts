@@ -1,5 +1,10 @@
 import { create } from "zustand";
 
+interface UserStoreType {
+  user: UserDataType;
+  setUser: (user: UserDataType) => void;
+}
+
 interface RoleStoreType {
   role: string;
   setRole: (role: string) => void;
@@ -9,6 +14,17 @@ interface SchoolStoreType {
   school: SchoolDataType | {};
   setSchool: (school: SchoolDataType | {}) => void;
 }
+
+export const useUser = create<UserStoreType>((set) => ({
+  user: {
+    id: "",
+    name: "John Doe",
+    email: "unknown",
+    schoolId: "",
+    role: "AUTH",
+  },
+  setUser: (user: UserDataType) => set({ user }),
+}));
 
 export const useRole = create<RoleStoreType>((set) => ({
   role: "admin",

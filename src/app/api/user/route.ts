@@ -2,7 +2,16 @@ import { withAuthRoute } from "@/lib/routeauth";
 import { NextResponse } from "next/server";
 
 export const GET = withAuthRoute(
-  async (req: Request, user: { id: string; email: string; role: string }) => {
+  async (
+    req: Request,
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+      schoolId: string;
+    }
+  ) => {
     try {
       if (user.role) {
         return NextResponse.json({ ...user }, { status: 200 });

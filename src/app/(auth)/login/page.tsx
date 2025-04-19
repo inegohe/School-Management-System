@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { BACKGROUND_IMAGES } from "@/store";
+import { BACKGROUND_IMAGES, useRole, useUser } from "@/store";
 import apiClient from "@/lib/apiclient";
 import axios from "axios";
 
@@ -34,6 +34,8 @@ const LoginPage = () => {
     resolver: zodResolver(schema),
     mode: "onBlur",
   });
+  const setRole = useRole((state) => state.setRole);
+  const setUser = useUser((state) => state.setUser);
   const [error, setError] = useState("");
   const [pnsNote, setPNSNote] = useState("");
   const [pns, setPNS] = useState(false);
@@ -49,24 +51,24 @@ const LoginPage = () => {
           email: data.email,
           password: data.password,
         });
-        console.log(result);
 
         if (status === 200) {
-          console.log(result);
-          router.push(`/${result.role}`);
+          setUser(result);
+          setRole(result.role);
+          router.push(`/${result.role.toLowerCase()}`);
         }
       } catch (err: any) {
         console.log(err);
-        setError(
-          err.response?.data?.error || err.message || "An error occurred"
-        );
         if (err.response?.data?.error === "PNS" || err.message === "PNS") {
           setValue("password", "");
           setPNSNote(
             "Password not set. Type your desired password and click 'Set Password'."
           );
           setPNS(true);
-        }
+        } else
+          setError(
+            err.response?.data?.error || err.message || "An error occurred"
+          );
       }
     } else {
       try {

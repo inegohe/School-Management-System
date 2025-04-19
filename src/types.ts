@@ -89,3 +89,11 @@ interface TimetableType {
   endTime: string;
   schoolId: string;
 }
+
+interface UserDataType {
+  id: string;
+  name: string;
+  email: string;
+  role: "ADMIN" | "TEACHER" | "PARENT" | "STUDENT" | "AUTH";
+  schoolId: string;
+}

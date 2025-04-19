@@ -45,8 +45,10 @@ export const GET = async (req: Request) => {
     const accesstoken = jwt.sign(
       {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "10M" }
@@ -56,8 +58,10 @@ export const GET = async (req: Request) => {
     const refreshtoken = jwt.sign(
       {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "4W" }

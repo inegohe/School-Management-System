@@ -6,8 +6,10 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 interface UserPayload {
   id: string;
+  name: string;
   email: string;
   role: string;
+  schoolId: string;
 }
 
 type AuthenticatedRouteHandler = (

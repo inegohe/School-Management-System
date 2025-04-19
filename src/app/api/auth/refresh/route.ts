@@ -22,8 +22,10 @@ export const POST = async () => {
     try {
       decoded = jwt.verify(refreshToken, process.env.JWT_SECRET!) as {
         id: string;
+        name: string;
         email: string;
         role: string;
+        schoolId: string;
       };
       const userRefreshToken = await prisma.refreshTokens.findFirst({
         where: {
@@ -46,8 +48,10 @@ export const POST = async () => {
         const newRefreshToken = jwt.sign(
           {
             id: decoded.id,
+            name: decoded.name,
             email: decoded.email,
             role: decoded.role,
+            schoolId: decoded.schoolId,
           },
           process.env.JWT_SECRET!,
           { expiresIn: "1W" }
@@ -108,8 +112,10 @@ export const POST = async () => {
     const newAccessToken = jwt.sign(
       {
         id: decoded.id,
+        name: decoded.name,
         email: decoded.email,
         role: decoded.role,
+        schoolId: decoded.schoolId,
       },
       process.env.JWT_SECRET!,
       { expiresIn: "1H" }
