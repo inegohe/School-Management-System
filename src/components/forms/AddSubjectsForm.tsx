@@ -61,8 +61,9 @@ const AddSubjectsForm = ({
                 type="text"
                 value={subject}
                 onChange={(e) => handleSubjectChange(index, e.target.value)}
+                autoFocus={true}
                 onKeyPress={(e) => {
-                  if(e.key === "Enter"){
+                  if (e.key === "Enter") {
                     e.preventDefault();
                     handleAddSubject();
                   }

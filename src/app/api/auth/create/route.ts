@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
     } = await req.json();
 
     const schoolId = v4();
-    
+
     const staffs = staffsData.map((staff: StaffData) => {
       return { id: v4(), ...staff, schoolId };
     });
@@ -49,6 +49,7 @@ export const POST = async (req: Request) => {
       data: {
         id: schoolId,
         ...schoolData,
+        type: schoolData.type.toUpperCase(),
         admins: [...admins.map((admin: StaffData) => admin.name)],
         subjects,
         timetableHtml,

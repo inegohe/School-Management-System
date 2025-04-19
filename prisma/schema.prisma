@@ -45,11 +45,11 @@ model Staff {
   post          String
   payrollNo     String
   level         String
-  yearOfService String
+  yearOfService Int
   teaching      Boolean
   address       String
   phoneNo       String
-  yearOfExit    String
+  yearOfExit    Int
   schoolId      String
   admin         Boolean
 
@@ -61,7 +61,7 @@ model Parent {
   id        String   @id @default(uuid()) // Use UUID for primary key
   email     String
   name      String
-  phoneNo   String
+  phoneNo   Int
   address   String
   schoolId  String
 
@@ -75,13 +75,13 @@ model Student {
   name         String
   email        String
   parentId     String
-  parentNo     String
+  parentNo     Int
   parentName     String
   registrationNo String
   admissionNo  String
-  birthdate    DateTime
+  birthdate    String
   gender       String
-  DOA          DateTime // Date of Admission
+  DOA          String // Date of Admission
   class        String
   address      String
   schoolId     String
@@ -144,8 +144,8 @@ model Class {
 model Timetable {
   id         String   @id @default(uuid()) // Use UUID for primary key
   day        String // e.g., Monday, Tuesday
-  startTime  DateTime
-  endTime    DateTime
+  startTime  String
+  endTime    String
   class      String
   subject    String
   period     Int

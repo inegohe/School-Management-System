@@ -31,10 +31,10 @@ interface StaffData {
   post: string;
   payrollNo: string;
   level: string;
-  yearOfExit: string;
+  yearOfExit: number;
   address: string;
   phoneNo: string;
-  yearOfService: string;
+  yearOfService: number;
   teaching: boolean;
   admin: boolean;
 }
