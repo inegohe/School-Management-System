@@ -64,7 +64,7 @@ const AddParentsForm = ({
         const parsedData: ParentData[] = jsonData.map((row) => ({
           name: row["NAME"] || "",
           email: row["EMAIL"] || "",
-          phoneNo: row["PHONE NO"] || "",
+          phoneNo: row["PHONE NO"].toString() || "",
           address: row["ADDRESS"] || "",
         }));
 
