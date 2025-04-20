@@ -2,8 +2,12 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { parentsData, role } from "@/lib/data";
+import { parentsData } from "@/lib/data";
+import { useRole } from "@/store";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type Parent = {
   id: number;
@@ -41,6 +45,8 @@ const columns = [
 ];
 
 const ParentListPage = () => {
+  const router = useRouter();
+  const role = useRole((state) => state.role);
   const renderRow = (item: Parent) => (
     <tr
       key={item.id}
@@ -57,7 +63,7 @@ const ParentListPage = () => {
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {role === "ADMIN" && (
             <>
               <FormModal table="parent" type="update" data={item} />
               <FormModal table="parent" type="delete" id={item.id} />
@@ -68,30 +74,43 @@ const ParentListPage = () => {
     </tr>
   );
 
-  return (
-    <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
-      {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
-            {role === "admin" && <FormModal table="teacher" type="create" />}
+  useEffect(() => {
+    if (["ADMIN", "TEACHER"].includes(role)) {
+      router.push(`/${role.toLowerCase()}`);
+    }
+  }, []);
+  if (["ADMIN", "TEACHER"].includes(role)) {
+    return (
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> You are not an ADMIN or
+        TEACHER, redirecting to {role} page
+      </div>
+    );
+  } else
+    return (
+      <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
+        {/* TOP */}
+        <div className="flex items-center justify-between">
+          <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+            <TableSearch />
+            <div className="flex items-center gap-4 self-end">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/filter.png" alt="" width={14} height={14} />
+              </button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/sort.png" alt="" width={14} height={14} />
+              </button>
+              {role === "ADMIN" && <FormModal table="teacher" type="create" />}
+            </div>
           </div>
         </div>
+        {/* LIST */}
+        <Table columns={columns} renderRow={renderRow} data={parentsData} />
+        {/* PAGINATION */}
+        <Pagination />
       </div>
-      {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={parentsData} />
-      {/* PAGINATION */}
-      <Pagination />
-    </div>
-  );
+    );
 };
 
 export default ParentListPage;

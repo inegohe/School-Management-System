@@ -60,12 +60,6 @@ const Menu = () => {
           visible: ["admin", "teacher", "student", "parent"],
         },
         {
-          title: "Messages",
-          icon: "/message.png",
-          link: "/list/messages",
-          visible: ["admin", "teacher", "student", "parent"],
-        },
-        {
           title: "Announcements",
           icon: "/announcement.png",
           link: "/list/announcements",
@@ -91,7 +85,7 @@ const Menu = () => {
         {
           title: "Logout",
           icon: "/logout.png",
-          link: "/logout",
+          link: "/api/auth/logout",
           visible: ["admin", "teacher", "student", "parent"],
         },
       ],

@@ -2,7 +2,8 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, teachersData } from "@/lib/data";
+import { teachersData } from "@/lib/data";
+import { useRole } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -55,6 +56,7 @@ const columns = [
 ];
 
 const TeacherListPage = () => {
+  const role = useRole((state) => state.role);
   const renderRow = (item: Teacher) => (
     <tr
       key={item.id}
@@ -85,7 +87,7 @@ const TeacherListPage = () => {
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
-          {role === "admin" && (
+          {role === "ADMIN" && (
             <FormModal table="teacher" type="delete" id={item.id} />
           )}
         </div>
@@ -107,7 +109,7 @@ const TeacherListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="teacher" type="create" />}
+            {role === "ADMIN" && <FormModal table="teacher" type="create" />}
           </div>
         </div>
       </div>

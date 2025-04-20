@@ -2,7 +2,8 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { eventsData, role } from "@/lib/data";
+import { eventsData } from "@/lib/data";
+import { useRole } from "@/store";
 import Image from "next/image";
 
 type Event = {
@@ -45,6 +46,7 @@ const columns = [
 ];
 
 const EventListPage = () => {
+  const role = useRole((state) => state.role);
   const renderRow = (item: Event) => (
     <tr
       key={item.id}
@@ -57,7 +59,7 @@ const EventListPage = () => {
       <td className="hidden md:table-cell">{item.endTime}</td>
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {role === "ADMIN" && (
             <>
               <FormModal table="event" type="update" data={item} />
               <FormModal table="event" type="delete" id={item.id} />
@@ -82,7 +84,7 @@ const EventListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="event" type="create" />}
+            {role === "ADMIN" && <FormModal table="event" type="create" />}
           </div>
         </div>
       </div>

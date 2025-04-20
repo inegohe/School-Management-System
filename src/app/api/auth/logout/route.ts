@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 
-export const POST = async () => {
+export const GET = async () => {
   try {
     const cookiesStore = await cookies();
 

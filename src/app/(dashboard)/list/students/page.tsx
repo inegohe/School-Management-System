@@ -2,9 +2,13 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, studentsData } from "@/lib/data";
+import { studentsData } from "@/lib/data";
+import { useRole } from "@/store";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type Student = {
   id: number;
@@ -50,6 +54,8 @@ const columns = [
 ];
 
 const StudentListPage = () => {
+  const router = useRouter();
+  const role = useRole((state) => state.role);
   const renderRow = (item: Student) => (
     <tr
       key={item.id}
@@ -79,7 +85,7 @@ const StudentListPage = () => {
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
-          {role === "admin" && (
+          {role === "ADMIN" && (
             <FormModal table="student" type="delete" id={item.id} />
           )}
         </div>
@@ -87,27 +93,42 @@ const StudentListPage = () => {
     </tr>
   );
 
-  return (
-    <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
-            {role === "admin" && <FormModal table="student" type="create" />}
+  useEffect(() => {
+    if (["ADMIN", "TEACHER"].includes(role)) {
+      router.push(`/${role.toLowerCase()}`);
+    }
+  }, []);
+  if (["ADMIN", "TEACHER"].includes(role)) {
+    return (
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> You are not an ADMIN or
+        TEACHER, redirecting to {role} page
+      </div>
+    );
+  } else
+    return (
+      <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
+        <div className="flex items-center justify-between">
+          <h1 className="hidden md:block text-lg font-semibold">
+            All Students
+          </h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+            <TableSearch />
+            <div className="flex items-center gap-4 self-end">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/filter.png" alt="" width={14} height={14} />
+              </button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/sort.png" alt="" width={14} height={14} />
+              </button>
+              {role === "ADMIN" && <FormModal table="student" type="create" />}
+            </div>
           </div>
         </div>
+        <Table columns={columns} renderRow={renderRow} data={studentsData} />
+        <Pagination />
       </div>
-      <Table columns={columns} renderRow={renderRow} data={studentsData} />
-      <Pagination />
-    </div>
-  );
+    );
 };
 
 export default StudentListPage;
