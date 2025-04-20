@@ -1,28 +1,15 @@
-import { withAuthRoute } from "@/lib/routeauth";
+import { getUser } from "@/server-actions";
 import { NextResponse } from "next/server";
 
-export const GET = withAuthRoute(
-  async (
-    req: Request,
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      role: string;
-      schoolId: string;
-    }
-  ) => {
-    try {
-      if (user.role) {
-        return NextResponse.json({ ...user }, { status: 200 });
-      }
-      return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
-    } catch (error) {
-      console.log(error);
-      return NextResponse.json(
-        { message: "An internal error occured" },
-        { status: 500 }
-      );
-    }
+export const GET = async () => {
+  try {
+    const user = await getUser();
+    return NextResponse.json({ ...user }, { status: 200 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "An internal error occured" },
+      { status: 500 }
+    );
   }
-);
+};

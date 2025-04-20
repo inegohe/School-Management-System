@@ -2,20 +2,30 @@
 
 import Announcement from "@/components/Announcements";
 import ScheduleCalendar from "@/components/ScheduleCalender";
-import { useRole } from "@/store";
+import { getUser } from "@/server-actions";
+import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const TeacherPage = () => {
   const router = useRouter();
-  const role = useRole((state) => state.role);
+  const setUser = useUser((state) => state.setUser);
+  const { role, setRole } = useRole();
+
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
 
   useEffect(() => {
-    if (role !== "TEACHER") {
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (role !== "TEACHER") {
       router.push(`/${role.toLowerCase()}`);
     }
-  }, []);
+  }, [role]);
   if (role !== "TEACHER") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">

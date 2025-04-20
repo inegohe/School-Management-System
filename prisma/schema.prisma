@@ -153,6 +153,26 @@ model Attendance {
   student   Student        @relation(fields: [studentId], references: [id])
 }
 
+model Event {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  startTime   String
+  endTime     String
+  schoolId    String
+  school    School         @relation(fields: [schoolId], references: [id])
+}
+
+model Announcement {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  schoolId    String
+  school    School         @relation(fields: [schoolId], references: [id])
+}
+
 enum Role {
   ADMIN
   TEACHER

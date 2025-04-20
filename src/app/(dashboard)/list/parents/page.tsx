@@ -5,7 +5,8 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { parentsData } from "@/lib/data";
-import { useRole } from "@/store";
+import { getUser } from "@/server-actions";
+import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -48,7 +49,8 @@ const columns = [
 
 const ParentListPage = () => {
   const router = useRouter();
-  const role = useRole((state) => state.role);
+  const setUser = useUser((state) => state.setUser);
+  const { role, setRole } = useRole();
   const renderRow = (item: Parent) => (
     <tr
       key={item.id}
@@ -76,11 +78,19 @@ const ParentListPage = () => {
     </tr>
   );
 
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
+
   useEffect(() => {
-    if (!["ADMIN", "TEACHER"].includes(role)) {
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     }
-  }, []);
+  }, [role]);
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">

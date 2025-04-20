@@ -12,7 +12,8 @@ import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSchool } from "@/actions";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { getUser } from "@/server-actions";
 
 type ValuePiece = Date | null;
 
@@ -20,10 +21,11 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AdminPage = () => {
   const router = useRouter();
+  const setUser = useUser((state) => state.setUser);
   const setSchool = useSchool((state) => state.setSchool);
   const setCounts = useCounts((state) => state.setCounts);
   const [value, onChange] = useState<Value>(new Date());
-  const role = useRole((state) => state.role);
+  const { role, setRole } = useRole();
 
   const getData = async () => {
     toast("Fetching...");
@@ -38,13 +40,21 @@ const AdminPage = () => {
     }
   };
 
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
+
   useEffect(() => {
-    if (role !== "ADMIN") {
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
     } else {
       getData();
     }
-  }, [value]);
+  }, [value, role]);
 
   if (role !== "ADMIN") {
     return (

@@ -6,18 +6,28 @@ import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRole } from "@/store";
+import { useRole, useUser } from "@/store";
 import { useEffect } from "react";
 import { LoaderCircle } from "lucide-react";
+import { getUser } from "@/server-actions";
 
 const SingleStudentPage = () => {
   const router = useRouter();
-  const role = useRole((state) => state.role);
+  const setUser = useUser((state) => state.setUser);
+  const { role, setRole } = useRole();
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
+
   useEffect(() => {
-    if (!["ADMIN", "TEACHER"].includes(role)) {
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     }
-  }, []);
+  }, [role]);
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">

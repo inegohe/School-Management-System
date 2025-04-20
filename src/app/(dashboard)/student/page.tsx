@@ -4,20 +4,36 @@ import Announcement from "@/components/Announcements";
 import Calender from "@/components/Calender";
 import Event from "@/components/Event";
 import ScheduleCalendar from "@/components/ScheduleCalender";
-import { useRole } from "@/store";
+import { getUser } from "@/server-actions";
+import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const StudentPage = () => {
   const router = useRouter();
-  const role = useRole((state) => state.role);
+  const [value, onChange] = useState<Value>(new Date());
+  const setUser = useUser((state) => state.setUser);
+  const { role, setRole } = useRole();
+
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
 
   useEffect(() => {
-    if (role !== "STUDENT") {
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (role !== "STUDENT") {
       router.push(`/${role.toLowerCase()}`);
     }
-  }, []);
+  }, [value, role]);
+
   if (role !== "STUDENT") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
@@ -42,7 +58,7 @@ const StudentPage = () => {
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2 h-full">
             <div className="w-full rounded-md bg-primary-light flex flex-col gap-4 p-2">
-              <Calender />
+              <Calender value={value} onChange={onChange}/>
               <Event />
             </div>
             <Announcement />
