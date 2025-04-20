@@ -55,7 +55,7 @@ interface StudentDataType {
   DOA: string;
   birthdate: string;
   admissionNo: string;
-  gender: string;
+  gender: "MALE" | "FEMALE";
   class: string;
   address: string;
   schoolId: string;

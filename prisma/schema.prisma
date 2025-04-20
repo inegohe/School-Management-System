@@ -81,7 +81,7 @@ model Student {
   registrationNo String
   admissionNo  String
   birthdate    String
-  gender       String
+  gender       Gender
   DOA          String // Date of Admission
   class        String
   address      String
@@ -160,7 +160,7 @@ model Timetable {
 model Attendance {
   id        String   @id @default(uuid()) // Use UUID for primary key
   date      DateTime
-  status    String // e.g., Present, Absent
+  status    AttendanceType
   schoolId  String
   studentId String
   classId   String
@@ -182,4 +182,14 @@ enum SchoolType {
   PRIMARY
   JUNIOR
   SENIOR
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AttendanceType {
+  PRESENT
+  ABSENT
 }

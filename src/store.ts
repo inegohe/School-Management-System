@@ -15,6 +15,29 @@ interface SchoolStoreType {
   setSchool: (school: SchoolDataType | {}) => void;
 }
 
+interface CountType {
+  users: number;
+  staffs: number;
+  students: number;
+  parents: number;
+  classes: number;
+  maleStudents: number;
+  femaleStudents: number;
+  weeksAttendance: {
+    present: number;
+    absent: number;
+  };
+  yearsAttendance: {
+    present: number;
+    absent: number;
+  };
+}
+
+interface CountsStoreType {
+  counts: CountType;
+  setCounts: (counts: CountType) => void;
+}
+
 export const useUser = create<UserStoreType>((set) => ({
   user: {
     id: "",
@@ -35,6 +58,27 @@ export const useRole = create<RoleStoreType>((set) => ({
 export const useSchool = create<SchoolStoreType>((set) => ({
   school: {},
   setSchool: (school: SchoolDataType | {}) => set({ school }),
+}));
+
+export const useCounts = create<CountsStoreType>((set) => ({
+  counts: {
+    users: 0,
+    staffs: 0,
+    students: 0,
+    parents: 0,
+    classes: 0,
+    maleStudents: 0,
+    femaleStudents: 0,
+    weeksAttendance: {
+      present: 0,
+      absent: 0,
+    },
+    yearsAttendance: {
+      present: 0,
+      absent: 0,
+    },
+  },
+  setCounts: (counts: CountType) => set({ counts }),
 }));
 
 export const BACKGROUND_IMAGES: string[] = [

@@ -7,20 +7,39 @@ import Calender from "@/components/Calender";
 import Cards from "@/components/Cards";
 import CountChart from "@/components/CountChart";
 import Event from "@/components/Event";
-import { useRole } from "@/store";
+import { useCounts, useRole, useSchool, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { fetchSchool } from "@/actions";
+import toast, { Toaster } from "react-hot-toast";
 
 const AdminPage = () => {
   const router = useRouter();
+  const setSchool = useSchool((state) => state.setSchool);
+  const setCounts = useCounts((state) => state.setCounts);
   const role = useRole((state) => state.role);
+
+  const getData = async () => {
+    const result = await fetchSchool();
+    if (!result.success) {
+      toast(result.data);
+      toast("An error occured while fetching data, please refresh the page");
+    } else {
+      const { _count, ...schoolData } = result.data;
+      setSchool(schoolData);
+      setCounts(_count);
+    }
+  };
 
   useEffect(() => {
     if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
+    } else {
+      getData();
     }
   }, []);
+
   if (role !== "ADMIN") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">

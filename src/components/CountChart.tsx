@@ -3,22 +3,24 @@
 import Image from "next/image";
 import RadialCharts from "./RadialChart";
 import { Mars, Venus } from "lucide-react";
+import { useCounts } from "@/store";
 
 const CountChart = () => {
+  const counts = useCounts((state) => state.counts);
   const data = [
     {
       name: "Male",
-      count: 1334,
+      count: counts.maleStudents,
       fill: "#ceebfa",
     },
     {
       name: "Female",
-      count: 1234,
+      count: counts.femaleStudents,
       fill: "#fae27c",
     },
     {
       name: "Gender",
-      count: 1234 * 2 + 100,
+      count: counts.students,
       fill: "#1f1e1e",
     },
   ];
@@ -38,13 +40,18 @@ const CountChart = () => {
       <div className="flex w-full gap-2 justify-between items-center mt-4">
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
           <p className="p-4 bg-sky rounded-full w-7 h-7" />
-          <p className="font-semibold">1,234</p>
-          <p className="text-gray-400">Boys({55}%)</p>
+          <p className="font-semibold">counts.maleStudents</p>
+          <p className="text-gray-400">
+            Boys({((counts.maleStudents / counts.students) * 100).toFixed(2)}%)
+          </p>
         </div>
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
           <p className="p-4 bg-yellow rounded-full w-7 h-7" />
-          <p className="font-semibold">1,234</p>
-          <p className="text-gray-400">Girls({55}%)</p>
+          <p className="font-semibold">counts.femaleStudents</p>
+          <p className="text-gray-400">
+            Girls({((counts.femaleStudents / counts.students) * 100).toFixed(2)}
+            %)
+          </p>
         </div>
       </div>
     </div>

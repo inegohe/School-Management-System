@@ -1,13 +1,15 @@
 "use client";
 
+import { useCounts } from "@/store";
 import Image from "next/image";
 
 const Cards = () => {
+  const counts = useCounts((state) => state.counts);
   const data = [
-    { number: 1345, title: "students" },
-    { number: 1332, title: "teachers" },
-    { number: 1948, title: "parents" },
-    { number: 1475, title: "subjects" },
+    { number: counts.students, title: "students" },
+    { number: counts.staffs, title: "staffs" },
+    { number: counts.parents, title: "parents" },
+    { number: counts.classes, title: "classes" },
   ];
   return (
     <div className="flex gap-4 flex-wrap w-full">
@@ -22,7 +24,9 @@ const Cards = () => {
             </p>
             <Image src="/more.png" width={20} height={20} alt="more" />
           </div>
-          <h1 className="text-3xl font-semibold my-4 text-black">{item.number}</h1>
+          <h1 className="text-3xl font-semibold my-4 text-black">
+            {item.number}
+          </h1>
           <p className="text-sm text-gray-400 capitalize">{item.title}</p>
         </div>
       ))}
