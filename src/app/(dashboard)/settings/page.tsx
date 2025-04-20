@@ -1,3 +1,5 @@
+"use client";
+
 import { useRole } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -15,8 +17,11 @@ const Settings = () => {
   if (role !== "ADMIN") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> You are not an ADMIN,
-        redirecting to {role} page
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not an ADMIN,
+        redirecting to ${role} page`}
       </div>
     );
   } else return <div>Settings</div>;

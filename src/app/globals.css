@@ -1,8 +1,8 @@
 :root {
   --primary: black;
-  --primary-light: rgb(31, 30, 30);
+  --primary-light: #1f1e1e;
   --secondary: white;
-  --secondary-light: rgba(255, 255, 255, 0.938);
+  --secondary-light: #ffffffef;
   --accent-1: #ceebfa;
   --accent-1-light: #edf9fb;
   --accent-2: #cfceff;
@@ -152,7 +152,6 @@ td,
 th {
   @apply border border-gray-300 px-4 py-2 text-center;
 }
-
 
 @tailwind base;
 @tailwind components;

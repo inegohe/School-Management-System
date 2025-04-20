@@ -32,7 +32,7 @@ const LineChart = ({ data }: { data: DataType[] }) => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
-        <Tooltip />
+        <Tooltip wrapperClassName="!bg-primary !text-secondary" />
         <Legend />
         <Line
           type="monotone"

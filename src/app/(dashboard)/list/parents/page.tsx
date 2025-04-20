@@ -1,3 +1,5 @@
+"use client";
+
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -75,11 +77,11 @@ const ParentListPage = () => {
   );
 
   useEffect(() => {
-    if (["ADMIN", "TEACHER"].includes(role)) {
+    if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     }
   }, []);
-  if (["ADMIN", "TEACHER"].includes(role)) {
+  if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> You are not an ADMIN or

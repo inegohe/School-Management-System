@@ -1,3 +1,5 @@
+"use client";
+
 import { useRole } from "@/store";
 import { useRouter } from "next/navigation";
 

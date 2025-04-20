@@ -24,8 +24,11 @@ const AdminPage = () => {
   if (role !== "ADMIN") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> You are not an ADMIN,
-        redirecting to {role} page
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not an ADMIN,
+        redirecting to ${role} page`}
       </div>
     );
   } else
@@ -41,7 +44,7 @@ const AdminPage = () => {
             <AttendanceLineChart />
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2">
-            <div className="w-full rounded-md bg-white flex flex-col gap-4 p-2">
+            <div className="w-full rounded-md bg-primary-light flex flex-col gap-4 p-2">
               <Calender />
               <Event />
             </div>

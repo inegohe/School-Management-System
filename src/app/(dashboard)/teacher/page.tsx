@@ -19,8 +19,11 @@ const TeacherPage = () => {
   if (role !== "TEACHER") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> You are not a TEACHER,
-        redirecting to {role} page
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not a TEACHER,
+        redirecting to ${role} page`}
       </div>
     );
   } else
@@ -28,7 +31,7 @@ const TeacherPage = () => {
       <>
         <section className="w-full flex gap-2 flex-col xl:flex-row h-fit">
           <div className="xl:w-2/3 flex flex-col gap-4 p-2 h-full">
-            <div className="h-[850px] lg:h-full flex flex-col bg-white p-3 lg:p-4">
+            <div className="h-[850px] lg:h-full flex flex-col bg-primary-light p-3 lg:p-4">
               <div className="w-full justify-between flex items-center">
                 <h1 className="font-bold text-lg">Schedule</h1>
               </div>

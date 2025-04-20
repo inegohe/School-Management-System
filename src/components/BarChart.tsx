@@ -9,14 +9,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Rectangle,
 } from "recharts";
 
 type DataType = {
-    name: string,
-    present: number,
-    absent: number
-}
+  name: string;
+  present: number;
+  absent: number;
+};
 
 const BarChart = ({ data }: { data: DataType[] }) => {
   return (
@@ -35,7 +34,7 @@ const BarChart = ({ data }: { data: DataType[] }) => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
-        <Tooltip />
+        <Tooltip wrapperClassName="!bg-primary !text-secondary" />
         <Legend />
         <Bar dataKey="present" fill="#ceebfa" radius={[30, 30, 0, 0]} />
         <Bar dataKey="absent" fill="#fae27c" radius={[30, 30, 0, 0]} />

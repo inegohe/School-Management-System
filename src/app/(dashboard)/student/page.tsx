@@ -21,8 +21,11 @@ const StudentPage = () => {
   if (role !== "STUDENT") {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> You are not a STUDENT,
-        redirecting to {role} page
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not a STUDENT,
+        redirecting to ${role} page`}
       </div>
     );
   } else

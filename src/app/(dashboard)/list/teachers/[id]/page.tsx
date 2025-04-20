@@ -1,3 +1,5 @@
+"use client";
+
 import Announcements from "@/components/Announcements";
 import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";

@@ -1,3 +1,5 @@
+"use client";
+
 import Announcements from "@/components/Announcements";
 import ScheduleCalender from "@/components/ScheduleCalender";
 import Performance from "@/components/Performance";
@@ -12,11 +14,11 @@ const SingleStudentPage = () => {
   const router = useRouter();
   const role = useRole((state) => state.role);
   useEffect(() => {
-    if (["ADMIN", "TEACHER"].includes(role)) {
+    if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     }
   }, []);
-  if (["ADMIN", "TEACHER"].includes(role)) {
+  if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> You are not an ADMIN or

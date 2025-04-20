@@ -24,10 +24,7 @@ const RadialCharts = ({ data }: { data: DataType }) => {
         barSize={40}
         data={data}
       >
-        <RadialBar
-          background
-          dataKey="count"
-        />
+        <RadialBar dataKey="count" />
       </RadialBarChart>
     </ResponsiveContainer>
   );
