@@ -40,14 +40,14 @@ const CountChart = () => {
       <div className="flex w-full gap-2 justify-between items-center mt-4">
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
           <p className="p-4 bg-sky rounded-full w-7 h-7" />
-          <p className="font-semibold">counts.maleStudents</p>
+          <p className="font-semibold">{counts.maleStudents}</p>
           <p className="text-gray-400">
             Boys({((counts.maleStudents / counts.students) * 100).toFixed(2)}%)
           </p>
         </div>
         <div className="flex text-start justify-center flex-col gap-1 text-sm">
           <p className="p-4 bg-yellow rounded-full w-7 h-7" />
-          <p className="font-semibold">counts.femaleStudents</p>
+          <p className="font-semibold">{counts.femaleStudents}</p>
           <p className="text-gray-400">
             Girls({((counts.femaleStudents / counts.students) * 100).toFixed(2)}
             %)

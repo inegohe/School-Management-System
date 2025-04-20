@@ -16,8 +16,8 @@ function getDayRange(date: Date): { gte: Date; lt: Date } {
   };
 }
 
-function getCurrentWeekMonday(): Date {
-  const today = new Date();
+function getCurrentWeekMonday(date: Date): Date {
+  const today = new Date(date) || new Date();
   const currentDay = today.getDay();
   const daysToSubtract = currentDay === 0 ? 6 : currentDay - 1;
   const startOfWeekMonday = new Date(today);
@@ -43,10 +43,11 @@ interface DailyAttendanceRecord {
 const weekDayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 async function getDailyAttendanceForWeek(
-  schoolId: string
+  schoolId: string,
+  date: Date
 ): Promise<DailyAttendanceRecord[]> {
   try {
-    const startOfWeekMonday = getCurrentWeekMonday();
+    const startOfWeekMonday = getCurrentWeekMonday(date);
     const dailyPromises: Promise<{ present: number; absent: number }>[] = [];
     for (let i = 0; i < 5; i++) {
       const currentDayDate = new Date(startOfWeekMonday);
@@ -183,8 +184,8 @@ async function getStudentGenderCountsForSchool(
     });
     const counts: GenderCounts = { male: 0, female: 0 };
     for (const group of genderGroups) {
-      if (group.gender === "MALE") counts.male = group._count?._all || 0;
-      else if (group.gender === "FEMALE")
+      if (group.gender === Gender.MALE) counts.male = group._count?._all || 0;
+      else if (group.gender === Gender.FEMALE)
         counts.female = group._count?._all || 0;
     }
     return counts;
@@ -194,7 +195,7 @@ async function getStudentGenderCountsForSchool(
   }
 }
 
-export const GET = withAuthRoute(async (req: Request, user) => {
+export const POST = withAuthRoute(async (req: Request, user) => {
   if (!user.schoolId) {
     return NextResponse.json(
       { message: "User not associated with a school." },
@@ -203,8 +204,9 @@ export const GET = withAuthRoute(async (req: Request, user) => {
   }
 
   try {
+    const { date } = await req.json();
     const schoolId = user.schoolId;
-    const currentYear = new Date().getFullYear();
+    const currentYear = new Date(date).getFullYear();
 
     const [school, genderCounts, weeklyDailyAttendance, monthlyAttendance] =
       await Promise.all([
@@ -223,7 +225,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
           },
         }),
         getStudentGenderCountsForSchool(schoolId),
-        getDailyAttendanceForWeek(schoolId),
+        getDailyAttendanceForWeek(schoolId, date),
         getMonthlyAttendanceForYear(schoolId, currentYear),
       ]);
 

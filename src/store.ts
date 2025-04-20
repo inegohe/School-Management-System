@@ -23,14 +23,16 @@ interface CountType {
   classes: number;
   maleStudents: number;
   femaleStudents: number;
-  weeksAttendance: {
+  weeklyDailyAttendance: {
+    name: string;
     present: number;
     absent: number;
-  };
-  yearsAttendance: {
+  }[];
+  monthlyAttendance: {
+    name: string;
     present: number;
     absent: number;
-  };
+  }[];
 }
 
 interface CountsStoreType {
@@ -69,14 +71,27 @@ export const useCounts = create<CountsStoreType>((set) => ({
     classes: 0,
     maleStudents: 0,
     femaleStudents: 0,
-    weeksAttendance: {
-      present: 0,
-      absent: 0,
-    },
-    yearsAttendance: {
-      present: 0,
-      absent: 0,
-    },
+    weeklyDailyAttendance: [
+      { name: "Mon", present: 0, absent: 0 },
+      { name: "Tue", present: 0, absent: 0 },
+      { name: "Wed", present: 0, absent: 0 },
+      { name: "Thu", present: 0, absent: 0 },
+      { name: "Fri", present: 0, absent: 0 },
+    ],
+    monthlyAttendance: [
+      { name: "January", present: 0, absent: 0 },
+      { name: "February", present: 0, absent: 0 },
+      { name: "March", present: 0, absent: 0 },
+      { name: "April", present: 0, absent: 0 },
+      { name: "May", present: 0, absent: 0 },
+      { name: "June", present: 0, absent: 0 },
+      { name: "July", present: 0, absent: 0 },
+      { name: "August", present: 0, absent: 0 },
+      { name: "September", present: 0, absent: 0 },
+      { name: "October", present: 0, absent: 0 },
+      { name: "November", present: 0, absent: 0 },
+      { name: "December", present: 0, absent: 0 },
+    ],
   },
   setCounts: (counts: CountType) => set({ counts }),
 }));

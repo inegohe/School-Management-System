@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Menu from "@/components/Menu";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -19,6 +20,11 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <Toaster
+            toastOptions={{
+              className: "!bg-primary !text-secondary",
+            }}
+          />
         </main>
       </body>
     </html>

@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { useRole } from "@/store";
+import { useRole, useSchool } from "@/store";
 import Link from "next/link";
 import Image from "next/image";
 
 const Menu = () => {
   const role = useRole((state) => state.role);
+  const school = useSchool((state) => state.school) as SchoolDataType;
   const menu = [
     {
       title: "MENU",
@@ -101,8 +102,8 @@ const Menu = () => {
           alt="logo"
           className="text-transparent"
         />
-        <h1 className="font-bold hidden md:block group-hover:block">
-          School Name
+        <h1 className="font-bold hidden md:block group-hover:block w-40 truncate">
+          {school.name || ""}
         </h1>
       </div>
       {menu.map((x, i) => {

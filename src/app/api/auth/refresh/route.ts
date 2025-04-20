@@ -118,7 +118,7 @@ export const POST = async () => {
         schoolId: decoded.schoolId,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "1H" }
+      { expiresIn: "24H" }
     );
 
     // Set the new access token in an HTTP-only cookie
@@ -127,7 +127,7 @@ export const POST = async () => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 10 * 60, // 10 mins
+      maxAge: 24 * 60 * 60, // 10 mins
     });
 
     return NextResponse.json(

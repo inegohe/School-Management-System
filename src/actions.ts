@@ -1,8 +1,8 @@
 import apiClient from "@/lib/apiclient";
 
-export const fetchSchool = async () => {
+export const fetchSchool = async (date: Date) => {
   try {
-    const res = await apiClient.get("/school");
+    const res = await apiClient.post("/school", { date: date || Date.now() });
     if (res.status === 200) {
       return { success: true, data: res.data };
     }

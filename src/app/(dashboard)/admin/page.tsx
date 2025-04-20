@@ -10,18 +10,24 @@ import Event from "@/components/Event";
 import { useCounts, useRole, useSchool, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchSchool } from "@/actions";
 import toast, { Toaster } from "react-hot-toast";
+
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AdminPage = () => {
   const router = useRouter();
   const setSchool = useSchool((state) => state.setSchool);
   const setCounts = useCounts((state) => state.setCounts);
+  const [value, onChange] = useState<Value>(new Date());
   const role = useRole((state) => state.role);
 
   const getData = async () => {
-    const result = await fetchSchool();
+    toast("Fetching...");
+    const result = await fetchSchool(value as Date);
     if (!result.success) {
       toast(result.data);
       toast("An error occured while fetching data, please refresh the page");
@@ -38,7 +44,7 @@ const AdminPage = () => {
     } else {
       getData();
     }
-  }, []);
+  }, [value]);
 
   if (role !== "ADMIN") {
     return (
@@ -64,7 +70,7 @@ const AdminPage = () => {
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2">
             <div className="w-full rounded-md bg-primary-light flex flex-col gap-4 p-2">
-              <Calender />
+              <Calender value={value} onChange={onChange} />
               <Event />
             </div>
             <Announcement />
