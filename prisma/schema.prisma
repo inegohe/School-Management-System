@@ -116,6 +116,8 @@ model School {
   students            Student[]
   timetables          Timetable[]
   users               User[]
+  events              Event[]
+  announcements       Announcement[]
 }
 
 model Class {

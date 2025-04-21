@@ -1,18 +1,26 @@
 "use client";
+import apiClient from "@/lib/apiclient";
+import { Event } from "@prisma/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
-interface Event {
-  title: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-}
 
 const Event = () => {
   const [events, setEvents] = useState<Event[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await apiClient.get("/events");
+        if (res.status === 200) {
+          setEvents(res.data.events);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
   return (
     <div className="flex flex-col gap-4 p-2">
       <div className="w-full justify-between flex items-center">

@@ -1,27 +1,26 @@
 "use client";
+import apiClient from "@/lib/apiclient";
+import { Announcement } from "@prisma/client";
 import Link from "next/link";
-
-const data = [
-  {
-    title: "Lorem Ipsum",
-    time: "9:00am - 10:00am",
-    description: "This is a placeholder description for the announcement.",
-  },
-  {
-    title: "Dolor Sit",
-    time: "11:00am - 12:30pm",
-    description:
-      "Interactive placeholder text for physics and chemistry experiments.",
-  },
-  {
-    title: "Amet Consectetur",
-    time: "12:30pm - 1:30pm",
-    description:
-      "Placeholder text for relaxing and recharging during the break.",
-  },
-];
+import { useEffect, useState } from "react";
 
 const Announcement = () => {
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const res = await apiClient.get("/announcements");
+        if (res.status === 200) {
+          setAnnouncements(res.data.announcements);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
   return (
     <div className="flex flex-col gap-4 p-2 bg-primary-light w-full rounded-md">
       <div className="w-full justify-between flex items-center">
@@ -30,14 +29,16 @@ const Announcement = () => {
           View all
         </Link>
       </div>
-      {data.map((announcement, index) => (
+      {announcements.map((announcement, index) => (
         <div
           key={index}
           className="w-full p-3 lg:p-5 rounded-md h-fit bg-primary gap-2 border-2 odd:border-sky-light even:border-purple-light"
         >
           <div className="w-full justify-between flex items-center">
             <h3 className="font-semibold text-lg">{announcement.title}</h3>
-            <p className="text-sm text-gray-400">{announcement.time}</p>
+            <p className="text-sm text-gray-400">
+              {announcement.date.toLocaleDateString()}
+            </p>
           </div>
           <p className="text-gray-500">{announcement.description}</p>
         </div>
