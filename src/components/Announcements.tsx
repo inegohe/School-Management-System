@@ -1,11 +1,11 @@
 "use client";
 import apiClient from "@/lib/apiclient";
-import { Announcement } from "@prisma/client";
+import { Announcement as AnnouncementType } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Announcement = () => {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<AnnouncementType[]>([]);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
