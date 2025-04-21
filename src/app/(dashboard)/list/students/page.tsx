@@ -54,10 +54,13 @@ const StudentListPage = () => {
       if (res.status === 200) {
         setStudents(res.data.students);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch students");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching students:", error);
       toast.error("An error occurred while fetching students");
     }
@@ -114,6 +117,7 @@ const StudentListPage = () => {
     } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     } else {
+      toast.loading("Fetching Data...");
       fetchStudents(page);
     }
   }, [role, page]);

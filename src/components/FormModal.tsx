@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
 
-const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
+const StaffForm = dynamic(() => import("./forms/StaffForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
@@ -15,7 +15,7 @@ const forms: Record<
   string,
   (type: "create" | "update", data?: any) => React.ReactElement
 > = {
-  teacher: (type, data) => <TeacherForm type={type} data={data} />,
+  teacher: (type, data) => <StaffForm type={type} data={data} />,
   student: (type, data) => <StudentForm type={type} data={data} />,
 };
 
@@ -31,10 +31,6 @@ const FormModal = ({
     | "parent"
     | "subject"
     | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
     | "attendance"
     | "event"
     | "announcement";

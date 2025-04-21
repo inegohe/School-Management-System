@@ -31,7 +31,7 @@ const AddSubjectsForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredSubjects = subjects.filter(
-      (subject) => subject.name.trim() !== ""
+      (subject) => subject.name.trim() !== "" || subject.teachers.filter(x => x.trim() !== "").length > 0
     );
     if (filteredSubjects.length < 10) {
       toast("A school must have atleast 10 subjects");
@@ -54,7 +54,7 @@ const AddSubjectsForm = ({
       >
         <div className="w-full flex flex-col gap-4">
           <h1 className="text-2xl font-bold mb-4">Add Subjects</h1>
-          <div className="gap-4 w-full flex-col flex justify-center">
+          <div className="gap-4 w-full flex-col flex justify-center mb-4">
             {subjects.map((subject, index) => (
               <div className="w-full flex-col gap-2 items-center" key={index}>
                 <h1 className="font-bold text-lg">{`Subject ${index + 1}`}</h1>
@@ -68,6 +68,12 @@ const AddSubjectsForm = ({
                         teachers: subject.teachers,
                       })
                     }
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddSubject();
+                      }
+                    }}
                     autoFocus={true}
                     placeholder="Subject Name"
                     className="input p-2 border-b border-primary rounded-md w-full md:w-1/3 outline-none"

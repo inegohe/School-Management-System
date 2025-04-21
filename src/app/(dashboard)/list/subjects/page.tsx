@@ -38,10 +38,13 @@ const SubjectListPage = () => {
       if (res.status === 200) {
         setSubjects(res.data.subjects);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch subjects");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching subjects:", error);
       toast.error("An error occurred while fetching subjects");
     }
@@ -68,6 +71,7 @@ const SubjectListPage = () => {
   );
 
   useEffect(() => {
+    toast.loading("Fetching Data...");
     fetchSubjects(page);
   }, [page]);
 
@@ -79,10 +83,10 @@ const SubjectListPage = () => {
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-yellow">
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "ADMIN" && <FormModal table="teacher" type="create" />}

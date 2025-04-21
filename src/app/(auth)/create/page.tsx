@@ -56,15 +56,21 @@ const RegisterSchoolPage = () => {
     try {
       console.log(totalData);
       setLoading(true);
+      toast.loading("Creating school");
       const res = await axios.post("/api/auth/create", totalData);
       if (res.status === 201) {
-        toast("School created successfully");
+        toast.dismiss();
+        toast.success("School created successfully");
         setSchool(res.data);
         router.push("/newschool");
+      } else {
+        toast.dismiss();
+        toast.error(`Error: ${res.data.message || "Unknown"}`);
       }
     } catch (error: any) {
+      toast.dismiss();
       console.error("Error creating school:", error);
-      toast(`Error: ${error.response?.data?.message || "Unknown"}`);
+      toast.error(`Error: ${error.response?.data?.message || "Unknown"}`);
     } finally {
       setLoading(false);
     }

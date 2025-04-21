@@ -16,7 +16,7 @@ export const POST = async (req: Request) => {
       timetableHtml,
       admins,
     } = await req.json();
-
+    
     const schoolId = v4();
 
     const staffs = staffsData.map((staff: StaffData) => {

@@ -49,10 +49,13 @@ const ParentListPage = () => {
       if (res.status === 200) {
         setParents(res.data.parents);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch parents");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching parents:", error);
       toast.error("An error occurred while fetching parents");
     }
@@ -98,7 +101,10 @@ const ParentListPage = () => {
       getUserRole();
     } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
-    } else fetchParents(page);
+    } else {
+      toast.loading("Fetching Data...");
+      fetchParents(page);
+    }
   }, [role, page]);
 
   if (!["ADMIN", "TEACHER"].includes(role)) {

@@ -28,15 +28,19 @@ const AdminPage = () => {
   const { role, setRole } = useRole();
 
   const getData = async () => {
-    toast("Fetching...");
+    toast.loading("Fetching Data...");
     const result = await fetchSchool(value as Date);
     if (!result.success) {
-      toast(result.data);
-      toast("An error occured while fetching data, please refresh the page");
+      toast.dismiss();
+      toast.error(result.data);
+      toast.error(
+        "An error occured while fetching data, please refresh the page"
+      );
     } else {
       const { _count, ...schoolData } = result.data;
       setSchool(schoolData);
       setCounts(_count);
+      toast.dismiss();
     }
   };
 

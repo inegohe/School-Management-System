@@ -53,16 +53,20 @@ const StaffListPage = () => {
       if (res.status === 200) {
         setStaffs(res.data.staffs);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch staffs");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching staffs:", error);
       toast.error("An error occurred while fetching staffs");
     }
   };
 
   useEffect(() => {
+    toast.loading("Fetching Data...");
     fetchStaffs(page);
   }, [page]);
 

@@ -40,10 +40,13 @@ const ClassListPage = () => {
       if (res.status === 200) {
         setClasses(res.data.classes);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch classes");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching classes:", error);
       toast.error("An error occurred while fetching classes");
     }
@@ -71,6 +74,7 @@ const ClassListPage = () => {
   );
 
   useEffect(() => {
+    toast.loading("Fetching Data...");
     fetchClasses(page);
   }, [page]);
 

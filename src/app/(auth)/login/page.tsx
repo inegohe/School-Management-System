@@ -81,7 +81,7 @@ const LoginPage = () => {
           toast("Check your email inbox to confirm your password setup.");
           setPNS(false);
           setPNSNote("");
-        }
+        } else toast.error("Error sending confirmation email");
       } catch (err: any) {
         console.log(err.response);
         setError(

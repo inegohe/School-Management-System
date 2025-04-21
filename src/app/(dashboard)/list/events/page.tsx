@@ -47,10 +47,13 @@ const EventListPage = () => {
       if (res.status === 200) {
         setEvents(res.data.events);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch events");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching events:", error);
       toast.error("An error occurred while fetching events");
     }
@@ -79,6 +82,7 @@ const EventListPage = () => {
   );
 
   useEffect(() => {
+    toast.loading("Fetching Data...");
     fetchEvents(page);
   }, [page]);
 

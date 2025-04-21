@@ -40,10 +40,13 @@ const AnnouncementListPage = () => {
       if (res.status === 200) {
         setAnnouncements(res.data.announcements);
         setTotalPages(res.data.totalPages);
+        toast.dismiss();
       } else {
+        toast.dismiss();
         toast.error(res.data.message || "Failed to fetch announcements");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error fetching announcements:", error);
       toast.error("An error occurred while fetching announcements");
     }
@@ -70,6 +73,7 @@ const AnnouncementListPage = () => {
   );
 
   useEffect(() => {
+    toast.loading("Fetching Data...");
     fetchAnnouncements(page);
   }, [page]);
 
