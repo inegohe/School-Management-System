@@ -29,6 +29,9 @@ const Announcement = () => {
           View all
         </Link>
       </div>
+      {!announcements.length && (
+        <p className="font-bold text-gray-400 text-lg">No Announcements</p>
+      )}
       {announcements.map((announcement, index) => (
         <div
           key={index}

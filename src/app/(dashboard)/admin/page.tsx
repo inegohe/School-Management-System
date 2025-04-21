@@ -69,16 +69,16 @@ const AdminPage = () => {
   } else
     return (
       <>
-        <section className="w-full flex gap-2 flex-col xl:flex-row">
-          <div className="xl:w-2/3 flex flex-col gap-4 p-2">
+        <section className="w-full flex gap-2 flex-col lg:flex-row">
+          <div className="lg:w-2/3 flex flex-col gap-4 p-2">
             <Cards />
-            <div className="flex gap-2 w-full flex-col xl:flex-row">
+            <div className="flex gap-2 w-full flex-col md:flex-row">
               <CountChart />
               <AttendanceChart />
             </div>
             <AttendanceLineChart />
           </div>
-          <div className="xl:w-1/3 flex flex-col gap-4 p-2">
+          <div className="lg:w-1/3 flex flex-col gap-4 p-2">
             <div className="w-full rounded-md bg-primary-light flex flex-col gap-4 p-2">
               <Calender value={value} onChange={onChange} />
               <Event />

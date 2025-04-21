@@ -20,7 +20,10 @@ const Cards = () => {
         >
           <div className="flex justify-between items-center">
             <p className="rounded-full px-2 py-1 bg-primary-light font-bold text-xs">
-              2025/05
+              {new Date().toLocaleDateString("en-UK", {
+                year: "numeric",
+                month: "2-digit",
+              })}
             </p>
             <Image src="/more.png" width={20} height={20} alt="more" />
           </div>
