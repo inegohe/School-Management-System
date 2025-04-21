@@ -1,11 +1,11 @@
 "use client";
 import apiClient from "@/lib/apiclient";
-import { Event } from "@prisma/client";
+import { Event as EventType } from "@prisma/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const Event = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventType[]>([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
