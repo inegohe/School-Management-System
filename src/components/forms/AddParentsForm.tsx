@@ -158,8 +158,8 @@ const AddParentsForm = ({
           </div>
         )}
         <p className="text-xs font-semibold text-secondary-light">
-          If a parent has two or more children, Do not duplicate the parent's
-          data, Input the parent just once!!
+          If a parent has two or more children, Do not duplicate the
+          parent&apos;s data, Input the parent just once!!
         </p>
       </div>
       <div className="w-full flex gap-4 justify-between">

@@ -110,7 +110,7 @@ model School {
   closeHour           String
   timetableHtml       String
   admins              String[]
-  subjects            String[]
+  
   attendances         Attendance[]
   classes             Class[]
   parents             Parent[]
@@ -120,7 +120,17 @@ model School {
   users               User[]
   events              Event[]
   announcements       Announcement[]
+  subjects            Subject[]
 }
+
+model Subject {
+  id           String       @id @default(uuid())
+  name         String
+  teachers     String[]          @default([])
+  schoolId     String
+  school       School       @relation(fields: [schoolId], references: [id])
+}
+
 
 model Class {
   id           String       @id @default(uuid())

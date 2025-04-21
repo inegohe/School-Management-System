@@ -4,20 +4,16 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { subjectsData } from "@/lib/data";
+import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
+import { Subject } from "@prisma/client";
 import Image from "next/image";
-
-type Subject = {
-  id: number;
-  name: string;
-  teachers: string[];
-};
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const columns = [
   {
     header: "Subject Name",
-    accessor: "name",
   },
   {
     header: "Teachers",
@@ -32,6 +28,25 @@ const columns = [
 
 const SubjectListPage = () => {
   const role = useRole((state) => state.role);
+  const [subjects, setSubjects] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchSubjects = async (page: number) => {
+    try {
+      const res = await apiClient.get(`/subjects?page=${page}&limit=10`);
+      if (res.status === 200) {
+        setSubjects(res.data.subjects);
+        setTotalPages(res.data.totalPages);
+      } else {
+        toast.error(res.data.message || "Failed to fetch subjects");
+      }
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+      toast.error("An error occurred while fetching subjects");
+    }
+  };
+
   const renderRow = (item: Subject) => (
     <tr
       key={item.id}
@@ -52,6 +67,10 @@ const SubjectListPage = () => {
     </tr>
   );
 
+  useEffect(() => {
+    fetchSubjects(page);
+  }, [page]);
+
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
@@ -71,9 +90,13 @@ const SubjectListPage = () => {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={subjectsData} />
+      <Table columns={columns} renderRow={renderRow} data={subjects} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={(newPage) => setPage(newPage)}
+      />
     </div>
   );
 };

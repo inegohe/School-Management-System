@@ -7,13 +7,13 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
+import { Student } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Student } from "@prisma/client";
 
 const columns = [
   {
@@ -68,7 +68,7 @@ const StudentListPage = () => {
       key={item.id}
       className="border-b border-gray-200 even:bg-primary-light text-sm hover:cursor-pointeer"
     >
-      <td className="flex items-center gap-4 p-4">
+      <td className="flex justify-start items-center gap-4 p-4">
         <Image
           src={item.image || "/avatar.png"}
           alt=""
@@ -76,12 +76,14 @@ const StudentListPage = () => {
           height={40}
           className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
         />
-        <div className="flex flex-col">
+        <div className="flex flex-col justify-center items-start">
           <h3 className="font-semibold">{item.name}</h3>
           <p className="text-xs text-gray-500">{item.class}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">
+        <p className="w-20 truncate">{item.id}</p>
+      </td>
       <td className="hidden md:table-cell">{item.email}</td>
       <td className="hidden md:table-cell">{item.parentName}</td>
       <td className="hidden md:table-cell">{item.address}</td>

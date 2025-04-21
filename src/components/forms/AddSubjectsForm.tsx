@@ -10,19 +10,19 @@ const AddSubjectsForm = ({
 }: {
   setTotalData: React.Dispatch<React.SetStateAction<TotalData>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  defaultValues: Subject[] | [];
+  defaultValues: SubjectData[] | [];
 }) => {
-  const [subjects, setSubjects] = useState<string[]>(defaultValues);
+  const [subjects, setSubjects] = useState<SubjectData[]>(defaultValues);
 
   const handleAddSubject = () => {
-    setSubjects([...subjects, ""]);
+    setSubjects([...subjects, { name: "", teachers: [] }]);
   };
 
   const handleRemoveSubject = () => {
     setSubjects(subjects.slice(0, -1));
   };
 
-  const handleSubjectChange = (index: number, value: string) => {
+  const handleSubjectChange = (index: number, value: SubjectData) => {
     const updatedSubjects = [...subjects];
     updatedSubjects[index] = value;
     setSubjects(updatedSubjects);
@@ -31,7 +31,7 @@ const AddSubjectsForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredSubjects = subjects.filter(
-      (subject) => subject.trim() !== ""
+      (subject) => subject.name.trim() !== ""
     );
     if (filteredSubjects.length < 10) {
       toast("A school must have atleast 10 subjects");
@@ -54,23 +54,46 @@ const AddSubjectsForm = ({
       >
         <div className="w-full flex flex-col gap-4">
           <h1 className="text-2xl font-bold mb-4">Add Subjects</h1>
-          <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex justify-center">
+          <div className="gap-4 w-full flex-col flex justify-center">
             {subjects.map((subject, index) => (
-              <input
-                key={index}
-                type="text"
-                value={subject}
-                onChange={(e) => handleSubjectChange(index, e.target.value)}
-                autoFocus={true}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddSubject();
-                  }
-                }}
-                placeholder={`Subject ${index + 1}`}
-                className="input p-2 border-b border-primary rounded-md w-full md:w-1/3 outline-none"
-              />
+              <div className="w-full flex-col gap-2 items-center" key={index}>
+                <h1 className="font-bold text-lg">{`Subject ${index + 1}`}</h1>
+                <div className="flex flex-col md:flex-row gap-2 w-full">
+                  <input
+                    type="text"
+                    value={subject.name}
+                    onChange={(e) =>
+                      handleSubjectChange(index, {
+                        name: e.target.value,
+                        teachers: subject.teachers,
+                      })
+                    }
+                    autoFocus={true}
+                    placeholder="Subject Name"
+                    className="input p-2 border-b border-primary rounded-md w-full md:w-1/3 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={subject.teachers.join(", ")}
+                    onChange={(e) =>
+                      handleSubjectChange(index, {
+                        name: subject.name,
+                        teachers: e.target.value
+                          .split(",")
+                          .map((x) => x.trim()),
+                      })
+                    }
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddSubject();
+                      }
+                    }}
+                    placeholder="Teacher Name 1, Teacher Name 2..."
+                    className="input p-2 border-b border-primary rounded-md w-full md:w-1/3 outline-none"
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>

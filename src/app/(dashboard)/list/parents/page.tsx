@@ -5,7 +5,6 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
-import { parentsData } from "@/lib/data";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Parent } from "@prisma/client";
@@ -58,18 +57,21 @@ const ParentListPage = () => {
       toast.error("An error occurred while fetching parents");
     }
   };
+
   const renderRow = (item: Parent) => (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-primary-light text-sm hover:bg-cursor-pointer"
     >
       <td className="flex items-center gap-4 p-4">
-        <div className="flex flex-col">
+        <div className="flex flex-col items-start justify-center">
           <h3 className="font-semibold">{item.name}</h3>
           <p className="text-xs text-gray-500">{item.email}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">
+        <p className="w-20 truncate">{item.id}</p>
+      </td>
       <td className="hidden md:table-cell">{item.phoneNo}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
@@ -96,8 +98,9 @@ const ParentListPage = () => {
       getUserRole();
     } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
-    }
-  }, [role]);
+    } else fetchParents(page);
+  }, [role, page]);
+
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
@@ -125,7 +128,7 @@ const ParentListPage = () => {
           </div>
         </div>
         {/* LIST */}
-        <Table columns={columns} renderRow={renderRow} data={parentsData} />
+        <Table columns={columns} renderRow={renderRow} data={parents} />
         {/* PAGINATION */}
         <Pagination
           currentPage={page}

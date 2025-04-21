@@ -4,55 +4,59 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { classesData } from "@/lib/data";
+import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
+import { Class } from "@prisma/client";
 import Image from "next/image";
-
-type Class = {
-  id: number;
-  name: string;
-  capacity: number;
-  grade: number;
-  supervisor: string;
-};
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const columns = [
   {
     header: "Class Name",
-    accessor: "name",
   },
   {
-    header: "Capacity",
-    accessor: "capacity",
+    header: "Total Students",
     className: "hidden md:table-cell",
   },
   {
-    header: "Grade",
-    accessor: "grade",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Supervisor",
-    accessor: "supervisor",
+    header: "Class Teacher",
     className: "hidden md:table-cell",
   },
   {
     header: "Actions",
-    accessor: "action",
   },
 ];
 
 const ClassListPage = () => {
   const role = useRole((state) => state.role);
+  const [classes, setClasses] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchClasses = async (page: number) => {
+    try {
+      const res = await apiClient.get(`/classes?page=${page}&limit=10`);
+      if (res.status === 200) {
+        setClasses(res.data.classes);
+        setTotalPages(res.data.totalPages);
+      } else {
+        toast.error(res.data.message || "Failed to fetch classes");
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      toast.error("An error occurred while fetching classes");
+    }
+  };
+
   const renderRow = (item: Class) => (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-primary-light text-sm hover:cursor-pointer"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td className="hidden md:table-cell">{item.capacity}</td>
-      <td className="hidden md:table-cell">{item.grade}</td>
-      <td className="hidden md:table-cell">{item.supervisor}</td>
+      <td className="hidden md:table-cell">{item.totalStudent}</td>
+      <td className="hidden md:table-cell">{item.classTeacher}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
@@ -65,6 +69,10 @@ const ClassListPage = () => {
       </td>
     </tr>
   );
+
+  useEffect(() => {
+    fetchClasses(page);
+  }, [page]);
 
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
@@ -83,8 +91,12 @@ const ClassListPage = () => {
           </div>
         </div>
       </div>
-      <Table columns={columns} renderRow={renderRow} data={classesData} />
-      <Pagination />
+      <Table columns={columns} renderRow={renderRow} data={classes} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={(newPage) => setPage(newPage)}
+      />
     </div>
   );
 };

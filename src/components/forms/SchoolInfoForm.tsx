@@ -62,7 +62,7 @@ const SchoolInfoForm = ({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onBlur",
-    defaultValues
+    defaultValues,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,8 +155,8 @@ const SchoolInfoForm = ({
               </div>
             ))}
             <p className="text-xs font-semibold text-secondary-light">
-              All field's are required except color palette as you can leave it
-              default and change it later in the settings
+              All field&apos;s are required except color palette as you can
+              leave it default and change it later in the settings
             </p>
           </div>
         </div>

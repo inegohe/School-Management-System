@@ -7,7 +7,7 @@ type StudentData = Omit<StudentDataType, "id" | "schoolId">;
 type ParentData = Omit<ParentDataType, "id" | "schoolId">;
 type ClassData = Omit<ClassDataType, "id" | "schoolId">;
 type Timetable = Omit<TimetableType, "id" | "schoolId">;
-type Subject = string;
+type SubjectData = Omit<SubjectDataType, "id" | "schoolId">;
 
 type TotalData = {
   schoolData: SchoolInfo | {};
@@ -15,7 +15,7 @@ type TotalData = {
   admins: StaffData[] | [];
   studentsData: StudentData[] | [];
   parentsData: ParentData[] | [];
-  subjects: Subject[] | [];
+  subjects: SubjectData[] | [];
   classes: ClassData[] | [];
   timetable: Timetable[] | [];
   timetableHtml: string;

@@ -23,12 +23,12 @@ type SchoolDataType = {
   logo: string;
   admins: string[];
   timetableHtml: string;
-  subjects: string[];
 };
 
 interface StaffDataType {
   id: string;
   name: string;
+  image?: string;
   email: string;
   oracleNo: string;
   registrationNo: string;
@@ -48,6 +48,7 @@ interface StaffDataType {
 interface StudentDataType {
   id: string;
   name: string;
+  image?: string;
   email: string;
   parentNo: string;
   parentName: string;
@@ -75,6 +76,13 @@ interface ClassDataType {
   name: string;
   classTeacher: string;
   totalStudent: number;
+  schoolId: string;
+}
+
+interface SubjectDataType {
+  id: string;
+  name: string;
+  teachers: string[];
   schoolId: string;
 }
 
