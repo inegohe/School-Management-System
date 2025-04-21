@@ -19,9 +19,9 @@ const Menu = () => {
           visible: ["admin", "teacher", "student", "parent"],
         },
         {
-          title: "Teachers",
+          title: "Staffs",
           icon: "/teacher.png",
-          link: "/list/teachers",
+          link: "/list/staffs",
           visible: ["admin", "teacher", "student", "parent"],
         },
         {

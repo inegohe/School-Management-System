@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
         schoolId: user.schoolId,
       },
       process.env.JWT_SECRET!,
-      { expiresIn: "24H" }
+      { expiresIn: "15M" }
     );
 
     // Generate refresh token
@@ -84,7 +84,7 @@ export const POST = async (req: Request) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 24 * 60 * 60, // 10 mins
+      maxAge: 15 * 60, // 15 mins
     });
 
     cookiesStore.set("refreshtoken", refreshtoken, {

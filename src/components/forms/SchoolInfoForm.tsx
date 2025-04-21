@@ -62,7 +62,7 @@ const SchoolInfoForm = ({
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onBlur",
-    defaultValues,
+    defaultValues
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

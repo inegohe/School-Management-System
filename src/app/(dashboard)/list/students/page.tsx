@@ -4,55 +4,39 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { studentsData } from "@/lib/data";
+import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-type Student = {
-  id: number;
-  studentId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  phone?: string;
-  grade: number;
-  class: string;
-  address: string;
-};
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Student } from "@prisma/client";
 
 const columns = [
   {
     header: "Info",
-    accessor: "info",
   },
   {
     header: "Student ID",
-    accessor: "studentId",
     className: "hidden md:table-cell",
   },
   {
-    header: "Grade",
-    accessor: "grade",
+    header: "Email",
     className: "hidden md:table-cell",
   },
   {
-    header: "Phone",
-    accessor: "phone",
+    header: "Parent Name",
     className: "hidden lg:table-cell",
   },
   {
     header: "Address",
-    accessor: "address",
     className: "hidden lg:table-cell",
   },
   {
     header: "Actions",
-    accessor: "action",
   },
 ];
 
@@ -60,6 +44,25 @@ const StudentListPage = () => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
+  const [students, setStudents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchStudents = async (page: number) => {
+    try {
+      const res = await apiClient.get(`/students?page=${page}&limit=10`);
+      if (res.status === 200) {
+        setStudents(res.data.students);
+        setTotalPages(res.data.totalPages);
+      } else {
+        toast.error(res.data.message || "Failed to fetch students");
+      }
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      toast.error("An error occurred while fetching students");
+    }
+  };
+
   const renderRow = (item: Student) => (
     <tr
       key={item.id}
@@ -67,7 +70,7 @@ const StudentListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.photo}
+          src={item.image || "/avatar.png"}
           alt=""
           width={40}
           height={40}
@@ -78,9 +81,9 @@ const StudentListPage = () => {
           <p className="text-xs text-gray-500">{item.class}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.studentId}</td>
-      <td className="hidden md:table-cell">{item.grade}</td>
-      <td className="hidden md:table-cell">{item.phone}</td>
+      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">{item.email}</td>
+      <td className="hidden md:table-cell">{item.parentName}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
@@ -108,8 +111,10 @@ const StudentListPage = () => {
       getUserRole();
     } else if (!["ADMIN", "TEACHER"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
+    } else {
+      fetchStudents(page);
     }
-  }, [role]);
+  }, [role, page]);
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
@@ -137,8 +142,12 @@ const StudentListPage = () => {
             </div>
           </div>
         </div>
-        <Table columns={columns} renderRow={renderRow} data={studentsData} />
-        <Pagination />
+        <Table columns={columns} renderRow={renderRow} data={students} />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
       </div>
     );
 };

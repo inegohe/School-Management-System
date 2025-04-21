@@ -4,46 +4,35 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import apiClient from "@/lib/apiclient";
 import { parentsData } from "@/lib/data";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
+import { Parent } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-type Parent = {
-  id: number;
-  name: string;
-  email?: string;
-  students: string[];
-  phone: string;
-  address: string;
-};
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const columns = [
   {
     header: "Info",
-    accessor: "info",
   },
   {
-    header: "Student Names",
-    accessor: "students",
+    header: "Parent ID",
     className: "hidden md:table-cell",
   },
   {
-    header: "Phone",
-    accessor: "phone",
+    header: "Phone No",
     className: "hidden lg:table-cell",
   },
   {
     header: "Address",
-    accessor: "address",
     className: "hidden lg:table-cell",
   },
   {
     header: "Actions",
-    accessor: "action",
   },
 ];
 
@@ -51,6 +40,24 @@ const ParentListPage = () => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
+  const [parents, setParents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchParents = async (page: number) => {
+    try {
+      const res = await apiClient.get(`/parents?page=${page}&limit=10`);
+      if (res.status === 200) {
+        setParents(res.data.parents);
+        setTotalPages(res.data.totalPages);
+      } else {
+        toast.error(res.data.message || "Failed to fetch parents");
+      }
+    } catch (error) {
+      console.error("Error fetching parents:", error);
+      toast.error("An error occurred while fetching parents");
+    }
+  };
   const renderRow = (item: Parent) => (
     <tr
       key={item.id}
@@ -59,11 +66,11 @@ const ParentListPage = () => {
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">
           <h3 className="font-semibold">{item.name}</h3>
-          <p className="text-xs text-gray-500">{item?.email}</p>
+          <p className="text-xs text-gray-500">{item.email}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.students.join(",")}</td>
-      <td className="hidden md:table-cell">{item.phone}</td>
+      <td className="hidden md:table-cell">{item.id}</td>
+      <td className="hidden md:table-cell">{item.phoneNo}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
@@ -120,7 +127,11 @@ const ParentListPage = () => {
         {/* LIST */}
         <Table columns={columns} renderRow={renderRow} data={parentsData} />
         {/* PAGINATION */}
-        <Pagination />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
       </div>
     );
 };
