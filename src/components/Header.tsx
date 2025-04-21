@@ -39,12 +39,7 @@ const Header = () => {
           href="/profile"
           className="rounded-full cursor-pointer overflow-hidden"
         >
-          <Image
-            src={null || "/avatar.png"}
-            width={50}
-            height={50}
-            alt="avatar"
-          />
+          <Image src={"/avatar.png"} width={50} height={50} alt="avatar" />
         </Link>
       </div>
     </main>
