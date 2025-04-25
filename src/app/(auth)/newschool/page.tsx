@@ -9,8 +9,8 @@ import Link from "next/link";
 
 export default function NewSchool() {
   const [dimension, setDimension] = useState<Record<string, number>>({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 0,
+    height: 0,
   });
   const school = useSchool((state) => state.school) as SchoolDataType;
 
@@ -75,13 +75,13 @@ export default function NewSchool() {
           <span className="font-normal">{`${
             school.type === "PRIMARY"
               ? school.type
-              : `${school.type.toLowerCase()} Secondary`
+              : `${school.type?.toLowerCase()} Secondary`
           } School`}</span>
         </p>
         <div className="flex flex-col gap-2 w-full justify-center items-center">
           <p className="font-bold text-lg underline">Admins:</p>
           <div className="w-full flex flex-wrap justify-center items-center gap-2">
-            {school.admins.map((admin, i) => (
+            {school.admins?.map((admin, i) => (
               <p
                 key={i}
                 className="font-bold rounded-md flex justify-center items-center w-fit p-2 border border-primary capitalize"
