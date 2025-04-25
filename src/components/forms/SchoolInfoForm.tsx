@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ArrowRight, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 
 const schema = z.object({
   name: z.string().min(3, { message: "School name is required!" }),
@@ -124,7 +125,9 @@ const SchoolInfoForm = ({
                       className="input"
                     />
                     {logoBase64 && (
-                      <img
+                      <Image
+                        width={50}
+                        height={50}
                         src={logoBase64}
                         alt="Preview"
                         className="rounded-md w-10 h-10"
