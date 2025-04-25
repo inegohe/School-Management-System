@@ -40,7 +40,7 @@ const Announcement = () => {
           <div className="w-full justify-between flex items-center">
             <h3 className="font-semibold text-lg">{announcement.title}</h3>
             <p className="text-sm text-gray-400">
-              {announcement.date.toLocaleDateString()}
+              {new Date(announcement.date).toLocaleDateString("en-UK", { day: "2-digit", month: "2-digit", year: "2-digit"})}
             </p>
           </div>
           <p className="text-gray-500">{announcement.description}</p>

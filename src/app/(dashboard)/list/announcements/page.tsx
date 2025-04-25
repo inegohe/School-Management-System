@@ -58,7 +58,7 @@ const AnnouncementListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       <td className="hidden md:table-cell">{item.description}</td>
-      <td className="hidden md:table-cell">{item.date.toDateString()}</td>
+      <td className="hidden md:table-cell">{new Date(item.date).toDateString()}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
