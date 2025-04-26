@@ -3,10 +3,13 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, LoaderCircle, Save, Upload } from "lucide-react";
+import { Download, Edit, LoaderCircle, Save, Upload } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const schema = z.object({
   name: z.string().min(3, { message: "School name is required!" }),
@@ -65,18 +68,7 @@ const SettingsForm = ({
   const [logoBase64, setLogoBase64] = useState<string>(
     "logo" in data.schoolInfo ? data.schoolInfo.logo : ""
   );
-  const [editables, setEditables] = useState<Record<string, boolean>>({
-    name: false,
-    address: false,
-    principal: false,
-    vicePrincipal: false,
-    slogan: false,
-    type: false,
-    missionStatement: false,
-    visionStatement: false,
-    startHour: false,
-    closeHour: false,
-  });
+  const [editables, setEditables] = useState<Record<string, boolean>>({});
 
   const {
     register,
@@ -306,15 +298,13 @@ const SettingsForm = ({
               "secondaryColorLight",
               "accentColor1",
               "accentColor1Light",
-              "secondaryColorLight",
               "accentColor2",
               "accentColor2Light",
-              "secondaryColorLight",
               "accentColor3",
               "accentColor3Light",
             ].map((key: string, i: number) => (
               <div
-                className={`flex flex-col gap-2 items-start justify-start w-full md:w-[32%]`}
+                className={`flex flex-col gap-2 items-start justify-start w-full ${key === "accentColor3Light" ? "md:w-full" : "md:w-[32%]"}`}
                 key={i}
               >
                 <p className="font-semibold text-xs capitalize">{key}</p>
@@ -323,7 +313,7 @@ const SettingsForm = ({
                     disabled={key in editables ? !editables[key] : true}
                     type="color"
                     {...register(key as keyof FormData)}
-                    className="outline-none bg-transparent w-full disabled:opacity-50"
+                    className="outline-none bg-transparent w-full disabled:opacity-70"
                   />
                   <Edit
                     className="size-5 cursor-pointer"
@@ -351,20 +341,197 @@ const SettingsForm = ({
               className="w-full overflow-x-scroll mx-auto"
               dangerouslySetInnerHTML={{ __html: data.timetableHtml }}
             />
+            <Timetable data={data} setData={setData} loading={loading}/>
           </div>
-        </div>
-        <div className="w-full flex justify-end">
-          <button type="submit" className="button justify-end">
-            {loading ? <LoaderCircle className="animate-spin" /> : <Save />}{" "}
-            Save
-          </button>
         </div>
         <p className="text-xs font-semibold text-secondary-light mt-4">
           All field&apos;s are required
         </p>
+        <div className="w-full flex justify-end">
+          <button type="submit" className="button justify-end">
+            {loading ? <LoaderCircle className="animate-spin" /> : <Save />}{" "}
+            Update Settings
+          </button>
+        </div>
       </form>
     </motion.div>
   );
 };
 
 export default SettingsForm;
+
+const Timetable = ({
+  setData,
+  data,
+  loading,
+}: {
+  setData: React.Dispatch<
+    React.SetStateAction<{
+      schoolInfo: SchoolInfo;
+      timetableHtml: string;
+      admins: string[];
+      id: string;
+    }>
+  >;
+  data: {
+    schoolInfo: SchoolInfo;
+    timetableHtml: string;
+    admins: string[];
+    id: string;
+  };
+  loading: boolean;
+}) => {
+  const [timetableHtml, setTimetableHtml] = useState<string>("");
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFileLoading(true);
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const validExtensions = [".xlsx", ".xls", ".xlsm"];
+      const fileExtension = file.name.slice(file.name.lastIndexOf("."));
+      if (!validExtensions.includes(fileExtension)) {
+        toast("File is not a valid Excel");
+        setFileError("Invalid file type. Please upload an Excel file.");
+        return;
+      }
+
+      setFileError(null);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target?.result;
+        if (!data) return;
+
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData: any[] = XLSX.utils.sheet_to_json(sheet, {
+          header: 1,
+        });
+        const htmlData: string = XLSX.utils.sheet_to_html(sheet);
+        const extractedData: Timetable[] = [];
+        let lastDay = "";
+        const periods = jsonData[0]?.slice(2) || [];
+
+        jsonData.forEach((row, rowIndex) => {
+          if (rowIndex === 0) return;
+          let day = lastDay;
+          if (row[0]) {
+            day = row[0];
+            lastDay = row[0];
+          }
+
+          if (day) {
+            let period = 1;
+            const subjects = row.slice(2);
+
+            for (let colIndex = 0; colIndex < subjects.length; colIndex++) {
+              if (subjects[colIndex]) {
+                extractedData.push({
+                  class: row[1],
+                  day,
+                  period: period++,
+                  periodSpan: 1,
+                  subject: subjects[colIndex].toString(),
+                  startTime: periods[colIndex]?.split(" - ")[0] || "",
+                  endTime: periods[colIndex]?.split(" - ")[1] || "",
+                });
+              } else {
+                extractedData[extractedData.length - 1].endTime =
+                  periods[colIndex]?.split(" - ")[1] || "";
+                extractedData[extractedData.length - 1].periodSpan += 1;
+              }
+            }
+          }
+        });
+        if (extractedData.length < 1) {
+          toast("Timetable is empty");
+        } else {
+          setTimetableHtml(htmlData);
+          setData((prev) => ({
+            ...prev,
+            timetableHtml: htmlData,
+          }));
+        }
+      };
+
+      reader.readAsBinaryString(file);
+    } catch (err: any) {
+      console.error("Error occurred when reading file", err);
+      setFileError(err?.message || "An unknown error occurred");
+    } finally {
+      setFileLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="w-full flex flex-col gap-4"
+    >
+      <h1 className="md:text-lg font-bold mb-2">Update Timetable</h1>
+      <div className="w-full items-center md:justify-between px-2 flex gap-2 flex-col md:flex-row">
+        <button
+          onClick={() => {
+            handleDownloadFromHtml(data.timetableHtml, "Timetable-Excel-File.xlsx")
+          }}
+          disabled={loading}
+          className="button w-full md:w-fit"
+        >
+          <Download /> Download Excel
+        </button>
+        <input
+          type="file"
+          accept=".xlsx,.xls,.xlsm"
+          onChange={handleFileUpload}
+          disabled={loading}
+          className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+        />
+      </div>
+      {fileLoading && (
+        <p className="text-green-500 text-sm mb-4 animate-pulse">Loading...</p>
+      )}
+      {fileError && (
+        <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
+      )}
+      {timetableHtml && (data.timetableHtml !== timetableHtml) && (
+        <div
+          className="w-full overflow-x-scroll mx-auto"
+          dangerouslySetInnerHTML={{ __html: timetableHtml }}
+        />
+      )}
+    </motion.div>
+  );
+};
+
+
+const handleDownloadFromHtml = (htmlString: string, filename: string = "downloaded-file.xlsx") => {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    const table = doc.querySelector('table');
+
+    if (!table) {
+      console.error("No table found in the HTML.");
+      return;
+    }
+
+    const worksheet = XLSX.utils.table_to_sheet(table);
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(data, filename);
+
+  } catch (error) {
+    console.error("Error generating or downloading file:", error);
+  }
+};
