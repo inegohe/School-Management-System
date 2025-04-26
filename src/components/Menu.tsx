@@ -75,7 +75,7 @@ const Menu = () => {
           title: "Profile",
           icon: "/profile.png",
           link: "/profile",
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["teacher", "student", "parent"],
         },
         {
           title: "Settings",

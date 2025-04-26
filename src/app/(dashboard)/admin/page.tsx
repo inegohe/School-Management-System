@@ -22,7 +22,7 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 const AdminPage = () => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
-  const setSchool = useSchool((state) => state.setSchool);
+  const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
   const [value, onChange] = useState<Value>(new Date());
   const { role, setRole } = useRole();
@@ -55,7 +55,7 @@ const AdminPage = () => {
       getUserRole();
     } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
-    } else {
+    } else if (Object.keys(school).length === 0) {
       getData();
     }
   }, [value, role]);

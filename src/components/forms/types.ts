@@ -1,6 +1,6 @@
 type SchoolInfo = Omit<
   SchoolDataType,
-  "admins" | "timetableHtml" | "subjects" | "id" | "schoolId"
+  "admins" | "timetableHtml" | "id"
 >;
 type StaffData = Omit<StaffDataType, "id" | "schoolId">;
 type StudentData = Omit<StudentDataType, "id" | "schoolId">;

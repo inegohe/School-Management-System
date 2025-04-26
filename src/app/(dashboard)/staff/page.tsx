@@ -22,11 +22,11 @@ const TeacherPage = () => {
   useEffect(() => {
     if (role === "AUTH") {
       getUserRole();
-    } else if (role !== "TEACHER") {
+    } else if (!["TEACHER", "ADMIN"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     }
   }, [role]);
-  if (role !== "TEACHER") {
+  if (!["TEACHER", "ADMIN"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" />{" "}
