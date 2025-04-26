@@ -119,6 +119,9 @@ const Menu = () => {
                     <Link
                       key={index}
                       href={y.link}
+                      {...(y.title === "Logout"
+                        ? { prefetch: false }
+                        : {})}
                       className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-primary"
                     >
                       <Image

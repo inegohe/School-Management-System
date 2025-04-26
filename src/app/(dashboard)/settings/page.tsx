@@ -14,7 +14,6 @@ const Settings = () => {
   const router = useRouter();
   const { role, setRole } = useRole();
   const { school, setSchool } = useSchool();
-  const [loading, setLoading] = useState(false);
   const setUser = useUser((state) => state.setUser);
   const setCounts = useCounts((state) => state.setCounts);
   const [data, setData] = useState<
@@ -80,7 +79,7 @@ const Settings = () => {
     return (
       <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
         {"schoolInfo" in data ? (
-          <SettingsForm data={data} setData={setData} loading={loading}/>
+          <SettingsForm data={data} setData={setData}/>
         ) : (
           <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
             <LoaderCircle className="animate-spin" /> Loading

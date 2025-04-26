@@ -45,7 +45,6 @@ type FormData = z.infer<typeof schema>;
 const SettingsForm = ({
   setData,
   data,
-  loading,
 }: {
   setData: React.Dispatch<
     React.SetStateAction<{
@@ -61,8 +60,8 @@ const SettingsForm = ({
     admins: string[];
     id: string;
   };
-  loading: boolean
 }) => {
+  const [loading, setLoading] = useState(false);
   const [logoBase64, setLogoBase64] = useState<string>(
     "logo" in data.schoolInfo ? data.schoolInfo.logo : ""
   );
@@ -105,12 +104,15 @@ const SettingsForm = ({
 
   const onSubmit = async (data: FormData) => {
     try {
+      setLoading(true);
       console.log(data);
       setData((prev) => {
         return { ...prev, schoolInfo: data };
       });
     } catch (error) {
       console.error("Error updating school:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -342,10 +344,15 @@ const SettingsForm = ({
             ))}
           </div>
           <p className="text-xs font-semibold text-secondary-light mt-4">
-            All field&apos;s are required except color palette as you can leave
-            it default and change it later in the settings
+            All field&apos;s are required
           </p>
-          <div></div>
+          <div className="w-full flex flex-col gap-4">
+            <h1 className="md:text-lg font-bold text-secondary-light">Current Timetable</h1>
+            <div
+              className="w-full overflow-x-scroll mx-auto"
+              dangerouslySetInnerHTML={{ __html: data.timetableHtml }}
+            />
+          </div>
         </div>
         <div className="w-full flex justify-end">
           <button type="submit" className="button justify-end">
