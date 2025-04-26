@@ -343,11 +343,10 @@ const SettingsForm = ({
               </div>
             ))}
           </div>
-          <p className="text-xs font-semibold text-secondary-light mt-4">
-            All field&apos;s are required
-          </p>
           <div className="w-full flex flex-col gap-4">
-            <h1 className="md:text-lg font-bold text-secondary-light">Current Timetable</h1>
+            <h1 className="md:text-lg font-bold text-secondary-light">
+              Current Timetable
+            </h1>
             <div
               className="w-full overflow-x-scroll mx-auto"
               dangerouslySetInnerHTML={{ __html: data.timetableHtml }}
@@ -360,6 +359,9 @@ const SettingsForm = ({
             Save
           </button>
         </div>
+        <p className="text-xs font-semibold text-secondary-light mt-4">
+          All field&apos;s are required
+        </p>
       </form>
     </motion.div>
   );
