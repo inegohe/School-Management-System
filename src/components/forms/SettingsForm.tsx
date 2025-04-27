@@ -8,8 +8,11 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import apiClient from "@/lib/apiclient";
+import { useSchool } from "@/store";
+import { updateColors } from "@/lib/helpers";
 
 const schema = z.object({
   name: z.string().min(3, { message: "School name is required!" }),
@@ -64,7 +67,22 @@ const SettingsForm = ({
     id: string;
   };
 }) => {
+  const currentTimetableHtml = data.timetableHtml;
+  const setSchool = useSchool((state) => state.setSchool);
   const [loading, setLoading] = useState(false);
+  const [timetableData, setTimetableData] = useState<Timetable[]>([]);
+  const [colors, setColors] = useState<Record<string, string>>({
+    primaryColor: data.schoolInfo.primaryColor,
+    primaryColorLight: data.schoolInfo.primaryColorLight,
+    secondaryColor: data.schoolInfo.secondaryColor,
+    secondaryColorLight: data.schoolInfo.secondaryColorLight,
+    accentColor1: data.schoolInfo.accentColor1,
+    accentColor1Light: data.schoolInfo.accentColor1Light,
+    accentColor2: data.schoolInfo.accentColor2,
+    accentColor2Light: data.schoolInfo.accentColor2Light,
+    accentColor3: data.schoolInfo.accentColor3,
+    accentcolor3Light: data.schoolInfo.accentColor3Light,
+  });
   const [logoBase64, setLogoBase64] = useState<string>(
     "logo" in data.schoolInfo ? data.schoolInfo.logo : ""
   );
@@ -94,15 +112,45 @@ const SettingsForm = ({
     }
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (formdata: FormData) => {
     try {
       setLoading(true);
       console.log(data);
       setData((prev) => {
-        return { ...prev, schoolInfo: data };
+        return { ...prev, schoolInfo: formdata };
       });
-    } catch (error) {
+
+      const res = await apiClient.put("/school", {
+        data: {
+          ...formdata,
+          timetableHtml: data.timetableHtml,
+          admins: data.admins,
+          id: data.id,
+        },
+        timetableData: timetableData,
+      });
+
+      if (res.status === 200) {
+        toast.success("School updated successfully");
+        setSchool(res.data);
+        updateColors({
+          primary: res.data.primaryColor,
+          "primary-light": res.data.primaryColorLight,
+          secondary: res.data.secondaryColor,
+          "secondary-light": res.data.secondaryColorLight,
+          "accent-1": res.data.accentColor1,
+          "accent-1-light": res.data.accentColor1Light,
+          "accent-2": res.data.accentColor2,
+          "accent-2-light": res.data.accentColor2Light,
+          "accent-3": res.data.accentColor3,
+          "accent-3-light": res.data.accentColor3Light,
+        });
+      } else {
+        toast.error(res.data.message || "Failed to update school");
+      }
+    } catch (error: any) {
       console.error("Error updating school:", error);
+      toast.error(error.response.data?.message || "Failed to update school");
     } finally {
       setLoading(false);
     }
@@ -223,67 +271,7 @@ const SettingsForm = ({
           </div>
           <div className="flex flex-col gap-2 mt-4">
             <h1 className="font-bold md:text-lg">Card Samples</h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Card 1 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-primary text-secondary">
-                <h2 className="md:text-lg font-bold text-accent-1">
-                  Card Title 1
-                </h2>
-                <p className="mt-2 text-accent-1-light">
-                  This is placeholder text for the first card.
-                </p>
-              </div>
-
-              {/* Card 2 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-primary">
-                <h2 className="md:text-lg font-bold text-accent-2">
-                  Card Title 2
-                </h2>
-                <p className="mt-2 text-accent-2-light">
-                  This is placeholder text for the second card.
-                </p>
-              </div>
-
-              {/* Card 3 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-primary">
-                <h2 className="md:text-lg font-bold text-accent-3">
-                  Card Title 3
-                </h2>
-                <p className="mt-2 text-accent-3-light">
-                  This is placeholder text for the second card.
-                </p>
-              </div>
-
-              {/* Card 4 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-accent-1">
-                <h2 className="md:text-lg font-bold text-primary">
-                  Card Title 4
-                </h2>
-                <p className="mt-2 text-primary-light">
-                  This is placeholder text for the second card.
-                </p>
-              </div>
-
-              {/* Card 5 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-accent-2">
-                <h2 className="md:text-lg font-bold text-primary">
-                  Card Title 5
-                </h2>
-                <p className="mt-2 text-primary-light">
-                  This is placeholder text for the third card.
-                </p>
-              </div>
-
-              {/* Card 6 */}
-              <div className="text-sm p-4 rounded-lg shadow-md bg-accent-3">
-                <h2 className="md:text-lg font-bold text-primary">
-                  Card Title 6
-                </h2>
-                <p className="mt-2 text-primary-light">
-                  This is placeholder text for the third card.
-                </p>
-              </div>
-            </div>
+            <ColorCardSamples colors={colors} />
             <p className="font-bold text-[10px] md:text-xs text-secondary-light">
               Card 1-3 uses background: primary, header: accent[1-3], text:
               accent[1-3]-light, while card 4-6 uses background: accent[1-3],
@@ -304,25 +292,24 @@ const SettingsForm = ({
               "accentColor3Light",
             ].map((key: string, i: number) => (
               <div
-                className={`flex flex-col gap-2 items-start justify-start w-full ${key === "accentColor3Light" ? "md:w-full" : "md:w-[32%]"}`}
+                className={`flex flex-col gap-2 items-start justify-start w-full ${
+                  key === "accentColor3Light" ? "md:w-full" : "md:w-[32%]"
+                }`}
                 key={i}
               >
                 <p className="font-semibold text-xs capitalize">{key}</p>
-                <div className="input p-2 border-b border-primary rounded-md w-full flex gap-2 items-center justify-between">
+                <div className="input p-2 border-b border-primary rounded-md w-full flex gap-2 items-center">
                   <input
-                    disabled={key in editables ? !editables[key] : true}
                     type="color"
+                    id={key}
                     {...register(key as keyof FormData)}
-                    className="outline-none bg-transparent w-full disabled:opacity-70"
-                  />
-                  <Edit
-                    className="size-5 cursor-pointer"
-                    onClick={() =>
-                      setEditables((prev) => ({
-                        ...prev,
-                        [key]: key in editables ? !editables[key] : true,
-                      }))
-                    }
+                    onBlur={() => {
+                      const element = document.getElementById(
+                        key
+                      ) as HTMLInputElement;
+                      setColors({ ...colors, [key]: element.value });
+                    }}
+                    className="outline-none bg-transparent w-full"
                   />
                 </div>
                 {errors[key as keyof FormData] && (
@@ -339,9 +326,14 @@ const SettingsForm = ({
             </h1>
             <div
               className="w-full overflow-x-scroll mx-auto"
-              dangerouslySetInnerHTML={{ __html: data.timetableHtml }}
+              dangerouslySetInnerHTML={{ __html: currentTimetableHtml }}
             />
-            <Timetable data={data} setData={setData} loading={loading}/>
+            <Timetable
+              data={data}
+              setData={setData}
+              setTimetableData={setTimetableData}
+              loading={loading}
+            />
           </div>
         </div>
         <p className="text-xs font-semibold text-secondary-light mt-4">
@@ -360,10 +352,113 @@ const SettingsForm = ({
 
 export default SettingsForm;
 
+const ColorCardSamples = ({ colors }: { colors: Record<string, string> }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Card 1 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.primaryColor }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.accentColor1 }}
+        >
+          Card Title 1
+        </h2>
+        <p className="mt-2" style={{ color: colors.accentColor1Light }}>
+          This is placeholder text for the first card.
+        </p>
+      </div>
+
+      {/* Card 2 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.primaryColor }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.accentColor2 }}
+        >
+          Card Title 2
+        </h2>
+        <p className="mt-2" style={{ color: colors.accentColor2Light }}>
+          This is placeholder text for the second card.
+        </p>
+      </div>
+
+      {/* Card 3 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.primaryColor }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.accentColor3 }}
+        >
+          Card Title 3
+        </h2>
+        <p className="mt-2" style={{ color: colors.accentColor3Light }}>
+          This is placeholder text for the second card.
+        </p>
+      </div>
+
+      {/* Card 4 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.accentColor1 }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.primaryColor }}
+        >
+          Card Title 4
+        </h2>
+        <p className="mt-2" style={{ color: colors.primaryColorLight }}>
+          This is placeholder text for the second card.
+        </p>
+      </div>
+
+      {/* Card 5 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.accentColor2 }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.primaryColor }}
+        >
+          Card Title 5
+        </h2>
+        <p className="mt-2" style={{ color: colors.primaryColorLight }}>
+          This is placeholder text for the third card.
+        </p>
+      </div>
+
+      {/* Card 6 */}
+      <div
+        className="text-sm p-4 rounded-lg shadow-md"
+        style={{ backgroundColor: colors.accentColor3 }}
+      >
+        <h2
+          className="md:text-lg font-bold"
+          style={{ color: colors.primaryColor }}
+        >
+          Card Title 6
+        </h2>
+        <p className="mt-2" style={{ color: colors.primaryColorLight }}>
+          This is placeholder text for the third card.
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const Timetable = ({
   setData,
   data,
   loading,
+  setTimetableData,
 }: {
   setData: React.Dispatch<
     React.SetStateAction<{
@@ -379,6 +474,7 @@ const Timetable = ({
     admins: string[];
     id: string;
   };
+  setTimetableData: React.Dispatch<React.SetStateAction<Timetable[]>>;
   loading: boolean;
 }) => {
   const [timetableHtml, setTimetableHtml] = useState<string>("");
@@ -403,10 +499,10 @@ const Timetable = ({
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const data = e.target?.result;
-        if (!data) return;
+        const inputdata = e.target?.result;
+        if (!inputdata) return;
 
-        const workbook = XLSX.read(data, { type: "binary" });
+        const workbook = XLSX.read(inputdata, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData: any[] = XLSX.utils.sheet_to_json(sheet, {
@@ -452,10 +548,13 @@ const Timetable = ({
           toast("Timetable is empty");
         } else {
           setTimetableHtml(htmlData);
-          setData((prev) => ({
-            ...prev,
-            timetableHtml: htmlData,
-          }));
+          if (htmlData !== data.timetableHtml) {
+            setData((prev) => ({
+              ...prev,
+              timetableHtml: htmlData,
+            }));
+            setTimetableData(extractedData);
+          }
         }
       };
 
@@ -479,7 +578,10 @@ const Timetable = ({
       <div className="w-full items-center md:justify-between px-2 flex gap-2 flex-col md:flex-row">
         <button
           onClick={() => {
-            handleDownloadFromHtml(data.timetableHtml, "Timetable-Excel-File.xlsx")
+            handleDownloadFromHtml(
+              data.timetableHtml,
+              "Timetable-Excel-File.xlsx"
+            );
           }}
           disabled={loading}
           className="button w-full md:w-fit"
@@ -500,22 +602,29 @@ const Timetable = ({
       {fileError && (
         <p className="text-red-500 text-sm mb-4 font-bold">{fileError}</p>
       )}
-      {timetableHtml && (data.timetableHtml !== timetableHtml) && (
+      {timetableHtml && data.timetableHtml !== timetableHtml && (
         <div
           className="w-full overflow-x-scroll mx-auto"
           dangerouslySetInnerHTML={{ __html: timetableHtml }}
         />
       )}
+      {timetableHtml && data.timetableHtml === timetableHtml && (
+        <p className="text-secondary-light text-sm mb-4 font-bold">
+          Timetable is unchanged
+        </p>
+      )}
     </motion.div>
   );
 };
 
-
-const handleDownloadFromHtml = (htmlString: string, filename: string = "downloaded-file.xlsx") => {
+const handleDownloadFromHtml = (
+  htmlString: string,
+  filename: string = "downloaded-file.xlsx"
+) => {
   try {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
-    const table = doc.querySelector('table');
+    const doc = parser.parseFromString(htmlString, "text/html");
+    const table = doc.querySelector("table");
 
     if (!table) {
       console.error("No table found in the HTML.");
@@ -525,12 +634,16 @@ const handleDownloadFromHtml = (htmlString: string, filename: string = "download
     const worksheet = XLSX.utils.table_to_sheet(table);
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
 
-    const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
     saveAs(data, filename);
-
   } catch (error) {
     console.error("Error generating or downloading file:", error);
   }

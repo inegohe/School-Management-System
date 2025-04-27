@@ -12,6 +12,7 @@ import { useSchool } from "@/store";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import AddParentsForm from "@/components/forms/AddParentsForm";
+import { updateColors } from "@/lib/helpers";
 
 const RegisterSchoolPage = () => {
   const router = useRouter();
@@ -62,6 +63,18 @@ const RegisterSchoolPage = () => {
         toast.dismiss();
         toast.success("School created successfully");
         setSchool(res.data);
+        updateColors({
+          primary: res.data.primaryColor,
+          "primary-light": res.data.primaryColorLight,
+          secondary: res.data.secondaryColor,
+          "secondary-light": res.data.secondaryColorLight,
+          "accent-1": res.data.accentColor1,
+          "accent-1-light": res.data.accentColor1Light,
+          "accent-2": res.data.accentColor2,
+          "accent-2-light": res.data.accentColor2Light,
+          "accent-3": res.data.accentColor3,
+          "accent-3-light": res.data.accentColor3Light,
+        })
         router.push("/newschool");
       } else {
         toast.dismiss();

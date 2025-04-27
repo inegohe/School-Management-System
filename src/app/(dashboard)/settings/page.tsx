@@ -9,6 +9,7 @@ import SettingsForm from "@/components/forms/SettingsForm";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { School } from "@prisma/client";
+import { updateColors } from "@/lib/helpers";
 
 const Settings = () => {
   const router = useRouter();
@@ -42,6 +43,18 @@ const Settings = () => {
       setData({ schoolInfo, timetableHtml, id, admins });
       setSchool(schoolData);
       setCounts(_count);
+      updateColors({
+        primary: schoolData.primaryColor,
+        "primary-light": schoolData.primaryColorLight,
+        secondary: schoolData.secondaryColor,
+        "secondary-light": schoolData.secondaryColorLight,
+        "accent-1": schoolData.accentColor1,
+        "accent-1-light": schoolData.accentColor1Light,
+        "accent-2": schoolData.accentColor2,
+        "accent-2-light": schoolData.accentColor2Light,
+        "accent-3": schoolData.accentColor3,
+        "accent-3-light": schoolData.accentColor3Light,
+      })
       toast.dismiss();
     }
   };

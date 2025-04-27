@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { fetchSchool } from "@/actions";
 import toast from "react-hot-toast";
 import { getUser } from "@/server-actions";
+import { updateColors } from "@/lib/helpers";
 
 type ValuePiece = Date | null;
 
@@ -40,6 +41,18 @@ const AdminPage = () => {
       const { _count, ...schoolData } = result.data;
       setSchool(schoolData);
       setCounts(_count);
+      updateColors({
+        primary: schoolData.primaryColor,
+        "primary-light": schoolData.primaryColorLight,
+        secondary: schoolData.secondaryColor,
+        "secondary-light": schoolData.secondaryColorLight,
+        "accent-1": schoolData.accentColor1,
+        "accent-1-light": schoolData.accentColor1Light,
+        "accent-2": schoolData.accentColor2,
+        "accent-2-light": schoolData.accentColor2Light,
+        "accent-3": schoolData.accentColor3,
+        "accent-3-light": schoolData.accentColor3Light,
+      })
       toast.dismiss();
     }
   };

@@ -256,3 +256,47 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     );
   }
 });
+
+export const PUT = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { data, timetableData } = await req.json();
+    if (!data.id) {
+      return NextResponse.json(
+        { message: "School id is required" },
+        { status: 400 }
+      );
+    }
+
+    const school = await prisma.school.update({
+      where: {
+        id: data.id,
+      },
+      data,
+    });
+
+    if(timetableData.length > 0){
+      await prisma.timetable.deleteMany({
+        where: {
+          schoolId: data.id,
+        },
+      });
+      await prisma.timetable.createMany({
+        data: timetableData,
+      });
+    }
+
+    if (!school) {
+      return NextResponse.json(
+        { message: "School not found." },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json({ ...school }, { status: 200 });
+  } catch (error: any) {
+    console.error("Error updating school data:", error);
+    return NextResponse.json(
+      { message: "Failed to update school data." },
+      { status: 500 }
+    );
+  }
+});
