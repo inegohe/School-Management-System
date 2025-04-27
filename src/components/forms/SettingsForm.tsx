@@ -309,7 +309,7 @@ const SettingsForm = ({
                       ) as HTMLInputElement;
                       setColors({ ...colors, [key]: element.value });
                     }}
-                    className="outline-none bg-transparent w-full"
+                    className="md:w-full md:border-none outline-none bg-transparent w-full rounded-md border border-secondary"
                   />
                 </div>
                 {errors[key as keyof FormData] && (

@@ -86,7 +86,7 @@ const Menu = () => {
         {
           title: "Logout",
           icon: "/logout.png",
-          link: "/api/auth/logout",
+          link: "/logout",
           visible: ["admin", "teacher", "student", "parent"],
         },
       ],
