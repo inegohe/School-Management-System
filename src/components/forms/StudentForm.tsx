@@ -7,21 +7,19 @@ import InputField from "../InputField";
 import Image from "next/image";
 
 const schema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
-    .max(20, { message: "Username must be at most 20 characters long!" }),
+  name: z.string().min(1, { message: "Name is required!" }),
   email: z.string().email({ message: "Invalid email address!" }),
-  password: z
+  parentNo: z.string().min(1, { message: "Parent Number is required!" }),
+  parentName: z.string().min(1, { message: "Parent Name is required!" }),
+  registrationNo: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long!" }),
-  firstName: z.string().min(1, { message: "First name is required!" }),
-  lastName: z.string().min(1, { message: "Last name is required!" }),
-  phone: z.string().min(1, { message: "Phone is required!" }),
+    .min(1, { message: "Registration Number is required!" }),
+  admissionNo: z.string().min(1, { message: "Admission Number is required!" }),
+  birthdate: z.string().min(1, { message: "Birthdate is required!" }),
+  gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required!" }),
+  DOA: z.string().min(1, { message: "Date of Admission is required!" }),
+  class: z.string().min(1, { message: "Class is required!" }),
   address: z.string().min(1, { message: "Address is required!" }),
-  bloodType: z.string().min(1, { message: "Blood Type is required!" }),
-  birthday: z.date({ message: "Birthday is required!" }),
-  sex: z.enum(["male", "female"], { message: "Sex is required!" }),
   img: z.instanceof(File, { message: "Image is required" }),
 });
 
@@ -42,64 +40,80 @@ const StudentForm = ({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = handleSubmit((formData) => {
+    console.log(formData);
   });
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">Create a new student</h1>
-      <span className="text-xs text-gray-400 font-medium">
-        Authentication Information
-      </span>
-      <div className="flex justify-between flex-wrap gap-4">
+      <h1 className="text-xl font-semibold">
+        {type === "create" ? "Create a new student" : "Update student"}
+      </h1>
+      <div className="flex flex-wrap gap-4">
         <InputField
-          label="Username"
-          name="username"
-          defaultValue={data?.username}
+          label="Name"
+          name="name"
+          defaultValue={data?.name}
           register={register}
-          error={errors?.username}
+          error={errors.name}
         />
         <InputField
           label="Email"
           name="email"
           defaultValue={data?.email}
           register={register}
-          error={errors?.email}
+          error={errors.email}
         />
         <InputField
-          label="Password"
-          name="password"
-          type="password"
-          defaultValue={data?.password}
+          label="Parent Number"
+          name="parentNo"
+          defaultValue={data?.parentNo}
           register={register}
-          error={errors?.password}
-        />
-      </div>
-      <span className="text-xs text-gray-400 font-medium">
-        Personal Information
-      </span>
-      <div className="flex justify-between flex-wrap gap-4">
-        <InputField
-          label="First Name"
-          name="firstName"
-          defaultValue={data?.firstName}
-          register={register}
-          error={errors.firstName}
+          error={errors.parentNo}
         />
         <InputField
-          label="Last Name"
-          name="lastName"
-          defaultValue={data?.lastName}
+          label="Parent Name"
+          name="parentName"
+          defaultValue={data?.parentName}
           register={register}
-          error={errors.lastName}
+          error={errors.parentName}
         />
         <InputField
-          label="Phone"
-          name="phone"
-          defaultValue={data?.phone}
+          label="Registration Number"
+          name="registrationNo"
+          defaultValue={data?.registrationNo}
           register={register}
-          error={errors.phone}
+          error={errors.registrationNo}
+        />
+        <InputField
+          label="Admission Number"
+          name="admissionNo"
+          defaultValue={data?.admissionNo}
+          register={register}
+          error={errors.admissionNo}
+        />
+        <InputField
+          label="Birthdate"
+          name="birthdate"
+          defaultValue={data?.birthdate}
+          register={register}
+          error={errors.birthdate}
+          type="date"
+        />
+        <InputField
+          label="Date of Admission"
+          name="DOA"
+          defaultValue={data?.DOA}
+          register={register}
+          error={errors.DOA}
+          type="date"
+        />
+        <InputField
+          label="Class"
+          name="class"
+          defaultValue={data?.class}
+          register={register}
+          error={errors.class}
         />
         <InputField
           label="Address"
@@ -108,50 +122,31 @@ const StudentForm = ({
           register={register}
           error={errors.address}
         />
-        <InputField
-          label="Blood Type"
-          name="bloodType"
-          defaultValue={data?.bloodType}
-          register={register}
-          error={errors.bloodType}
-        />
-        <InputField
-          label="Birthday"
-          name="birthday"
-          defaultValue={data?.birthday}
-          register={register}
-          error={errors.birthday}
-          type="date"
-        />
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label className="text-xs text-gray-500">Gender</label>
           <select
             className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
-            {...register("sex")}
-            defaultValue={data?.sex}
+            {...register("gender")}
+            defaultValue={data?.gender}
           >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
-          {errors.sex?.message && (
-            <p className="text-xs text-red-400">
-              {errors.sex.message.toString()}
-            </p>
+          {errors.gender?.message && (
+            <p className="text-xs text-red-400">{errors.gender.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label
             className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
             htmlFor="img"
           >
-            <Image src="/upload.png" alt="" width={28} height={28} />
+            <Image src="/upload.png" alt="Upload" width={28} height={28} />
             <span>Upload a photo</span>
           </label>
           <input type="file" id="img" {...register("img")} className="hidden" />
           {errors.img?.message && (
-            <p className="text-xs text-red-400">
-              {errors.img.message.toString()}
-            </p>
+            <p className="text-xs text-red-400">{errors.img.message}</p>
           )}
         </div>
       </div>

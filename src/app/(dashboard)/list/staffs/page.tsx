@@ -103,7 +103,7 @@ const StaffListPage = () => {
             </button>
           </Link>
           {role === "ADMIN" && (
-            <FormModal table="teacher" type="delete" id={item.id} />
+            <FormModal table="staff" type="delete" id={item.id} />
           )}
         </div>
       </td>
@@ -124,7 +124,7 @@ const StaffListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "ADMIN" && <FormModal table="teacher" type="create" />}
+            {role === "ADMIN" && <FormModal table="staff" type="create" />}
           </div>
         </div>
       </div>

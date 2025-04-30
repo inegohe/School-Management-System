@@ -15,7 +15,7 @@ const forms: Record<
   string,
   (type: "create" | "update", data?: any) => React.ReactElement
 > = {
-  teacher: (type, data) => <StaffForm type={type} data={data} />,
+  staff: (type, data) => <StaffForm type={type} data={data} />,
   student: (type, data) => <StudentForm type={type} data={data} />,
 };
 
@@ -26,7 +26,7 @@ const FormModal = ({
   id,
 }: {
   table:
-    | "teacher"
+    | "staff"
     | "student"
     | "parent"
     | "subject"
