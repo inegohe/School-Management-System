@@ -1,8 +1,11 @@
 "use client";
 
+import apiClient from "@/lib/apiclient";
+import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const StaffForm = dynamic(() => import("./forms/StaffForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -15,8 +18,8 @@ const forms: Record<
   string,
   (type: "create" | "update", data?: any) => React.ReactElement
 > = {
-  staff: (type, data) => <StaffForm type={type} data={data} />,
-  student: (type, data) => <StudentForm type={type} data={data} />,
+  staffs: (type, data) => <StaffForm type={type} data={data} />,
+  students: (type, data) => <StudentForm type={type} data={data} />,
 };
 
 const FormModal = ({
@@ -26,14 +29,14 @@ const FormModal = ({
   id,
 }: {
   table:
-    | "staff"
-    | "student"
-    | "parent"
-    | "subject"
-    | "class"
+    | "staffs"
+    | "students"
+    | "parents"
+    | "subjects"
+    | "classes"
     | "attendance"
-    | "event"
-    | "announcement";
+    | "events"
+    | "announcements";
   type: "create" | "update" | "delete";
   data?: any;
   id?: string;
@@ -47,6 +50,23 @@ const FormModal = ({
       : "bg-accent-2";
 
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const deleteTable = async () => {
+    try{
+      setLoading(true);
+      const res = await apiClient.delete(`/${table}`, { data: { id }});
+      if(res.status === 200){
+        toast.success(res.data.message);
+      } else toast.error(res.data.message);
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete unsuccessfull");
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  }
 
   const Form = () => {
     return type === "delete" && id ? (
@@ -54,8 +74,8 @@ const FormModal = ({
         <span className="text-center font-medium">
           All data will be lost. Are you sure you want to delete this {table}?
         </span>
-        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
-          Delete
+        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center flex gap-2 items-center" onClick={deleteTable}>
+          {loading && <LoaderCircle className="animate-spin" />} Delete
         </button>
       </form>
     ) : type === "create" || type === "update" ? (

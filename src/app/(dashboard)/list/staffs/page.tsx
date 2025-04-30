@@ -1,16 +1,19 @@
 "use client";
 
+import { getUser } from "@/server-actions";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
-import { useRole } from "@/store";
+import { useRole, useUser } from "@/store";
 import { Staff } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
 
 const columns = [
   {
@@ -42,7 +45,9 @@ const columns = [
 ];
 
 const StaffListPage = () => {
-  const role = useRole((state) => state.role);
+  const router = useRouter();
+  const setUser = useUser((state) => state.setUser);
+  const { role, setRole } = useRole();
   const [staffs, setStaffs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -65,10 +70,22 @@ const StaffListPage = () => {
     }
   };
 
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
+
   useEffect(() => {
-    toast.loading("Fetching Data...");
-    fetchStaffs(page);
-  }, [page]);
+    if (role === "AUTH") {
+      getUserRole();
+    } else if (!["ADMIN", "TEACHER"].includes(role)) {
+      router.push(`/${role.toLowerCase()}`);
+    } else {
+      toast.loading("Fetching Data...");
+      fetchStaffs(page);
+    }
+  }, [role, page]);
 
   const renderRow = (item: Staff) => (
     <tr
@@ -103,41 +120,52 @@ const StaffListPage = () => {
             </button>
           </Link>
           {role === "ADMIN" && (
-            <FormModal table="staff" type="delete" id={item.id} />
+            <FormModal table="staffs" type="delete" id={item.id} />
           )}
         </div>
       </td>
     </tr>
   );
 
-  return (
-    <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
-      {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Staffs</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
-            {role === "ADMIN" && <FormModal table="staff" type="create" />}
+  if (!["ADMIN", "TEACHER"].includes(role)) {
+    return (
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not an ADMIN or TEACHER,
+        redirecting to ${role} page`}
+      </div>
+    );
+  } else
+    return (
+      <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
+        {/* TOP */}
+        <div className="flex items-center justify-between">
+          <h1 className="hidden md:block text-lg font-semibold">All Staffs</h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+            <TableSearch />
+            <div className="flex items-center gap-4 self-end">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/filter.png" alt="" width={14} height={14} />
+              </button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <Image src="/sort.png" alt="" width={14} height={14} />
+              </button>
+              {role === "ADMIN" && <FormModal table="staffs" type="create" />}
+            </div>
           </div>
         </div>
+        {/* LIST */}
+        <Table columns={columns} renderRow={renderRow} data={staffs} />
+        {/* PAGINATION */}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
       </div>
-      {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={staffs} />
-      {/* PAGINATION */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={(newPage) => setPage(newPage)}
-      />
-    </div>
-  );
+    );
 };
 
 export default StaffListPage;

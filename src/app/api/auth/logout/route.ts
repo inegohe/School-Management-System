@@ -22,7 +22,7 @@ export const GET = async () => {
       },
     });
 
-    return NextResponse.redirect(`${process.env.BASE_URL}/login`);
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("Logout error:", error);
     return NextResponse.json(

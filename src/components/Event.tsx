@@ -1,10 +1,12 @@
 "use client";
 import apiClient from "@/lib/apiclient";
+import { useRecents } from "@/store";
 import { Event as EventType } from "@prisma/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const Event = () => {
+  const {recents, setRecents} = useRecents();
   const [events, setEvents] = useState<EventType[]>([]);
 
   useEffect(() => {
@@ -13,6 +15,12 @@ const Event = () => {
         const res = await apiClient.get("/events");
         if (res.status === 200) {
           setEvents(res.data.events);
+          setRecents({
+            events: res.data.events.filter(
+              (x: EventType) => new Date(x.date) === new Date(Date.now())
+            ).length,
+            announcements: recents.announcements,
+          });
         }
       } catch (err) {
         console.log(err);

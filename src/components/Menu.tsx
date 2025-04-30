@@ -100,7 +100,7 @@ const Menu = () => {
           width={32}
           height={32}
           alt="logo"
-          className="text-transparent rounded-md"
+          className="text-transparent rounded-full w-[32px] h-[32px] max-w-[32px] bg-transparent"
         />
         <h1 title={school.name} aria-label={school.name} aria-description={school.name} className="font-bold hidden md:block group-hover:block w-40 truncate">
           {school.name || ""}
@@ -115,7 +115,7 @@ const Menu = () => {
               </h1>
               {x.items.map(
                 (y, index) =>
-                  y.visible.includes(role.toLowerCase()) && (
+                  (y.visible.includes(role.toLowerCase()) || y.title === "Dashboard") && (
                     <Link
                       key={index}
                       href={y.link}

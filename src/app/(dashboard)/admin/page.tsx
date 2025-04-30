@@ -21,11 +21,12 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AdminPage = () => {
+  const initDate = new Date();
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
   const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
-  const [value, onChange] = useState<Value>(new Date());
+  const [value, onChange] = useState<Value>(initDate);
   const { role, setRole } = useRole();
 
   const getData = async () => {
@@ -68,7 +69,7 @@ const AdminPage = () => {
       getUserRole();
     } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
-    } else if (Object.keys(school).length === 0) {
+    } else if (Object.keys(school).length === 0 || value.getDay() !== initDate.getDay()) {
       getData();
     }
   }, [value, role]);

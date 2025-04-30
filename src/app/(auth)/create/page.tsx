@@ -13,6 +13,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import AddParentsForm from "@/components/forms/AddParentsForm";
 import { updateColors } from "@/lib/helpers";
+import Link from "next/link";
 
 const RegisterSchoolPage = () => {
   const router = useRouter();
@@ -90,7 +91,7 @@ const RegisterSchoolPage = () => {
   };
 
   return (
-    <div className="flex w-full h-full justify-start items-start overflow-x-hidden">
+    <div className="flex flex-col gap-4 w-full h-full justify-start items-start overflow-x-hidden">
       {page === 0 ? (
         <SchoolInfoForm
           setTotalData={setTotalData}
@@ -139,6 +140,7 @@ const RegisterSchoolPage = () => {
           loading={loading}
         />
       ) : null}
+      <div className="w-full flex justify-center items-center text-center text-sm text-secondary-light gap-1 font-bold">Already have a school? <Link href="/login" className="underline">Login</Link></div>
       <Toaster
         toastOptions={{
           className: "!bg-primary !text-secondary",

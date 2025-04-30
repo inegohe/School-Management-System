@@ -64,8 +64,8 @@ const ClassListPage = () => {
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
             <>
-              <FormModal table="class" type="update" data={item} />
-              <FormModal table="class" type="delete" id={item.id} />
+              <FormModal table="classes" type="update" data={item} />
+              <FormModal table="classes" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -91,7 +91,7 @@ const ClassListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "ADMIN" && <FormModal table="class" type="create" />}
+            {role === "ADMIN" && <FormModal table="classes" type="create" />}
           </div>
         </div>
       </div>
