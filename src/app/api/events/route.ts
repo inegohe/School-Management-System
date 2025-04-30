@@ -36,3 +36,29 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     );
   }
 });
+
+export const DELETE = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json({ message: "Id not provided" }, { status: 404 });
+    }
+
+    await prisma.event.delete({
+      where: {
+        id,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Delete successfull" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+});

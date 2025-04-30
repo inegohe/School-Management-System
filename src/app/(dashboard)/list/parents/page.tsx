@@ -81,8 +81,8 @@ const ParentListPage = () => {
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
             <>
-              <FormModal table="parent" type="update" data={item} />
-              <FormModal table="parent" type="delete" id={item.id} />
+              <FormModal table="parents" type="update" data={item} />
+              <FormModal table="parents" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -110,8 +110,11 @@ const ParentListPage = () => {
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> You are not an ADMIN or
-        TEACHER, redirecting to {role} page
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You are not an ADMIN or TEACHER,
+        redirecting to ${role} page`}
       </div>
     );
   } else
@@ -129,7 +132,7 @@ const ParentListPage = () => {
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <Image src="/sort.png" alt="" width={14} height={14} />
               </button>
-              {role === "ADMIN" && <FormModal table="teacher" type="create" />}
+              {role === "ADMIN" && <FormModal table="parents" type="create" />}
             </div>
           </div>
         </div>

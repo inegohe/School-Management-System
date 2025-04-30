@@ -1,10 +1,12 @@
 "use client";
 import apiClient from "@/lib/apiclient";
+import { useRecents } from "@/store";
 import { Announcement as AnnouncementType } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Announcement = () => {
+  const { recents, setRecents } = useRecents();
   const [announcements, setAnnouncements] = useState<AnnouncementType[]>([]);
 
   useEffect(() => {
@@ -13,6 +15,12 @@ const Announcement = () => {
         const res = await apiClient.get("/announcements");
         if (res.status === 200) {
           setAnnouncements(res.data.announcements);
+          setRecents({
+            announcements: res.data.announcements.filter(
+              (x: AnnouncementType) => new Date(x.date) === new Date(Date.now())
+            ).length,
+            events: recents.events,
+          });
         }
       } catch (err) {
         console.log(err);
@@ -40,7 +48,11 @@ const Announcement = () => {
           <div className="w-full justify-between flex items-center">
             <h3 className="font-semibold text-lg">{announcement.title}</h3>
             <p className="text-sm text-gray-400">
-              {new Date(announcement.date).toLocaleDateString("en-UK", { day: "2-digit", month: "2-digit", year: "2-digit"})}
+              {new Date(announcement.date).toLocaleDateString("en-UK", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })}
             </p>
           </div>
           <p className="text-gray-500">{announcement.description}</p>

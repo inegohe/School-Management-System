@@ -40,6 +40,11 @@ interface CountsStoreType {
   setCounts: (counts: CountType) => void;
 }
 
+interface RecentsStoreType {
+  recents: { announcements: number, events: number };
+  setRecents: (recents: { announcements: number, events: number }) => void;
+}
+
 export const useUser = create<UserStoreType>((set) => ({
   user: {
     id: "",
@@ -94,6 +99,11 @@ export const useCounts = create<CountsStoreType>((set) => ({
     ],
   },
   setCounts: (counts: CountType) => set({ counts }),
+}));
+
+export const useRecents = create<RecentsStoreType>((set) => ({
+  recents: { announcements: 0, events: 0 },
+  setRecents: (recents: { announcements: number, events: number }) => set({ recents }),
 }));
 
 export const BACKGROUND_IMAGES: string[] = [
