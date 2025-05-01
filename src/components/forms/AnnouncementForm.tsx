@@ -34,6 +34,7 @@ const AnnouncementForm = ({
     resolver: zodResolver(schema),
   });
   const [loading, setLoading] = useState(false);
+  
   const onSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
@@ -44,7 +45,7 @@ const AnnouncementForm = ({
       } else toast.error(res.data.message);
     } catch (err) {
       console.log(err);
-      toast.error("Delete unsuccessfull");
+      toast.error("Operation unsuccessfull");
     } finally {
       setLoading(false);
     }

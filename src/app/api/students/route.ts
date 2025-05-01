@@ -88,7 +88,7 @@ export const POST = withAuthRoute(async (req: Request, user) => {
       },
     });
 
-    return NextResponse.json(student, { status: 200 });
+    return NextResponse.json({ message: "Student created successfully"}, { status: 200 });
   } catch (error) {
     console.error("Error creating student:", error);
     return NextResponse.json(

@@ -31,15 +31,33 @@ const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
 
 const forms: Record<
   string,
-  (type: "create" | "update", close: () => void, data?: any) => React.ReactElement
+  (
+    type: "create" | "update",
+    close: () => void,
+    data?: any
+  ) => React.ReactElement
 > = {
-  staffs: (type, data, close) => <StaffForm type={type} data={data} close={close}/>,
-  students: (type, data, close) => <StudentForm type={type} data={data} close={close}/>,
-  parents: (type, data, close) => <ParentForm type={type} data={data} close={close}/>,
-  subjects: (type, data, close) => <SubjectForm type={type} data={data} close={close}/>,
-  classes: (type, data, close) => <ClassForm type={type} data={data} close={close}/>,
-  events: (type, data, close) => <EventForm type={type} data={data} close={close}/>,
-  announcements: (type, data, close) => <AnnouncementForm type={type} data={data} close={close}/>,
+  staffs: (type, data, close) => (
+    <StaffForm type={type} data={data} close={close} />
+  ),
+  students: (type, data, close) => (
+    <StudentForm type={type} data={data} close={close} />
+  ),
+  parents: (type, data, close) => (
+    <ParentForm type={type} data={data} close={close} />
+  ),
+  subjects: (type, data, close) => (
+    <SubjectForm type={type} data={data} close={close} />
+  ),
+  classes: (type, data, close) => (
+    <ClassForm type={type} data={data} close={close} />
+  ),
+  events: (type, data, close) => (
+    <EventForm type={type} data={data} close={close} />
+  ),
+  announcements: (type, data, close) => (
+    <AnnouncementForm type={type} data={data} close={close} />
+  ),
 };
 
 const FormModal = ({
@@ -73,10 +91,10 @@ const FormModal = ({
   const [loading, setLoading] = useState(false);
 
   const deleteTable = async () => {
-    try{
+    try {
       setLoading(true);
-      const res = await apiClient.delete(`/${table}`, { data: { id }});
-      if(res.status === 200){
+      const res = await apiClient.delete(`/${table}`, { data: { id } });
+      if (res.status === 200) {
         toast.success(res.data.message);
       } else toast.error(res.data.message);
     } catch (err) {
@@ -87,7 +105,7 @@ const FormModal = ({
       toast("Refresh list to view updates");
       setOpen(false);
     }
-  }
+  };
 
   const Form = () => {
     return type === "delete" && id ? (
@@ -95,12 +113,22 @@ const FormModal = ({
         <span className="text-center font-medium">
           All data will be lost. Are you sure you want to delete this {table}?
         </span>
-        <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center flex gap-2 items-center" onClick={deleteTable}>
+        <button
+          className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center flex gap-2 items-center"
+          onClick={deleteTable}
+        >
           {loading && <LoaderCircle className="animate-spin" />} Delete
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](type, () => { toast("Refresh list to view updates"); setOpen(false); }, data)
+      forms[table](
+        type,
+        () => {
+          toast("Refresh list to view updates");
+          setOpen(false);
+        },
+        data
+      )
     ) : (
       "Form not found!"
     );

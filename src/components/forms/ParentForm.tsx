@@ -45,7 +45,7 @@ const ParentForm = ({
       } else toast.error(res.data.message);
     } catch (err) {
       console.log(err);
-      toast.error("Delete unsuccessfull");
+      toast.error("Operation unsuccessfull");
     } finally {
       setLoading(false);
     }

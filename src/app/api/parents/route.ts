@@ -64,7 +64,7 @@ export const POST = withAuthRoute(async (req: Request, user) => {
       },
     });
 
-    return NextResponse.json(parent, { status: 200 });
+    return NextResponse.json({ message: "Parent created successfully"}, { status: 200 });
   } catch (error) {
     console.error("Error creating parent:", error);
     return NextResponse.json(

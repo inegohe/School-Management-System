@@ -37,7 +37,7 @@ const SubjectForm = ({
     try {
       setLoading(true);
       const res = await apiClient.post(`/announcements/create`, {
-        data: formData,
+        data: formData
       });
       if (res.status === 200) {
         toast.success(res.data.message);
@@ -45,7 +45,7 @@ const SubjectForm = ({
       } else toast.error(res.data.message);
     } catch (err) {
       console.log(err);
-      toast.error("Delete unsuccessfull");
+      toast.error("Operation unsuccessfull");
     } finally {
       setLoading(false);
     }
