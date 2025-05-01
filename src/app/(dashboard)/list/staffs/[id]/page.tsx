@@ -9,7 +9,8 @@ import ScheduleCalendar from "@/components/ScheduleCalender";
 import { useRole } from "@/store";
 import Image from "next/image";
 import apiClient from "@/lib/apiclient";
-import { Link, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import Link from "next/link";
 
 const SingleTeacherPage = () => {
   const { id } = useParams();
