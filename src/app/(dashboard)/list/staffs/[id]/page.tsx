@@ -103,7 +103,7 @@ const SingleTeacherPage = () => {
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
                   <Image
-                    src="/address.png"
+                    src="/home.png"
                     alt="Address"
                     width={14}
                     height={14}
