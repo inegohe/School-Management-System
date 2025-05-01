@@ -41,7 +41,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
     const {
-      totalData: { ...data, parentEmail },
+      totalData: { parentEmail, ...data },
     } = await req.json();
 
     if (!data) {
@@ -65,7 +65,7 @@ export const POST = withAuthRoute(async (req: Request, user) => {
       },
     });
 
-    if (existingParent.id) {
+    if (existingParent) {
       parentId = existingParent.id;
     } else {
       await prisma.parent.create({
@@ -93,6 +93,35 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     console.error("Error creating student:", error);
     return NextResponse.json(
       { error: "Failed to create student" },
+      { status: 500 }
+    );
+  }
+});
+
+export const PATCH = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { id, data } = await req.json();
+
+    if (!id || !data) {
+      return NextResponse.json(
+        { error: "Id and data are required" },
+        { status: 400 }
+      );
+    }
+
+    const staff = await prisma.staff.update({
+      where: { id },
+      data: {
+        ...data,
+        schoolId: user.schoolId,
+      },
+    });
+
+    return NextResponse.json(staff, { status: 200 });
+  } catch (error) {
+    console.error("Error updating staff:", error);
+    return NextResponse.json(
+      { error: "Failed to update staff" },
       { status: 500 }
     );
   }

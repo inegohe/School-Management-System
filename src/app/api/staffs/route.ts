@@ -42,20 +42,17 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     const { data } = await req.json();
 
     if (!data) {
-      return NextResponse.json(
-        { error: "Data are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
     await prisma.user.create({
-      data: {  
+      data: {
         name: data.name,
         email: data.email,
         schoolId: user.schoolId,
         role: data.teaching ? "TEACHER" : "NONTEACHING",
-      }
-    })
+      },
+    });
 
     const staff = await prisma.staff.create({
       data: {
@@ -74,6 +71,34 @@ export const POST = withAuthRoute(async (req: Request, user) => {
   }
 });
 
+export const PATCH = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { id, data } = await req.json();
+
+    if (!id || !data) {
+      return NextResponse.json(
+        { error: "Id and data are required" },
+        { status: 400 }
+      );
+    }
+
+    const staff = await prisma.staff.update({
+      where: { id },
+      data: {
+        ...data,
+        schoolId: user.schoolId,
+      },
+    });
+
+    return NextResponse.json(staff, { status: 200 });
+  } catch (error) {
+    console.error("Error updating staff:", error);
+    return NextResponse.json(
+      { error: "Failed to update staff" },
+      { status: 500 }
+    );
+  }
+});
 
 export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {

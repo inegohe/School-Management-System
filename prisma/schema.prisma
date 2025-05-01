@@ -36,7 +36,7 @@ model Staff {
   id             String  @id @default(uuid())
   name           String
   image          String  @default("")
-  email          String
+  email          String  @unique
   oracleNo       String
   registrationNo String
   designation    String
@@ -55,7 +55,7 @@ model Staff {
 
 model Parent {
   id       String    @id @default(uuid())
-  email    String
+  email    String    @unique
   name     String
   phoneNo  String
   address  String
@@ -68,7 +68,7 @@ model Student {
   id             String       @id @default(uuid())
   name           String
   image          String       @default("")
-  email          String
+  email          String       @unique
   parentId       String
   parentNo       String
   parentName     String
