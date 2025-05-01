@@ -5,11 +5,6 @@ import type { NextRequest } from "next/server";
 const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];const genericAuthenticatedRoute = "/auth";
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
-  const forwardedHost = req.headers.get("x-forwarded-host");
-  const origin = req.headers.get("origin");
-  console.log("Forwarded Host:", forwardedHost);
-  console.log("Origin:", origin);
-
   const cookieStore = await cookies();
   const refreshToken =
     cookieStore.get("refreshtoken")?.value ||

@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <main className="flex justify-end w-full p-3 items-center">
       <div className="flex items-center justify-between gap-4">
-        <Link href="/lists/announcements" className="rounded-full p-2 bg-primary-light cursor-pointer relative">
+        <Link href="/list/announcements" className="rounded-full p-2 bg-primary-light cursor-pointer relative">
           <Image
             src="/announcement.png"
             width={20}
@@ -21,7 +21,7 @@ const Header = () => {
           />
           {recents.announcements > 0 && <div className="flex items-center justify-center rounded-full w-4 h-4 p-1 text-xs text-primary bg-secondary absolute top-0 left-3/4">{recents.announcements}</div>}
         </Link>
-        <Link href="/lists/events" className="rounded-full p-2 bg-primary-light cursor-pointer relative">
+        <Link href="/list/events" className="rounded-full p-2 bg-primary-light cursor-pointer relative">
           <Image
             src="/calendar.png"
             width={20}

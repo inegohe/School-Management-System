@@ -16,6 +16,9 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
 const ParentForm = dynamic(() => import("./forms/ParentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 const ClassForm = dynamic(() => import("./forms/ClassForm"), {
   loading: () => <h1>Loading...</h1>,
 });
@@ -33,9 +36,9 @@ const forms: Record<
   staffs: (type, data) => <StaffForm type={type} data={data} />,
   students: (type, data) => <StudentForm type={type} data={data} />,
   parents: (type, data) => <ParentForm type={type} data={data} />,
+  subjects: (type, data) => <SubjectForm type={type} data={data} />,
   classes: (type, data) => <ClassForm type={type} data={data} />,
   events: (type, data) => <EventForm type={type} data={data} />,
-  subjects: (type, data) => <StaffForm type={type} data={data} />,
   announcements: (type, data) => <AnnouncementForm type={type} data={data} />,
 };
 
