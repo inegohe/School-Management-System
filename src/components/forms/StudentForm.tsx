@@ -4,13 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
-import Image from "next/image";
+import apiClient from "@/lib/apiclient";
+import toast from "react-hot-toast";
+import React, { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Name is required!" }),
   email: z.string().email({ message: "Invalid email address!" }),
-  parentNo: z.string().min(1, { message: "Parent Number is required!" }),
-  parentName: z.string().min(1, { message: "Parent Name is required!" }),
   registrationNo: z
     .string()
     .min(1, { message: "Registration Number is required!" }),
@@ -19,8 +20,10 @@ const schema = z.object({
   gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required!" }),
   DOA: z.string().min(1, { message: "Date of Admission is required!" }),
   class: z.string().min(1, { message: "Class is required!" }),
-  address: z.string().min(1, { message: "Address is required!" }),
-  img: z.instanceof(File, { message: "Image is required" }),
+  parentName: z.string().min(1, { message: "Parent Name is required!" }),
+  parentEmail: z.string().email({ message: "Parent Eamil is required!" }),
+  parentNo: z.string().min(1, { message: "Parent Phone Number is required!" }),
+  address: z.string().min(1, { message: "Address is required!" })
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -28,9 +31,11 @@ type Inputs = z.infer<typeof schema>;
 const StudentForm = ({
   type,
   data,
+  close
 }: {
   type: "create" | "update";
   data?: any;
+  close: () => void;
 }) => {
   const {
     register,
@@ -39,9 +44,21 @@ const StudentForm = ({
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log(formData);
+  const [loading, setLoading] = useState(false);
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      setLoading(true);
+      const res = await apiClient.post(`/students`, { totalData: formData });
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        close();
+      } else toast.error(res.data.message);
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete unsuccessfull");
+    } finally {
+      setLoading(false);
+    }
   });
 
   return (
@@ -136,23 +153,13 @@ const StudentForm = ({
             <p className="text-xs text-red-400">{errors.gender.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label
-            className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
-            htmlFor="img"
-          >
-            <Image src="/upload.png" alt="Upload" width={28} height={28} />
-            <span>Upload a photo</span>
-          </label>
-          <input type="file" id="img" {...register("img")} className="hidden" />
-          {errors.img?.message && (
-            <p className="text-xs text-red-400">{errors.img.message}</p>
-          )}
-        </div>
       </div>
-      <button className="button text-secondary p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
-      </button>
+      <div className="w-full flex justify-end">
+        <button className="button text-secondary p-2 rounded-m">
+          {loading && <LoaderCircle className="animate-spin" />}{" "}
+          {type === "create" ? "Create" : "Update"}
+        </button>
+      </div>
     </form>
   );
 };

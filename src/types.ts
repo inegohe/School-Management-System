@@ -102,6 +102,6 @@ interface UserDataType {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "TEACHER" | "PARENT" | "STUDENT" | "AUTH";
+  role: "ADMIN" | "TEACHER" | "NONTEACHING" | "PARENT" | "STUDENT" | "AUTH";
   schoolId: string;
 }

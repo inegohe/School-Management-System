@@ -4,6 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
+import apiClient from "@/lib/apiclient";
+import toast from "react-hot-toast";
+import React, { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 const schema = z.object({
   title: z.string().min(1, { message: "Title is required!" }),
@@ -18,9 +22,11 @@ type Inputs = z.infer<typeof schema>;
 const EventForm = ({
   type,
   data,
+  close
 }: {
   type: "create" | "update";
   data?: any;
+  close: () => void;
 }) => {
   const {
     register,
@@ -29,9 +35,21 @@ const EventForm = ({
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log(formData);
+  const [loading, setLoading] = useState(false);
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      setLoading(true);
+      const res = await apiClient.post(`/events`, { data: formData });
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        close();
+      } else toast.error(res.data.message);
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete unsuccessfull");
+    } finally {
+      setLoading(false);
+    }
   });
 
   return (
@@ -79,9 +97,12 @@ const EventForm = ({
           type="time"
         />
       </div>
-      <button className="button text-secondary p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
-      </button>
+      <div className="w-full flex justify-end">
+        <button className="button text-secondary p-2 rounded-m">
+          {loading && <LoaderCircle className="animate-spin" />}{" "}
+          {type === "create" ? "Create" : "Update"}
+        </button>
+      </div>
     </form>
   );
 };

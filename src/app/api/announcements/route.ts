@@ -37,6 +37,35 @@ export const GET = withAuthRoute(async (req: Request, user) => {
   }
 });
 
+export const POST = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { data } = await req.json();
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Data are required" },
+        { status: 400 }
+      );
+    }
+
+    const announcement = await prisma.announcement.create({
+      data: {
+        ...data,
+        schoolId: user.schoolId,
+      },
+    });
+
+    return NextResponse.json(announcement, { status: 200 });
+  } catch (error) {
+    console.error("Error creating announcement:", error);
+    return NextResponse.json(
+      { error: "Failed to create announcement" },
+      { status: 500 }
+    );
+  }
+});
+
+
 export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
     const { id } = await req.json();

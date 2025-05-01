@@ -24,8 +24,10 @@ const InputField = ({
       <label className="text-xs text-gray-500">{label}</label>
       <input
         type={type}
-        {...register(name)}
-        className="bg-transparent border-b border-secondary p-2 rounded-md text-sm w-full"
+        {...register(name, {
+          valueAsNumber: type === "number"
+        })}
+        className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
         {...inputProps}
         defaultValue={defaultValue}
       />

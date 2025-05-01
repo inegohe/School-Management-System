@@ -4,7 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
-import Image from "next/image";
+import apiClient from "@/lib/apiclient";
+import toast from "react-hot-toast";
+import React, { useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 const schema = z.object({
   name: z
@@ -19,7 +22,9 @@ const schema = z.object({
     .string()
     .min(1, { message: "Registration Number is required!" }),
   designation: z.string().min(1, { message: "Designation is required!" }),
-  post: z.string().min(3, { message: "Post must be at least 3 characters long!" }),
+  post: z
+    .string()
+    .min(3, { message: "Post must be at least 3 characters long!" }),
   payrollNo: z.string().min(1, { message: "Payroll Number is required!" }),
   level: z.string().min(1, { message: "Level is required!" }),
   yearOfService: z
@@ -39,9 +44,11 @@ type Inputs = z.infer<typeof schema>;
 const StaffForm = ({
   type,
   data,
+  close,
 }: {
   type: "create" | "update";
   data?: any;
+  close: () => void;
 }) => {
   const {
     register,
@@ -50,9 +57,21 @@ const StaffForm = ({
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
-
-  const onSubmit = handleSubmit((formData) => {
-    console.log(formData);
+  const [loading, setLoading] = useState(false);
+  const onSubmit = handleSubmit(async (formData) => {
+    try {
+      setLoading(true);
+      const res = await apiClient.post(`/staffs`, { data: formData });
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        close();
+      } else toast.error(res.data.message);
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete unsuccessfull");
+    } finally {
+      setLoading(false);
+    }
   });
 
   return (
@@ -164,9 +183,12 @@ const StaffForm = ({
           type="checkbox"
         />
       </div>
-      <button className="button text-secondary p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
-      </button>
+      <div className="w-full flex justify-end">
+        <button className="button text-secondary p-2 rounded-m">
+          {loading && <LoaderCircle className="animate-spin" />}{" "}
+          {type === "create" ? "Create" : "Update"}
+        </button>
+      </div>
     </form>
   );
 };

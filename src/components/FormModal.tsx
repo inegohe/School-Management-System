@@ -3,9 +3,9 @@
 import apiClient from "@/lib/apiclient";
 import { LoaderCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const StaffForm = dynamic(() => import("./forms/StaffForm"), {
   loading: () => <h1>Loading...</h1>,
@@ -31,15 +31,15 @@ const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
 
 const forms: Record<
   string,
-  (type: "create" | "update", data?: any) => React.ReactElement
+  (type: "create" | "update", close: () => void, data?: any) => React.ReactElement
 > = {
-  staffs: (type, data) => <StaffForm type={type} data={data} />,
-  students: (type, data) => <StudentForm type={type} data={data} />,
-  parents: (type, data) => <ParentForm type={type} data={data} />,
-  subjects: (type, data) => <SubjectForm type={type} data={data} />,
-  classes: (type, data) => <ClassForm type={type} data={data} />,
-  events: (type, data) => <EventForm type={type} data={data} />,
-  announcements: (type, data) => <AnnouncementForm type={type} data={data} />,
+  staffs: (type, data, close) => <StaffForm type={type} data={data} close={close}/>,
+  students: (type, data, close) => <StudentForm type={type} data={data} close={close}/>,
+  parents: (type, data, close) => <ParentForm type={type} data={data} close={close}/>,
+  subjects: (type, data, close) => <SubjectForm type={type} data={data} close={close}/>,
+  classes: (type, data, close) => <ClassForm type={type} data={data} close={close}/>,
+  events: (type, data, close) => <EventForm type={type} data={data} close={close}/>,
+  announcements: (type, data, close) => <AnnouncementForm type={type} data={data} close={close}/>,
 };
 
 const FormModal = ({
@@ -84,6 +84,7 @@ const FormModal = ({
       toast.error("Delete unsuccessfull");
     } finally {
       setLoading(false);
+      toast("Refresh list to view updates");
       setOpen(false);
     }
   }
@@ -99,7 +100,7 @@ const FormModal = ({
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](type, data)
+      forms[table](type, () => { toast("Refresh list to view updates"); setOpen(false); }, data)
     ) : (
       "Form not found!"
     );

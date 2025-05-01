@@ -49,7 +49,7 @@ model Staff {
   phoneNo        String
   yearOfExit     Int
   schoolId       String
-  admin          Boolean
+  admin          Boolean @default(false)
   school         School  @relation(fields: [schoolId], references: [id])
 }
 
@@ -126,7 +126,7 @@ model School {
 model Subject {
   id           String       @id @default(uuid())
   name         String
-  teachers     String[]          @default([])
+  teachers     String[]     @default([])
   schoolId     String
   school       School       @relation(fields: [schoolId], references: [id])
 }
@@ -190,6 +190,7 @@ model Announcement {
 enum Role {
   ADMIN
   TEACHER
+  NONTEACHING
   STUDENT
   PARENT
 }

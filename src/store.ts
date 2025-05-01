@@ -6,8 +6,10 @@ interface UserStoreType {
 }
 
 interface RoleStoreType {
-  role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH";
-  setRole: (role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH") => void;
+  role: "ADMIN" | "TEACHER" | "NONTEACHING" | "STUDENT" | "PARENT" | "AUTH";
+  setRole: (
+    role: "ADMIN" | "TEACHER" | "NONTEACHING" | "STUDENT" | "PARENT" | "AUTH"
+  ) => void;
 }
 
 interface SchoolStoreType {
@@ -41,8 +43,8 @@ interface CountsStoreType {
 }
 
 interface RecentsStoreType {
-  recents: { announcements: number, events: number };
-  setRecents: (recents: { announcements: number, events: number }) => void;
+  recents: { announcements: number; events: number };
+  setRecents: (recents: { announcements: number; events: number }) => void;
 }
 
 export const useUser = create<UserStoreType>((set) => ({
@@ -58,8 +60,9 @@ export const useUser = create<UserStoreType>((set) => ({
 
 export const useRole = create<RoleStoreType>((set) => ({
   role: "AUTH",
-  setRole: (role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT" | "AUTH") =>
-    set({ role }),
+  setRole: (
+    role: "ADMIN" | "TEACHER" | "NONTEACHING" | "STUDENT" | "PARENT" | "AUTH"
+  ) => set({ role }),
 }));
 
 export const useSchool = create<SchoolStoreType>((set) => ({
@@ -103,7 +106,8 @@ export const useCounts = create<CountsStoreType>((set) => ({
 
 export const useRecents = create<RecentsStoreType>((set) => ({
   recents: { announcements: 0, events: 0 },
-  setRecents: (recents: { announcements: number, events: number }) => set({ recents }),
+  setRecents: (recents: { announcements: number; events: number }) =>
+    set({ recents }),
 }));
 
 export const BACKGROUND_IMAGES: string[] = [

@@ -36,3 +36,56 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     );
   }
 });
+
+export const POST = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { data } = await req.json();
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Data are required" },
+        { status: 400 }
+      );
+    }
+
+    const subject = await prisma.subject.create({
+      data: {
+        ...data,
+        schoolId: user.schoolId,
+      },
+    });
+
+    return NextResponse.json(subject, { status: 200 });
+  } catch (error) {
+    console.error("Error creating subject:", error);
+    return NextResponse.json(
+      { error: "Failed to create subject" },
+      { status: 500 }
+    );
+  }
+});
+
+export const DELETE = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { id } = await req.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.subject.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Subject deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting subject:", error);
+    return NextResponse.json(
+      { error: "Failed to delete subject" },
+      { status: 500 }
+    );
+  }
+});

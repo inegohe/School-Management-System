@@ -37,6 +37,44 @@ export const GET = withAuthRoute(async (req: Request, user) => {
   }
 });
 
+export const POST = withAuthRoute(async (req: Request, user) => {
+  try {
+    const { data } = await req.json();
+
+    if (!data) {
+      return NextResponse.json(
+        { error: "Data are required" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.user.create({
+      data: {  
+        name: data.name,
+        email: data.email,
+        schoolId: user.schoolId,
+        role: data.teaching ? "TEACHER" : "NONTEACHING",
+      }
+    })
+
+    const staff = await prisma.staff.create({
+      data: {
+        ...data,
+        schoolId: user.schoolId,
+      },
+    });
+
+    return NextResponse.json(staff, { status: 200 });
+  } catch (error) {
+    console.error("Error creating staff:", error);
+    return NextResponse.json(
+      { error: "Failed to create staff" },
+      { status: 500 }
+    );
+  }
+});
+
+
 export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
     const { id } = await req.json();

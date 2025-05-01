@@ -8,7 +8,7 @@ interface UserPayload {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "TEACHER" | "STUDENT" | "PARENT";
+  role: "ADMIN" | "TEACHER" | "NONTEACHING" | "STUDENT" | "PARENT";
   schoolId: string;
 }
 

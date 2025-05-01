@@ -2,9 +2,17 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];const genericAuthenticatedRoute = "/auth";
+const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];
+const genericAuthenticatedRoute = "/auth";
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
+  const origin = req.headers.get("origin");
+  const forwardedHost = req.headers.get("x-forwarded-host");
+  // Reject requests with mismatched headers
+  if ((origin !== forwardedHost) && process.env.NODE_ENV !== "development") {
+    return new NextResponse("Invalid request headers", { status: 400 });
+  }
+
   const cookieStore = await cookies();
   const refreshToken =
     cookieStore.get("refreshtoken")?.value ||
