@@ -26,7 +26,7 @@ const AdminPage = () => {
   const setUser = useUser((state) => state.setUser);
   const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
-  const [value, onChange] = useState<Value>(initDate);
+  const [value, onChange] = useState<Value>(new Date());
   const { role, setRole } = useRole();
 
   const getData = async () => {
@@ -65,11 +65,12 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
+    console.log(value, initDate);
     if (role === "AUTH") {
       getUserRole();
     } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
-    } else if (Object.keys(school).length === 0 || value.getDay() !== initDate.getDay()) {
+    } else if (Object.keys(school).length === 0 || (value instanceof Date && value.getDay() !== initDate.getDay())) {
       getData();
     }
   }, [value, role]);

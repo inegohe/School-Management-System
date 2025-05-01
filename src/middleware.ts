@@ -1,13 +1,15 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
 
-const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];
-const roleRoutes = ["/admin", "/teacher", "/student", "/parent"];
-const genericAuthenticatedRoute = "/auth";
+const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];const genericAuthenticatedRoute = "/auth";
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
+  const forwardedHost = req.headers.get("x-forwarded-host");
+  const origin = req.headers.get("origin");
+  console.log("Forwarded Host:", forwardedHost);
+  console.log("Origin:", origin);
+
   const cookieStore = await cookies();
   const refreshToken =
     cookieStore.get("refreshtoken")?.value ||

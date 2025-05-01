@@ -13,6 +13,18 @@ const StaffForm = dynamic(() => import("./forms/StaffForm"), {
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 const forms: Record<
   string,
@@ -20,6 +32,11 @@ const forms: Record<
 > = {
   staffs: (type, data) => <StaffForm type={type} data={data} />,
   students: (type, data) => <StudentForm type={type} data={data} />,
+  parents: (type, data) => <ParentForm type={type} data={data} />,
+  classes: (type, data) => <ClassForm type={type} data={data} />,
+  events: (type, data) => <EventForm type={type} data={data} />,
+  subjects: (type, data) => <StaffForm type={type} data={data} />,
+  announcements: (type, data) => <AnnouncementForm type={type} data={data} />,
 };
 
 const FormModal = ({
