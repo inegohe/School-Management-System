@@ -58,13 +58,14 @@ const SubjectForm = ({
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new subject" : "Update subject"}
       </h1>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-col w-full gap-4">
         <InputField
           label="Subject Name"
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors.name}
+          className="w-full"
         />
         <div className="flex flex-col gap-2 w-full">
           <label className="text-xs text-gray-500">Teachers</label>

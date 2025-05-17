@@ -16,7 +16,7 @@ const SingleStudentPage = () => {
   const { id } = useParams();
   const role = useRole((state) => state.role);
   const [student, setStudent] = useState<any>(null);
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchStudent = async () => {

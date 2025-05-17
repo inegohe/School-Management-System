@@ -90,6 +90,7 @@ const StaffForm = ({
           defaultValue={data?.name}
           register={register}
           error={errors.name}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Email"
@@ -97,6 +98,7 @@ const StaffForm = ({
           defaultValue={data?.email}
           register={register}
           error={errors.email}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Oracle No"
@@ -104,6 +106,7 @@ const StaffForm = ({
           defaultValue={data?.oracleNo}
           register={register}
           error={errors.oracleNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Registration No"
@@ -111,6 +114,7 @@ const StaffForm = ({
           defaultValue={data?.registrationNo}
           register={register}
           error={errors.registrationNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Designation"
@@ -118,6 +122,7 @@ const StaffForm = ({
           defaultValue={data?.designation}
           register={register}
           error={errors.designation}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Post"
@@ -125,6 +130,7 @@ const StaffForm = ({
           defaultValue={data?.post}
           register={register}
           error={errors.post}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Payroll No"
@@ -132,6 +138,7 @@ const StaffForm = ({
           defaultValue={data?.payrollNo}
           register={register}
           error={errors.payrollNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Level"
@@ -139,6 +146,7 @@ const StaffForm = ({
           defaultValue={data?.level}
           register={register}
           error={errors.level}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Year of Service"
@@ -147,6 +155,7 @@ const StaffForm = ({
           register={register}
           error={errors.yearOfService}
           type="number"
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Year of Exit"
@@ -155,6 +164,7 @@ const StaffForm = ({
           register={register}
           error={errors.yearOfExit}
           type="number"
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Phone No"
@@ -162,6 +172,7 @@ const StaffForm = ({
           defaultValue={data?.phoneNo}
           register={register}
           error={errors.phoneNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Address"
@@ -169,6 +180,7 @@ const StaffForm = ({
           defaultValue={data?.address}
           register={register}
           error={errors.address}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Teaching"
@@ -177,6 +189,7 @@ const StaffForm = ({
           register={register}
           error={errors.teaching}
           type="checkbox"
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Admin"
@@ -185,6 +198,7 @@ const StaffForm = ({
           register={register}
           error={errors.admin}
           type="checkbox"
+          className="w-full md:w-1/4"
         />
       </div>
       <div className="w-full flex justify-end">

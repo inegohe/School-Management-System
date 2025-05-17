@@ -61,13 +61,14 @@ const EventForm = ({
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new event" : "Update event"}
       </h1>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-col w-full gap-4">
         <InputField
           label="Title"
           name="title"
           defaultValue={data?.title}
           register={register}
           error={errors.title}
+          className="w-full"
         />
         <InputField
           label="Description"
@@ -75,6 +76,7 @@ const EventForm = ({
           defaultValue={data?.description}
           register={register}
           error={errors.description}
+          className="w-full"
         />
         <InputField
           label="Date"
@@ -83,6 +85,7 @@ const EventForm = ({
           register={register}
           error={errors.date}
           type="date"
+          className="w-full"
         />
         <InputField
           label="Start Time"
@@ -91,6 +94,7 @@ const EventForm = ({
           register={register}
           error={errors.startTime}
           type="time"
+          className="w-full"
         />
         <InputField
           label="End Time"
@@ -99,6 +103,7 @@ const EventForm = ({
           register={register}
           error={errors.endTime}
           type="time"
+          className="w-full"
         />
       </div>
       <div className="w-full flex justify-end">

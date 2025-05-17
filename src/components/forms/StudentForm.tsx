@@ -45,12 +45,14 @@ const StudentForm = ({
     resolver: zodResolver(schema),
   });
   const [loading, setLoading] = useState(false);
-
-  const onSubmit = async (formData: Inputs) => {
-    console.log("called");
+  const onSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
-      const res = await apiClient.post(`/students`, { totalData: formData });
+      const res = await apiClient.post(`/students`, {
+        totalData: formData,
+        type,
+        id: data?.id,
+      });
       if (res.status === 200) {
         toast.success(res.data.message);
         close();
@@ -61,10 +63,10 @@ const StudentForm = ({
     } finally {
       setLoading(false);
     }
-  };
+  });
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new student" : "Update student"}
       </h1>
@@ -75,12 +77,14 @@ const StudentForm = ({
           defaultValue={data?.name}
           register={register}
           error={errors.name}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Email"
           name="email"
           defaultValue={data?.email}
           register={register}
+          className="w-full md:w-1/4"
           error={errors.email}
         />
         <InputField
@@ -89,6 +93,7 @@ const StudentForm = ({
           defaultValue={data?.parentNo}
           register={register}
           error={errors.parentNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Parent Name"
@@ -96,6 +101,7 @@ const StudentForm = ({
           defaultValue={data?.parentName}
           register={register}
           error={errors.parentName}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Registration Number"
@@ -103,6 +109,7 @@ const StudentForm = ({
           defaultValue={data?.registrationNo}
           register={register}
           error={errors.registrationNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Admission Number"
@@ -110,6 +117,7 @@ const StudentForm = ({
           defaultValue={data?.admissionNo}
           register={register}
           error={errors.admissionNo}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Birthdate"
@@ -118,6 +126,7 @@ const StudentForm = ({
           register={register}
           error={errors.birthdate}
           type="date"
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Date of Admission"
@@ -125,6 +134,7 @@ const StudentForm = ({
           defaultValue={"12/10/2021"}
           register={register}
           error={errors.DOA}
+          className="w-full md:w-1/4"
           type="date"
         />
         <InputField
@@ -133,6 +143,7 @@ const StudentForm = ({
           defaultValue={data?.class}
           register={register}
           error={errors.class}
+          className="w-full md:w-1/4"
         />
         <InputField
           label="Address"
@@ -140,6 +151,7 @@ const StudentForm = ({
           defaultValue={data?.address}
           register={register}
           error={errors.address}
+          className="w-full md:w-1/4"
         />
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Gender</label>
@@ -157,7 +169,7 @@ const StudentForm = ({
         </div>
       </div>
       <div className="w-full flex justify-end">
-        <button type="submit" className="button text-secondary p-2 rounded-md">
+        <button className="button text-secondary p-2 rounded-md">
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </button>

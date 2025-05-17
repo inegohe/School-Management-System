@@ -20,7 +20,7 @@ type Inputs = z.infer<typeof schema>;
 const AnnouncementForm = ({
   type,
   data,
-  close
+  close,
 }: {
   type: "create" | "update";
   data?: any;
@@ -34,11 +34,15 @@ const AnnouncementForm = ({
     resolver: zodResolver(schema),
   });
   const [loading, setLoading] = useState(false);
-  
+
   const onSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
-      const res = await apiClient.post(`/announcements`, { data: formData });
+      const res = await apiClient.post(`/announcements`, {
+        data: formData,
+        type,
+        id: data?.id,
+      });
       if (res.status === 200) {
         toast.success(res.data.message);
         close();
@@ -58,13 +62,14 @@ const AnnouncementForm = ({
           ? "Create a new announcement"
           : "Update announcement"}
       </h1>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-col gap-4 w-full">
         <InputField
           label="Title"
           name="title"
           defaultValue={data?.title}
           register={register}
           error={errors.title}
+          className="w-full"
         />
         <InputField
           label="Description"
@@ -72,6 +77,7 @@ const AnnouncementForm = ({
           defaultValue={data?.description}
           register={register}
           error={errors.description}
+          className="w-full"
         />
         <InputField
           label="Date"
@@ -79,6 +85,7 @@ const AnnouncementForm = ({
           defaultValue={data?.date}
           register={register}
           error={errors.date}
+          className="w-full"
           type="date"
         />
       </div>

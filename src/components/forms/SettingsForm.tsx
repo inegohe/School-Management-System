@@ -171,7 +171,7 @@ const SettingsForm = ({
           Change Your School&apos;s Settings
         </h1>
         <div className="w-full flex-col flex items-between">
-          <div className="gap-4 w-full md:flex-row flex-col flex w-full h-full">
+          <div className="gap-4 w-full md:flex-row flex-col flex h-full">
             <label
               htmlFor="image"
               className="flex gap-2 items-center justify-center w-full md:w-60 h-full rounded-md overflow-hidden relative bg-black"
@@ -183,7 +183,7 @@ const SettingsForm = ({
                 alt="Preview"
                 className="w-full h-full"
               />
-              <div className="absolute top-0 left-0 w-full z-10 w-full h-full flex items-center justify-center cursor-pointer p-2 rounded-md bg-primary-light opacity-0 hover:opacity-60">
+              <div className="absolute top-0 left-0 w-full z-10 h-full flex items-center justify-center cursor-pointer p-2 rounded-md bg-primary-light opacity-0 hover:opacity-60">
                 <Upload className="size-8" />
               </div>
               <input

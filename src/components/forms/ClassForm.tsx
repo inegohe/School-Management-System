@@ -61,13 +61,14 @@ const ClassForm = ({
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new class" : "Update class"}
       </h1>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-col w-full gap-4">
         <InputField
           label="Class Name"
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors.name}
+          className="w-full"
         />
         <InputField
           label="Total Students"
@@ -76,6 +77,7 @@ const ClassForm = ({
           register={register}
           error={errors.totalStudent}
           type="number"
+          className="w-full"
         />
         <InputField
           label="Class Teacher"
@@ -83,6 +85,7 @@ const ClassForm = ({
           defaultValue={data?.classTeacher}
           register={register}
           error={errors.classTeacher}
+          className="w-full"
         />
       </div>
       <div className="w-full flex justify-end">

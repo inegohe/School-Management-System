@@ -67,6 +67,7 @@ const ParentForm = ({
           defaultValue={data?.name}
           register={register}
           error={errors.name}
+          className="w-full"
         />
         <InputField
           label="Email"
@@ -74,6 +75,7 @@ const ParentForm = ({
           defaultValue={data?.email}
           register={register}
           error={errors.email}
+          className="w-full"
         />
         <InputField
           label="Phone Number"
@@ -81,6 +83,7 @@ const ParentForm = ({
           defaultValue={data?.phoneNo}
           register={register}
           error={errors.phoneNo}
+          className="w-full"
         />
         <InputField
           label="Address"
@@ -88,6 +91,7 @@ const ParentForm = ({
           defaultValue={data?.address}
           register={register}
           error={errors.address}
+          className="w-full"
         />
       </div>
       <div className="w-full flex justify-end">
