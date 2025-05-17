@@ -36,6 +36,7 @@ const SingleTeacherPage = () => {
 
   useEffect(() => {
     fetchTeacher();
+    setRefresh(false);
   }, [id, refresh]);
 
   if (loading) {

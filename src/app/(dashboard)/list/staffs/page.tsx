@@ -85,6 +85,7 @@ const StaffListPage = () => {
     } else {
       toast.loading("Fetching Data...");
       fetchStaffs(page);
+      setRefresh(false);
     }
   }, [role, page, refresh]);
 

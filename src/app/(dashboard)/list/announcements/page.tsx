@@ -89,6 +89,7 @@ const AnnouncementListPage = () => {
   useEffect(() => {
     toast.loading("Fetching Data...");
     fetchAnnouncements(page);
+    setRefresh(false);
   }, [page, refresh]);
 
   return (
@@ -102,7 +103,10 @@ const AnnouncementListPage = () => {
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <RefreshCcw onClick={() => setRefresh(!refresh)} />
+              <RefreshCcw
+                className={`stroke-primary ${refresh && "animate-spin"}`}
+                onClick={() => setRefresh(!refresh)}
+              />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
