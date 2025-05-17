@@ -7,6 +7,7 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
 import { Announcement } from "@prisma/client";
+import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -32,6 +33,7 @@ const AnnouncementListPage = () => {
   const role = useRole((state) => state.role);
   const [announcements, setAnnouncements] = useState([]);
   const [page, setPage] = useState(1);
+  const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchAnnouncements = async (page: number) => {
@@ -58,13 +60,25 @@ const AnnouncementListPage = () => {
     >
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       <td className="hidden md:table-cell">{item.description}</td>
-      <td className="hidden md:table-cell">{new Date(item.date).toDateString()}</td>
+      <td className="hidden md:table-cell">
+        {new Date(item.date).toDateString()}
+      </td>
       <td>
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
             <>
-              <FormModal table="announcement" type="update" data={item} />
-              <FormModal table="announcement" type="delete" id={item.id} />
+              <FormModal
+                table="announcements"
+                type="update"
+                data={item}
+                refresh={() => setRefresh(!refresh)}
+              />
+              <FormModal
+                table="announcements"
+                type="delete"
+                id={item.id}
+                refresh={() => setRefresh(!refresh)}
+              />
             </>
           )}
         </div>
@@ -75,7 +89,7 @@ const AnnouncementListPage = () => {
   useEffect(() => {
     toast.loading("Fetching Data...");
     fetchAnnouncements(page);
-  }, [page]);
+  }, [page, refresh]);
 
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
@@ -88,13 +102,17 @@ const AnnouncementListPage = () => {
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/filter.png" alt="" width={14} height={14} />
+              <RefreshCcw onClick={() => setRefresh(!refresh)} />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "ADMIN" && (
-              <FormModal table="announcement" type="create" />
+              <FormModal
+                table="announcements"
+                type="create"
+                refresh={() => setRefresh(!refresh)}
+              />
             )}
           </div>
         </div>

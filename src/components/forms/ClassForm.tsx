@@ -22,7 +22,7 @@ type Inputs = z.infer<typeof schema>;
 const ClassForm = ({
   type,
   data,
-  close
+  close,
 }: {
   type: "create" | "update";
   data?: any;
@@ -39,7 +39,11 @@ const ClassForm = ({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
-      const res = await apiClient.post(`/classes`, { data: formData });
+      const res = await apiClient.post(`/classes`, {
+        data: formData,
+        type,
+        id: data?.id,
+      });
       if (res.status === 200) {
         toast.success(res.data.message);
         close();

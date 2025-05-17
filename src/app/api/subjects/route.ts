@@ -39,27 +39,35 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { data } = await req.json();
+    const { data, type, id } = await req.json();
 
     if (!data) {
-      return NextResponse.json(
-        { error: "Data are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
-    const subject = await prisma.subject.create({
-      data: {
-        ...data,
-        schoolId: user.schoolId,
-      },
-    });
+    type === "create"
+      ? await prisma.subject.create({
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        })
+      : await prisma.subject.update({
+          where: { id },
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        });
 
-    return NextResponse.json({ message: "Subject created successfully"}, { status: 200 });
-  } catch (error) {
-    console.error("Error creating subject:", error);
     return NextResponse.json(
-      { error: "Failed to create subject" },
+      { message: `Subject ${type}d successfully` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating/creating subject:", error);
+    return NextResponse.json(
+      { error: "Failed to update/create subject" },
       { status: 500 }
     );
   }
@@ -70,17 +78,17 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
     const { id } = await req.json();
 
     if (!id) {
-      return NextResponse.json(
-        { error: "ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
     await prisma.subject.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: "Subject deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Subject deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error deleting subject:", error);
     return NextResponse.json(

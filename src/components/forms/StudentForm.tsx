@@ -23,7 +23,7 @@ const schema = z.object({
   parentName: z.string().min(1, { message: "Parent Name is required!" }),
   parentEmail: z.string().email({ message: "Parent Eamil is required!" }),
   parentNo: z.string().min(1, { message: "Parent Phone Number is required!" }),
-  address: z.string().min(1, { message: "Address is required!" })
+  address: z.string().min(1, { message: "Address is required!" }),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -31,7 +31,7 @@ type Inputs = z.infer<typeof schema>;
 const StudentForm = ({
   type,
   data,
-  close
+  close,
 }: {
   type: "create" | "update";
   data?: any;
@@ -45,10 +45,12 @@ const StudentForm = ({
     resolver: zodResolver(schema),
   });
   const [loading, setLoading] = useState(false);
-  const onSubmit = handleSubmit(async (formData) => {
+
+  const onSubmit = async (formData: Inputs) => {
+    console.log("called");
     try {
       setLoading(true);
-      const res = await apiClient.post(`/students`, { totalData: formData});
+      const res = await apiClient.post(`/students`, { totalData: formData });
       if (res.status === 200) {
         toast.success(res.data.message);
         close();
@@ -59,10 +61,10 @@ const StudentForm = ({
     } finally {
       setLoading(false);
     }
-  });
+  };
 
   return (
-    <form className="flex flex-col gap-8" onSubmit={onSubmit}>
+    <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
       <h1 className="text-xl font-semibold">
         {type === "create" ? "Create a new student" : "Update student"}
       </h1>
@@ -120,7 +122,7 @@ const StudentForm = ({
         <InputField
           label="Date of Admission"
           name="DOA"
-          defaultValue={data?.DOA}
+          defaultValue={"12/10/2021"}
           register={register}
           error={errors.DOA}
           type="date"
@@ -155,7 +157,7 @@ const StudentForm = ({
         </div>
       </div>
       <div className="w-full flex justify-end">
-        <button className="button text-secondary p-2 rounded-m">
+        <button type="submit" className="button text-secondary p-2 rounded-md">
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </button>

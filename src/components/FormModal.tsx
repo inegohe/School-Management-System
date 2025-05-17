@@ -37,25 +37,25 @@ const forms: Record<
     data?: any
   ) => React.ReactElement
 > = {
-  staffs: (type, data, close) => (
+  staffs: (type, close, data) => (
     <StaffForm type={type} data={data} close={close} />
   ),
-  students: (type, data, close) => (
+  students: (type, close, data) => (
     <StudentForm type={type} data={data} close={close} />
   ),
-  parents: (type, data, close) => (
+  parents: (type, close, data) => (
     <ParentForm type={type} data={data} close={close} />
   ),
-  subjects: (type, data, close) => (
+  subjects: (type, close, data) => (
     <SubjectForm type={type} data={data} close={close} />
   ),
-  classes: (type, data, close) => (
+  classes: (type, close, data) => (
     <ClassForm type={type} data={data} close={close} />
   ),
-  events: (type, data, close) => (
+  events: (type, close, data) => (
     <EventForm type={type} data={data} close={close} />
   ),
-  announcements: (type, data, close) => (
+  announcements: (type, close, data) => (
     <AnnouncementForm type={type} data={data} close={close} />
   ),
 };
@@ -65,6 +65,7 @@ const FormModal = ({
   type,
   data,
   id,
+  refresh,
 }: {
   table:
     | "staffs"
@@ -78,6 +79,7 @@ const FormModal = ({
   type: "create" | "update" | "delete";
   data?: any;
   id?: string;
+  refresh: () => void;
 }) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
@@ -102,7 +104,8 @@ const FormModal = ({
       toast.error("Delete unsuccessfull");
     } finally {
       setLoading(false);
-      toast("Refresh list to view updates");
+      toast("Refreshing");
+      refresh();
       setOpen(false);
     }
   };
@@ -124,7 +127,8 @@ const FormModal = ({
       forms[table](
         type,
         () => {
-          toast("Refresh list to view updates");
+          toast("Refreshing");
+          refresh();
           setOpen(false);
         },
         data
@@ -143,7 +147,7 @@ const FormModal = ({
         <Image src={`/${type}.png`} alt="" width={16} height={16} />
       </button>
       {open && (
-        <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+        <div className="w-screen h-screen absolute left-0 top-0 bg-primary bg-opacity-60 z-50 flex items-start justify-center overflow-y-scroll py-4">
           <div className="bg-primary-light p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
             <Form />
             <div

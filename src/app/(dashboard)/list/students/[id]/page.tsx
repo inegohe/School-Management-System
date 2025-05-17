@@ -16,6 +16,7 @@ const SingleStudentPage = () => {
   const { id } = useParams();
   const role = useRole((state) => state.role);
   const [student, setStudent] = useState<any>(null);
+  const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const fetchStudent = async () => {
@@ -35,7 +36,7 @@ const SingleStudentPage = () => {
 
   useEffect(() => {
     fetchStudent();
-  }, [id]);
+  }, [id, refresh]);
 
   if (loading) {
     return (
@@ -76,7 +77,12 @@ const SingleStudentPage = () => {
               <div className="flex items-center gap-4">
                 <h1 className="text-xl font-semibold">{student.name}</h1>
                 {role === "ADMIN" && (
-                  <FormModal table="students" type="update" data={student} />
+                  <FormModal
+                    table="students"
+                    type="update"
+                    data={student}
+                    refresh={() => setRefresh(!refresh)}
+                  />
                 )}
               </div>
               <p className="text-sm text-gray-500">{student.class}</p>
@@ -95,12 +101,7 @@ const SingleStudentPage = () => {
                   <span>{student.birthdate}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image
-                    src="/home.png"
-                    alt="Address"
-                    width={14}
-                    height={14}
-                  />
+                  <Image src="/home.png" alt="Address" width={14} height={14} />
                   <span>{student.address}</span>
                 </div>
               </div>
@@ -138,7 +139,7 @@ const SingleStudentPage = () => {
             </Link>
           </div>
         </div>
-        <Performance />
+        {/* <Performance /> */}
         <Announcements />
       </div>
     </div>

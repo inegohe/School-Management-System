@@ -16,6 +16,7 @@ const SingleTeacherPage = () => {
   const { id } = useParams();
   const role = useRole((state) => state.role);
   const [teacher, setTeacher] = useState<any>(null);
+  const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const fetchTeacher = async () => {
@@ -35,12 +36,14 @@ const SingleTeacherPage = () => {
 
   useEffect(() => {
     fetchTeacher();
-  }, [id]);
+  }, [id, refresh]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-full">
-        <p className="font-bold flex gap-1 text-secondary-light"><LoaderCircle className="animate-spin" /> Loading...</p>
+        <p className="font-bold flex gap-1 text-secondary-light">
+          <LoaderCircle className="animate-spin" /> Loading...
+        </p>
       </div>
     );
   }
@@ -78,36 +81,22 @@ const SingleTeacherPage = () => {
                     table="staffs"
                     type="update"
                     data={teacher}
+                    refresh={() => setRefresh(!refresh)}
                   />
                 )}
               </div>
-              <p className="text-sm text-gray-500">{teacher.designation}</p>
+              <p className="text-sm text-gray-500">{teacher.post}</p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image
-                    src="/mail.png"
-                    alt="Email"
-                    width={14}
-                    height={14}
-                  />
+                  <Image src="/mail.png" alt="Email" width={14} height={14} />
                   <span>{teacher.email}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image
-                    src="/phone.png"
-                    alt="Phone"
-                    width={14}
-                    height={14}
-                  />
+                  <Image src="/phone.png" alt="Phone" width={14} height={14} />
                   <span>{teacher.phoneNo}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image
-                    src="/home.png"
-                    alt="Address"
-                    width={14}
-                    height={14}
-                  />
+                  <Image src="/home.png" alt="Address" width={14} height={14} />
                   <span>{teacher.address}</span>
                 </div>
               </div>
@@ -125,18 +114,27 @@ const SingleTeacherPage = () => {
         <div className="bg-primary-light p-4 rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-accent-1" href={`/list/staffs?q=teacher:${teacher.name}`}>
+            <Link
+              className="p-3 rounded-md bg-accent-1"
+              href={`/list/staffs?q=teacher:${teacher.name}`}
+            >
               Teacher&apos;s Classes
             </Link>
-            <Link className="p-3 rounded-md bg-accent-2" href={`/list/students?q=teacher:${teacher.name}`}>
+            <Link
+              className="p-3 rounded-md bg-accent-2"
+              href={`/list/students?q=teacher:${teacher.name}`}
+            >
               Teacher&apos;s Students
             </Link>
-            <Link className="p-3 rounded-md bg-accent-3" href={`/list/subjects?q=teacher:${teacher.name}`}>
+            <Link
+              className="p-3 rounded-md bg-accent-3"
+              href={`/list/subjects?q=teacher:${teacher.name}`}
+            >
               Teacher&apos;s Subjects
             </Link>
           </div>
         </div>
-        <Performance />
+        <Performance level={parseInt(teacher.level) || 0} />
         <Announcements />
       </div>
     </div>

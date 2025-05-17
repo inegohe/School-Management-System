@@ -49,6 +49,7 @@ const StaffListPage = () => {
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
   const [staffs, setStaffs] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -85,7 +86,7 @@ const StaffListPage = () => {
       toast.loading("Fetching Data...");
       fetchStaffs(page);
     }
-  }, [role, page]);
+  }, [role, page, refresh]);
 
   const renderRow = (item: Staff) => (
     <tr
@@ -120,7 +121,12 @@ const StaffListPage = () => {
             </button>
           </Link>
           {role === "ADMIN" && (
-            <FormModal table="staffs" type="delete" id={item.id} />
+            <FormModal
+              table="staffs"
+              type="delete"
+              id={item.id}
+              refresh={() => setRefresh(!refresh)}
+            />
           )}
         </div>
       </td>
@@ -152,7 +158,13 @@ const StaffListPage = () => {
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <Image src="/sort.png" alt="" width={14} height={14} />
               </button>
-              {role === "ADMIN" && <FormModal table="staffs" type="create" />}
+              {role === "ADMIN" && (
+                <FormModal
+                  table="staffs"
+                  type="create"
+                  refresh={() => setRefresh(!refresh)}
+                />
+              )}
             </div>
           </div>
         </div>

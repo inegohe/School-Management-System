@@ -61,7 +61,11 @@ const StaffForm = ({
   const onSubmit = handleSubmit(async (formData) => {
     try {
       setLoading(true);
-      const res = await apiClient.post(`/staffs`, { data: formData});
+      const res = await apiClient.post(`/staffs`, {
+        data: formData,
+        type,
+        id: data?.id,
+      });
       if (res.status === 200) {
         toast.success(res.data.message);
         close();

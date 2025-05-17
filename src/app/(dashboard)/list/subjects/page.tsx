@@ -7,6 +7,7 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
 import { Subject } from "@prisma/client";
+import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -30,6 +31,7 @@ const SubjectListPage = () => {
   const role = useRole((state) => state.role);
   const [subjects, setSubjects] = useState([]);
   const [page, setPage] = useState(1);
+  const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchSubjects = async (page: number) => {
@@ -61,8 +63,18 @@ const SubjectListPage = () => {
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
             <>
-              <FormModal table="subjects" type="update" data={item} />
-              <FormModal table="subjects" type="delete" id={item.id} />
+              <FormModal
+                table="subjects"
+                type="update"
+                data={item}
+                refresh={() => setRefresh(!refresh)}
+              />
+              <FormModal
+                table="subjects"
+                type="delete"
+                id={item.id}
+                refresh={() => setRefresh(!refresh)}
+              />
             </>
           )}
         </div>
@@ -73,7 +85,7 @@ const SubjectListPage = () => {
   useEffect(() => {
     toast.loading("Fetching Data...");
     fetchSubjects(page);
-  }, [page]);
+  }, [page, refresh]);
 
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
@@ -84,12 +96,18 @@ const SubjectListPage = () => {
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/filter.png" alt="" width={14} height={14} />
+              <RefreshCcw onClick={() => setRefresh(!refresh)} />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "ADMIN" && <FormModal table="subjects" type="create" />}
+            {role === "ADMIN" && (
+              <FormModal
+                table="subjects"
+                type="create"
+                refresh={() => setRefresh(!refresh)}
+              />
+            )}
           </div>
         </div>
       </div>

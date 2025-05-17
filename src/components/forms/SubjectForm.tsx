@@ -37,7 +37,9 @@ const SubjectForm = ({
     try {
       setLoading(true);
       const res = await apiClient.post(`/announcements/create`, {
-        data: formData
+        data: formData,
+        type,
+        id: data?.id,
       });
       if (res.status === 200) {
         toast.success(res.data.message);

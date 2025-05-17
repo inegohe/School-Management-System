@@ -8,7 +8,7 @@ import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Parent } from "@prisma/client";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,6 +40,7 @@ const ParentListPage = () => {
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
   const [parents, setParents] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -81,8 +82,18 @@ const ParentListPage = () => {
         <div className="flex items-center gap-2">
           {role === "ADMIN" && (
             <>
-              <FormModal table="parents" type="update" data={item} />
-              <FormModal table="parents" type="delete" id={item.id} />
+              <FormModal
+                table="parents"
+                type="update"
+                data={item}
+                refresh={() => setRefresh(!refresh)}
+              />
+              <FormModal
+                table="parents"
+                type="delete"
+                id={item.id}
+                refresh={() => setRefresh(!refresh)}
+              />
             </>
           )}
         </div>
@@ -105,7 +116,7 @@ const ParentListPage = () => {
       toast.loading("Fetching Data...");
       fetchParents(page);
     }
-  }, [role, page]);
+  }, [role, page, refresh]);
 
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
@@ -127,12 +138,18 @@ const ParentListPage = () => {
             <TableSearch />
             <div className="flex items-center gap-4 self-end">
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/filter.png" alt="" width={14} height={14} />
+                <RefreshCcw onClick={() => setRefresh(!refresh)} />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <Image src="/sort.png" alt="" width={14} height={14} />
               </button>
-              {role === "ADMIN" && <FormModal table="parents" type="create" />}
+              {role === "ADMIN" && (
+                <FormModal
+                  table="parents"
+                  type="create"
+                  refresh={() => setRefresh(!refresh)}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -39,32 +39,39 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { data } = await req.json();
+    const { data, type, id } = await req.json();
 
     if (!data) {
-      return NextResponse.json(
-        { error: "Data are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
-    const announcement = await prisma.announcement.create({
-      data: {
-        ...data,
-        schoolId: user.schoolId,
-      },
-    });
+    type === "create"
+      ? await prisma.announcement.create({
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        })
+      : await prisma.announcement.update({
+          where: { id },
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        });
 
-    return NextResponse.json({ message: "Announcement created successfully"}, { status: 200 });
-  } catch (error) {
-    console.error("Error creating announcement:", error);
     return NextResponse.json(
-      { error: "Failed to create announcement" },
+      { message: `Announcement ${type}d successfully` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating/creating announcement:", error);
+    return NextResponse.json(
+      { error: "Failed to update/create announcement" },
       { status: 500 }
     );
   }
 });
-
 
 export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {

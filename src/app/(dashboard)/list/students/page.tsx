@@ -8,7 +8,7 @@ import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Student } from "@prisma/client";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -45,6 +45,7 @@ const StudentListPage = () => {
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
   const [students, setStudents] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -98,7 +99,12 @@ const StudentListPage = () => {
             </button>
           </Link>
           {role === "ADMIN" && (
-            <FormModal table="students" type="delete" id={item.id} />
+            <FormModal
+              table="students"
+              type="delete"
+              id={item.id}
+              refresh={() => setRefresh(!refresh)}
+            />
           )}
         </div>
       </td>
@@ -120,11 +126,13 @@ const StudentListPage = () => {
       toast.loading("Fetching Data...");
       fetchStudents(page);
     }
-  }, [role, page]);
+  }, [role, page, refresh]);
+
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
-        <LoaderCircle className="animate-spin" /> {role === "AUTH"
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
           ? "Authenticating..."
           : `You are not an ADMIN or TEACHER,
         redirecting to ${role} page`}
@@ -141,12 +149,18 @@ const StudentListPage = () => {
             <TableSearch />
             <div className="flex items-center gap-4 self-end">
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/filter.png" alt="" width={14} height={14} />
+                <RefreshCcw onClick={() => setRefresh(!refresh)} />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <Image src="/sort.png" alt="" width={14} height={14} />
               </button>
-              {role === "ADMIN" && <FormModal table="students" type="create" />}
+              {role === "ADMIN" && (
+                <FormModal
+                  table="students"
+                  type="create"
+                  refresh={() => setRefresh(!refresh)}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -39,33 +39,49 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { data } = await req.json();
+    const { data, type, id } = await req.json();
 
     if (!data) {
       return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
-    await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        schoolId: user.schoolId,
-        role: data.admin ? "ADMIN" : data.teaching ? "TEACHER" : "NONTEACHING",
-      },
-    });
+    type === "create" &&
+      (await prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          schoolId: user.schoolId,
+          role: data.admin
+            ? "ADMIN"
+            : data.teaching
+            ? "TEACHER"
+            : "NONTEACHING",
+        },
+      }));
 
-    const staff = await prisma.staff.create({
-      data: {
-        ...data,
-        schoolId: user.schoolId,
-      },
-    });
+    type === "create"
+      ? await prisma.staff.create({
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        })
+      : await prisma.staff.update({
+          where: { id },
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        });
 
-    return NextResponse.json({ message: "Staff created successfully"}, { status: 200 });
-  } catch (error) {
-    console.error("Error creating staff:", error);
     return NextResponse.json(
-      { error: "Failed to create staff" },
+      { message: `Staff ${type}d successfully` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating/creating staff:", error);
+    return NextResponse.json(
+      { error: "Failed to update/create staff" },
       { status: 500 }
     );
   }

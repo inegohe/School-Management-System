@@ -39,32 +39,39 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { data } = await req.json();
+    const { data, type, id } = await req.json();
 
     if (!data) {
-      return NextResponse.json(
-        { error: "Data are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
-    const classdata = await prisma.class.create({
-      data: {
-        ...data,
-        schoolId: user.schoolId,
-      },
-    });
+    type === "create"
+      ? await prisma.class.create({
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        })
+      : await prisma.class.update({
+          where: { id },
+          data: {
+            ...data,
+            schoolId: user.schoolId,
+          },
+        });
 
-    return NextResponse.json({ message: "Class created successfully"}, { status: 200 });
-  } catch (error) {
-    console.error("Error creating class:", error);
     return NextResponse.json(
-      { error: "Failed to create class" },
+      { message: `Class ${type}d successfully` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(`Error updating/creating class:`, error);
+    return NextResponse.json(
+      { error: "Failed to update/create class" },
       { status: 500 }
     );
   }
 });
-
 
 export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
