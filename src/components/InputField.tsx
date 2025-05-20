@@ -31,11 +31,15 @@ const InputField = ({
           setValueAs:
             type === "date"
               ? (value: string) => new Date(value).toISOString()
+              : type === "checkbox"
+              ? (value: string) => (value === "true" ? true : false)
               : (value: any) => value,
         })}
         className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
         {...inputProps}
-        {...(type !== "date"
+        {...(type === "checkbox"
+          ? { checked: !!defaultValue }
+          : type !== "date"
           ? { defaultValue: defaultValue }
           : {
               defaultValue: new Date(defaultValue || "")

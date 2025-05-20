@@ -47,6 +47,7 @@ const StudentForm = ({
   const [loading, setLoading] = useState(false);
   const onSubmit = handleSubmit(async (formData) => {
     try {
+      console.log("Trying");
       setLoading(true);
       const res = await apiClient.post(`/students`, {
         totalData: formData,
@@ -169,7 +170,7 @@ const StudentForm = ({
         </div>
       </div>
       <div className="w-full flex justify-end">
-        <button className="button text-secondary p-2 rounded-md">
+        <button type="submit" className="button text-secondary p-2 rounded-md">
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </button>

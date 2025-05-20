@@ -6,7 +6,7 @@ import { PieChart, Pie, ResponsiveContainer } from "recharts";
 const Performance = ({ level }: { level: number }) => {
   const data = [
     { name: "Group A", value: level || 1, fill: "#C3EBFA" },
-    { name: "Group B", value: 17, fill: "#FAE27C" },
+    { name: "Group B", value: (17 - level), fill: "#FAE27C" },
   ];
   return (
     <div className="bg-primary-light p-4 rounded-md h-80 relative">
