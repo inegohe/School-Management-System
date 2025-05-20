@@ -7,16 +7,27 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const search = searchParams.get("searchQuery") || "";
     const skip = (page - 1) * limit;
 
     const announcements = await prisma.announcement.findMany({
-      where: { schoolId: user.schoolId },
+      where: { schoolId: user.schoolId, ...(search && {
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ],
+    }), },
       skip,
       take: limit,
     });
 
     const total = await prisma.announcement.count({
-      where: { schoolId: user.schoolId },
+      where: { schoolId: user.schoolId, ...(search && {
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ],
+    }), },
     });
 
     return NextResponse.json(

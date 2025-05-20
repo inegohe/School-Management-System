@@ -122,19 +122,19 @@ const SingleStudentPage = () => {
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link
               className="p-3 rounded-md bg-accent-1"
-              href={`/list/staffs?q=student:${student.name}`}
+              href={`/list/staffs?q=${student.name}`}
             >
               Student&apos;s Classes
             </Link>
             <Link
               className="p-3 rounded-md bg-accent-2"
-              href={`/list/students?q=student:${student.name}`}
+              href={`/list/students?q=${student.name}`}
             >
               Student&apos;s Students
             </Link>
             <Link
               className="p-3 rounded-md bg-accent-3"
-              href={`/list/subjects?q=student:${student.name}`}
+              href={`/list/subjects?q=${student.name}`}
             >
               Student&apos;s Subjects
             </Link>

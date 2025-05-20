@@ -11,7 +11,7 @@ import { Student } from "@prisma/client";
 import { LoaderCircle, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -42,16 +42,22 @@ const columns = [
 
 const StudentListPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
   const [students, setStudents] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState(searchParams.get("q") || "");
 
-  const fetchStudents = async (page: number) => {
+  const fetchStudents = async (page: number, searchQuery = "") => {
     try {
-      const res = await apiClient.get(`/students?page=${page}&limit=10`);
+      const res = await apiClient.get(
+        `/students?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}`
+      );
       if (res.status === 200) {
         setStudents(res.data.students);
         setTotalPages(res.data.totalPages);
@@ -124,10 +130,10 @@ const StudentListPage = () => {
       router.push(`/${role.toLowerCase()}`);
     } else {
       toast.loading("Fetching Data...");
-      fetchStudents(page);
+      fetchStudents(page, search);
       setRefresh(false);
     }
-  }, [role, page, refresh]);
+  }, [role, page, refresh, search]);
 
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
@@ -147,7 +153,7 @@ const StudentListPage = () => {
             All Students
           </h1>
           <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-            <TableSearch />
+            <TableSearch value={search} onChange={setSearch} />
             <div className="flex items-center gap-4 self-end">
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <RefreshCcw

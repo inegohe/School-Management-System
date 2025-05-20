@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 const columns = [
   {
@@ -46,16 +47,20 @@ const columns = [
 
 const StaffListPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
   const [staffs, setStaffs] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState(searchParams.get("q") || "");
 
-  const fetchStaffs = async (page: number) => {
+  const fetchStaffs = async (page: number, searchQuery = "") => {
     try {
-      const res = await apiClient.get(`/staffs?page=${page}&limit=10`);
+      const res = await apiClient.get(
+        `/staffs?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`
+      );
       if (res.status === 200) {
         setStaffs(res.data.staffs);
         setTotalPages(res.data.totalPages);
@@ -84,10 +89,10 @@ const StaffListPage = () => {
       router.push(`/${role.toLowerCase()}`);
     } else {
       toast.loading("Fetching Data...");
-      fetchStaffs(page);
+      fetchStaffs(page, search);
       setRefresh(false);
     }
-  }, [role, page, refresh]);
+  }, [role, page, refresh, search]);
 
   const renderRow = (item: Staff) => (
     <tr
@@ -151,7 +156,7 @@ const StaffListPage = () => {
         <div className="flex items-center justify-between">
           <h1 className="hidden md:block text-lg font-semibold">All Staffs</h1>
           <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-            <TableSearch />
+            <TableSearch value={search} onChange={setSearch} />
             <div className="flex items-center gap-4 self-end">
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 <Image src="/filter.png" alt="" width={14} height={14} />

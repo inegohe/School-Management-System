@@ -9,6 +9,7 @@ import { useRole } from "@/store";
 import { Announcement } from "@prisma/client";
 import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -31,14 +32,18 @@ const columns = [
 
 const AnnouncementListPage = () => {
   const role = useRole((state) => state.role);
+  const searchParams = useSearchParams();
   const [announcements, setAnnouncements] = useState([]);
   const [page, setPage] = useState(1);
   const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState(searchParams.get("q") || "");
 
-  const fetchAnnouncements = async (page: number) => {
+  const fetchAnnouncements = async (page: number, searchQuery = "") => {
     try {
-      const res = await apiClient.get(`/announcements?page=${page}&limit=10`);
+      const res = await apiClient.get(
+        `/announcement?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`
+      );
       if (res.status === 200) {
         setAnnouncements(res.data.announcements);
         setTotalPages(res.data.totalPages);
@@ -88,9 +93,9 @@ const AnnouncementListPage = () => {
 
   useEffect(() => {
     toast.loading("Fetching Data...");
-    fetchAnnouncements(page);
+    fetchAnnouncements(page, search);
     setRefresh(false);
-  }, [page, refresh]);
+  }, [page, refresh, search]);
 
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
@@ -100,7 +105,7 @@ const AnnouncementListPage = () => {
           All Announcements
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch value={search} onChange={setSearch} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
               <RefreshCcw
