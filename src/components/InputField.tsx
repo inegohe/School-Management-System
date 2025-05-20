@@ -38,7 +38,17 @@ const InputField = ({
         className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
         {...inputProps}
         {...(type === "checkbox"
-          ? { checked: !!defaultValue }
+          ? {
+              checked: Boolean(defaultValue),
+              onChange: (e) => {
+                register(name).onChange({
+                  target: {
+                    name,
+                    value: e.target.checked,
+                  },
+                });
+              },
+            }
           : type !== "date"
           ? { defaultValue: defaultValue }
           : {

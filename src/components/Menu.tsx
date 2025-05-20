@@ -4,6 +4,7 @@ import React from "react";
 import { useRole, useSchool } from "@/store";
 import Link from "next/link";
 import Image from "next/image";
+import { BookText } from "lucide-react";
 
 const Menu = () => {
   const role = useRole((state) => state.role);
@@ -124,13 +125,13 @@ const Menu = () => {
                         : {})}
                       className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-primary"
                     >
-                      <Image
+                      {y.title === "Subjects" ? <BookText className="stroke-gray-500 size-5"/> : <Image
                         src={y.icon}
                         alt={y.title}
                         width={20}
                         height={20}
                         className="text-transparent w-[20px] h-[20px] max-w-[20px] bg-transparent"
-                      />
+                      />}
                       <span className="hidden md:block group-hover:block">
                         {y.title}
                       </span>

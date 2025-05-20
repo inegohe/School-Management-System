@@ -46,8 +46,8 @@ const StudentForm = ({
   });
   const [loading, setLoading] = useState(false);
   const onSubmit = handleSubmit(async (formData) => {
+    console.log("Trying");
     try {
-      console.log("Trying");
       setLoading(true);
       const res = await apiClient.post(`/students`, {
         totalData: formData,
