@@ -39,7 +39,7 @@ const InputField = ({
         {...inputProps}
         {...(type === "checkbox"
           ? {
-              checked: Boolean(defaultValue),
+              defaultChecked: Boolean(defaultValue),
               onChange: (e) => {
                 register(name).onChange({
                   target: {

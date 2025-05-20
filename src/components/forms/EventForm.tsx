@@ -81,7 +81,7 @@ const EventForm = ({
         <InputField
           label="Date"
           name="date"
-          defaultValue={data?.date}
+          defaultValue={data?.date?.toString()}
           register={register}
           error={errors.date}
           type="date"
