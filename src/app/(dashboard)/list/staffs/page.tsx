@@ -11,7 +11,7 @@ import { Staff } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -45,7 +45,7 @@ const columns = [
   },
 ];
 
-const StaffListPage = () => {
+const StaffListPageInner = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setUser = useUser((state) => state.setUser);
@@ -185,5 +185,11 @@ const StaffListPage = () => {
       </div>
     );
 };
+
+const StaffListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <StaffListPageInner />
+  </Suspense>
+);
 
 export default StaffListPage;

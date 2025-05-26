@@ -11,7 +11,7 @@ import { Parent } from "@prisma/client";
 import { LoaderCircle, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const columns = [
@@ -35,7 +35,7 @@ const columns = [
   },
 ];
 
-const ParentListPage = () => {
+const ParentListPageInner = () => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
@@ -171,5 +171,11 @@ const ParentListPage = () => {
       </div>
     );
 };
+
+const ParentListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ParentListPageInner />
+  </Suspense>
+);
 
 export default ParentListPage;

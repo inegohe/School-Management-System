@@ -12,7 +12,7 @@ import { LoaderCircle, RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const columns = [
@@ -40,7 +40,7 @@ const columns = [
   },
 ];
 
-const StudentListPage = () => {
+const StudentListPageInner = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setUser = useUser((state) => state.setUser);
@@ -183,5 +183,11 @@ const StudentListPage = () => {
       </div>
     );
 };
+
+const StudentListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <StudentListPageInner />
+  </Suspense>
+);
 
 export default StudentListPage;

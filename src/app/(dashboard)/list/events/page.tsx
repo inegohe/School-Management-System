@@ -9,7 +9,7 @@ import { useRole } from "@/store";
 import { Event } from "@prisma/client";
 import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const columns = [
@@ -33,7 +33,7 @@ const columns = [
   },
 ];
 
-const EventListPage = () => {
+const EventListPageInner = () => {
   const role = useRole((state) => state.role);
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
@@ -139,5 +139,11 @@ const EventListPage = () => {
     </div>
   );
 };
+
+const EventListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EventListPageInner />
+  </Suspense>
+);
 
 export default EventListPage;

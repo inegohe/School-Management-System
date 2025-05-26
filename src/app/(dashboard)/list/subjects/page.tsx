@@ -9,7 +9,7 @@ import { useRole } from "@/store";
 import { Subject } from "@prisma/client";
 import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const columns = [
@@ -27,7 +27,7 @@ const columns = [
   },
 ];
 
-const SubjectListPage = () => {
+const SubjectListPageInner = () => {
   const role = useRole((state) => state.role);
   const [subjects, setSubjects] = useState([]);
   const [page, setPage] = useState(1);
@@ -129,5 +129,11 @@ const SubjectListPage = () => {
     </div>
   );
 };
+
+const SubjectListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <SubjectListPageInner />
+  </Suspense>
+);
 
 export default SubjectListPage;

@@ -10,7 +10,7 @@ import { Announcement } from "@prisma/client";
 import { RefreshCcw } from "lucide-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const columns = [
@@ -30,7 +30,7 @@ const columns = [
   },
 ];
 
-const AnnouncementListPage = () => {
+const AnnouncementListPageInner = () => {
   const role = useRole((state) => state.role);
   const searchParams = useSearchParams();
   const [announcements, setAnnouncements] = useState([]);
@@ -137,5 +137,11 @@ const AnnouncementListPage = () => {
     </div>
   );
 };
+
+const AnnouncementListPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <AnnouncementListPageInner />
+  </Suspense>
+);
 
 export default AnnouncementListPage;
