@@ -7,8 +7,9 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
 import { Subject } from "@prisma/client";
-import { RefreshCcw } from "lucide-react";
+import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -28,17 +29,21 @@ const columns = [
 ];
 
 const SubjectListPageInner = () => {
+  const searchParams = useSearchParams();
   const role = useRole((state) => state.role);
   const [subjects, setSubjects] = useState([]);
   const [page, setPage] = useState(1);
   const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
 
   const fetchSubjects = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/subjects?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`
+        `/subjects?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setSubjects(res.data.subjects);
@@ -89,7 +94,7 @@ const SubjectListPageInner = () => {
     toast.loading("Fetching Data...");
     fetchSubjects(page, search);
     setRefresh(false);
-  }, [page, refresh, search]);
+  }, [page, refresh, search, order]);
 
   return (
     <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
@@ -106,7 +111,7 @@ const SubjectListPageInner = () => {
               />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <Image src="/sort.png" alt="" width={14} height={14} />
+              {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
             </button>
             {role === "ADMIN" && (
               <FormModal
@@ -131,7 +136,13 @@ const SubjectListPageInner = () => {
 };
 
 const SubjectListPage = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense
+    fallback={
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> Loading...
+      </div>
+    }
+  >
     <SubjectListPageInner />
   </Suspense>
 );

@@ -8,6 +8,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
+    const order = searchParams.get("sort") as "asc" | "desc" || "asc";
     const skip = (page - 1) * limit;
 
     const parents = await prisma.parent.findMany({
@@ -22,6 +23,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     }), },
       skip,
       take: limit,
+      orderBy: { name: order },
     });
 
     const total = await prisma.parent.count({

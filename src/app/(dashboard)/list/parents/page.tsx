@@ -8,9 +8,9 @@ import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Parent } from "@prisma/client";
-import { LoaderCircle, RefreshCcw } from "lucide-react";
+import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -36,6 +36,7 @@ const columns = [
 ];
 
 const ParentListPageInner = () => {
+  const searchParams = useSearchParams();
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
   const { role, setRole } = useRole();
@@ -43,12 +44,13 @@ const ParentListPageInner = () => {
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
 
   const fetchParents = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/parents?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`
+        `/parents?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setParents(res.data.parents);
@@ -120,7 +122,7 @@ const ParentListPageInner = () => {
       fetchParents(page, search);
       setRefresh(false);
     }
-  }, [role, page, refresh, search]);
+  }, [role, page, refresh, search, order]);
 
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
@@ -148,7 +150,7 @@ const ParentListPageInner = () => {
                 />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/sort.png" alt="" width={14} height={14} />
+                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -173,7 +175,11 @@ const ParentListPageInner = () => {
 };
 
 const ParentListPage = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense fallback={
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> Loading...
+      </div>
+    }>
     <ParentListPageInner />
   </Suspense>
 );

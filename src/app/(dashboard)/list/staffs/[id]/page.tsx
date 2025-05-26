@@ -117,7 +117,7 @@ const SingleTeacherPage = () => {
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link
               className="p-3 rounded-md bg-accent-1"
-              href={`/list/staffs?q=${teacher.name}`}
+              href={`/list/classes?q=${teacher.name}`}
             >
               Teacher&apos;s Classes
             </Link>

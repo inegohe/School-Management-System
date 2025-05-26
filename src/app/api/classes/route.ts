@@ -8,28 +8,43 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
+    const order = searchParams.get("sort") as "asc" | "desc" || "asc";
     const skip = (page - 1) * limit;
 
+    const searchNumber = Number.isNaN(Number(search)) ? null : Number(search);
+
+    const orFilters: Array<
+      | { name: { contains: string; mode: "insensitive" } }
+      | { classTeacher: { contains: string; mode: "insensitive" } }
+      | { totalStudent: { equals: number } }
+    > = [
+      { name: { contains: search, mode: "insensitive" as const } },
+      {
+        classTeacher: { contains: search, mode: "insensitive" as const },
+      },
+    ];
+    if (searchNumber !== null) {
+      orFilters.push({ totalStudent: { equals: searchNumber } });
+    }
     const classes = await prisma.class.findMany({
-      where: { schoolId: user.schoolId, ...(search && {
-      OR: [
-        { name: { contains: search, mode: "insensitive" } },
-        { totalStudent: { equals: parseInt(search)} },
-        { classTeacher: { contains: search, mode: "insensitive" } },
-      ],
-    }), },
+      where: {
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: orFilters,
+        }),
+      },
       skip,
       take: limit,
+      orderBy: { name: order },
     });
 
     const total = await prisma.class.count({
-      where: { schoolId: user.schoolId, ...(search && {
-      OR: [
-        { name: { contains: search, mode: "insensitive" } },
-        { totalStudent: { equals: parseInt(search)} },
-        { classTeacher: { contains: search, mode: "insensitive" } },
-      ],
-    }), },
+      where: {
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: orFilters,
+        }),
+      },
     });
 
     return NextResponse.json(

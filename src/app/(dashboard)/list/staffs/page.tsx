@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, SortAsc, SortDesc } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 const columns = [
@@ -55,11 +55,12 @@ const StaffListPageInner = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
 
   const fetchStaffs = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/staffs?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}`
+        `/staffs?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setStaffs(res.data.staffs);
@@ -92,7 +93,7 @@ const StaffListPageInner = () => {
       fetchStaffs(page, search);
       setRefresh(false);
     }
-  }, [role, page, refresh, search]);
+  }, [role, page, refresh, search, order]);
 
   const renderRow = (item: Staff) => (
     <tr
@@ -162,7 +163,7 @@ const StaffListPageInner = () => {
                 <Image src="/filter.png" alt="" width={14} height={14} />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/sort.png" alt="" width={14} height={14} />
+                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -187,7 +188,11 @@ const StaffListPageInner = () => {
 };
 
 const StaffListPage = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense fallback={
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> Loading...
+      </div>
+    }>
     <StaffListPageInner />
   </Suspense>
 );

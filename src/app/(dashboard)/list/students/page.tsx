@@ -8,7 +8,7 @@ import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Student } from "@prisma/client";
-import { LoaderCircle, RefreshCcw } from "lucide-react";
+import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -50,13 +50,14 @@ const StudentListPageInner = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
+  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
 
   const fetchStudents = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
         `/students?page=${page}&limit=10&search=${encodeURIComponent(
           searchQuery
-        )}`
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setStudents(res.data.students);
@@ -133,7 +134,7 @@ const StudentListPageInner = () => {
       fetchStudents(page, search);
       setRefresh(false);
     }
-  }, [role, page, refresh, search]);
+  }, [role, page, refresh, search, order]);
 
   if (!["ADMIN", "TEACHER"].includes(role)) {
     return (
@@ -162,7 +163,7 @@ const StudentListPageInner = () => {
                 />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/sort.png" alt="" width={14} height={14} />
+                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -185,7 +186,11 @@ const StudentListPageInner = () => {
 };
 
 const StudentListPage = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense fallback={
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" /> Loading...
+      </div>
+    }>
     <StudentListPageInner />
   </Suspense>
 );
