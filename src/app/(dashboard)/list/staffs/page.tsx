@@ -110,7 +110,7 @@ const StaffListPageInner = () => {
         />
         <div className="flex flex-col items-start justify-center">
           <h3 className="font-semibold">{item.name}</h3>
-          <p className="text-xs text-gray-500">{item.email}</p>
+          <p className="text-xs text-gray-500 w-20 truncate md:w-full">{item.email}</p>
         </div>
       </td>
       <td className="hidden md:table-cell">
