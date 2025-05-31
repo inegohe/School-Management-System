@@ -9,9 +9,9 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const origin = req.headers.get("origin");
   const forwardedHost = req.headers.get("x-forwarded-host");
   // Reject requests with mismatched headers
-  if ((origin !== forwardedHost) && process.env.NODE_ENV !== "development") {
-    return new NextResponse("Invalid request headers", { status: 400 });
-  }
+  // if ((origin !== forwardedHost) && process.env.NODE_ENV !== "development") {
+  //   return new NextResponse("Invalid request headers", { status: 400 });
+  // }
 
   const cookieStore = await cookies();
   const refreshToken =
