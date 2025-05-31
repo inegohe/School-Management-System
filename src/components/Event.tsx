@@ -17,7 +17,7 @@ const Event = () => {
           setEvents(res.data.events);
           setRecents({
             events: res.data.events.filter(
-              (x: EventType) => new Date(x.date) === new Date(Date.now())
+              (x: EventType) => new Date(x.date).getDay() === new Date(Date.now()).getDay()
             ).length,
             announcements: recents.announcements,
           });

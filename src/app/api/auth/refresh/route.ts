@@ -104,7 +104,7 @@ export const POST = async () => {
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid refresh token" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 

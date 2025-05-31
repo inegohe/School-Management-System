@@ -17,7 +17,7 @@ const Announcement = () => {
           setAnnouncements(res.data.announcements);
           setRecents({
             announcements: res.data.announcements.filter(
-              (x: AnnouncementType) => new Date(x.date) === new Date(Date.now())
+              (x: AnnouncementType) => new Date(x.date).getDay() === new Date(Date.now()).getDay()
             ).length,
             events: recents.events,
           });

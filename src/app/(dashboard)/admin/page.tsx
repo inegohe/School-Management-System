@@ -65,7 +65,6 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    console.log(value, initDate);
     if (role === "AUTH") {
       getUserRole();
     } else if (role !== "ADMIN") {

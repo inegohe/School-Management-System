@@ -82,7 +82,7 @@ const AnnouncementForm = ({
         <InputField
           label="Date"
           name="date"
-          defaultValue={data?.date?.toString()}
+          defaultValue={data?.date?.toString() || ""}
           register={register}
           error={errors.date}
           className="w-full"

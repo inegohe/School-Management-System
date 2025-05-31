@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LoaderCircle, SortAsc, SortDesc } from "lucide-react";
+import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 const columns = [
@@ -160,7 +160,10 @@ const StaffListPageInner = () => {
             <TableSearch value={search} onChange={setSearch} />
             <div className="flex items-center gap-4 self-end">
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                <Image src="/filter.png" alt="" width={14} height={14} />
+                <RefreshCcw
+                  className={`stroke-primary ${refresh && "animate-spin"}`}
+                  onClick={() => setRefresh(!refresh)}
+                />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
                 {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}

@@ -5,10 +5,10 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
-import { useRole } from "@/store";
+import { useRecents, useRole } from "@/store";
 import { Event } from "@prisma/client";
 import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
-import Image from "next/image";
+import { Event as EventType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -39,18 +39,30 @@ const EventListPageInner = () => {
   const role = useRole((state) => state.role);
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
+  const { recents, setRecents } = useRecents();
   const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
+  const [order, setOrder] = useState(
+    (searchParams.get("sort") as "asc" | "desc") || "asc"
+  );
 
   const fetchEvents = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/events?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
+        `/events?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setEvents(res.data.events);
+        setRecents({
+          events: res.data.events.filter(
+            (x: EventType) =>
+              new Date(x.date).getDay() === new Date(Date.now()).getDay()
+          ).length,
+          announcements: recents.announcements,
+        });
         setTotalPages(res.data.totalPages);
         toast.dismiss();
       } else {
@@ -119,7 +131,17 @@ const EventListPageInner = () => {
               />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
+              {order !== "asc" ? (
+                <SortAsc
+                  onClick={() => setOrder("asc")}
+                  className="stroke-primary"
+                />
+              ) : (
+                <SortDesc
+                  onClick={() => setOrder("desc")}
+                  className="stroke-primary"
+                />
+              )}
             </button>
             {role === "ADMIN" && (
               <FormModal
@@ -144,11 +166,13 @@ const EventListPageInner = () => {
 };
 
 const EventListPage = () => (
-  <Suspense fallback={
+  <Suspense
+    fallback={
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> Loading...
       </div>
-    }>
+    }
+  >
     <EventListPageInner />
   </Suspense>
 );

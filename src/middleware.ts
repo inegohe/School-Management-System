@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const publicOnlyRoutes = ["/", "/login", "/create", "/newschool"];
+const publicOnlyRoutes = ["/", "/login", "/create", "/newschool", "/logout"];
 const genericAuthenticatedRoute = "/auth";
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {

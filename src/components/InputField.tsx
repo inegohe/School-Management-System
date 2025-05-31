@@ -52,7 +52,7 @@ const InputField = ({
           : type !== "date"
           ? { defaultValue: defaultValue }
           : {
-              defaultValue: new Date(defaultValue || "")
+              defaultValue: new Date(defaultValue || Date.now())
                 .toLocaleString("en-GB", {
                   day: "2-digit",
                   month: "2-digit",

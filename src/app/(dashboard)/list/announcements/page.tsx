@@ -5,10 +5,10 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
-import { useRole } from "@/store";
+import { useRecents, useRole } from "@/store";
 import { Announcement } from "@prisma/client";
 import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
-import Image from "next/image";
+import { Announcement as AnnouncementType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -35,18 +35,30 @@ const AnnouncementListPageInner = () => {
   const searchParams = useSearchParams();
   const [announcements, setAnnouncements] = useState([]);
   const [page, setPage] = useState(1);
+  const { recents, setRecents } = useRecents();
   const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
+  const [order, setOrder] = useState(
+    (searchParams.get("sort") as "asc" | "desc") || "asc"
+  );
 
   const fetchAnnouncements = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/announcements?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
+        `/announcements?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setAnnouncements(res.data.announcements);
+        setRecents({
+          announcements: res.data.announcements.filter(
+            (x: AnnouncementType) =>
+              new Date(x.date).getDay() === new Date(Date.now()).getDay()
+          ).length,
+          events: recents.events,
+        });
         setTotalPages(res.data.totalPages);
         toast.dismiss();
       } else {
@@ -115,7 +127,17 @@ const AnnouncementListPageInner = () => {
               />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
+              {order !== "asc" ? (
+                <SortAsc
+                  onClick={() => setOrder("asc")}
+                  className="stroke-primary"
+                />
+              ) : (
+                <SortDesc
+                  onClick={() => setOrder("desc")}
+                  className="stroke-primary"
+                />
+              )}
             </button>
             {role === "ADMIN" && (
               <FormModal
@@ -140,11 +162,13 @@ const AnnouncementListPageInner = () => {
 };
 
 const AnnouncementListPage = () => (
-  <Suspense fallback={
+  <Suspense
+    fallback={
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> Loading...
       </div>
-    }>
+    }
+  >
     <AnnouncementListPageInner />
   </Suspense>
 );
