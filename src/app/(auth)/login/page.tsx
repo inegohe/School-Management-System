@@ -11,6 +11,7 @@ import Image from "next/image";
 import { BACKGROUND_IMAGES, useRole, useUser } from "@/store";
 import apiClient from "@/lib/apiclient";
 import axios from "axios";
+import { getRoleLabel } from "@/lib/helpers";
 
 const schema = z.object({
   email: z.string().email("Input a valid email").trim(),
@@ -55,7 +56,7 @@ const LoginPage = () => {
         if (status === 200) {
           setUser(result);
           setRole(result.role);
-          router.push(`/${result.role.toLowerCase()}`);
+          router.push(`/${getRoleLabel(result.role)}`);
         }
       } catch (err: any) {
         console.log(err);

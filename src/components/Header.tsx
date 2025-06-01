@@ -1,13 +1,30 @@
 "use client";
 
+import apiClient from "@/lib/apiclient";
 import { useRecents, useUser } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 // Code: Header component
 const Header = () => {
   const user = useUser((state) => state.user);
   const recents = useRecents(state => state.recents);
+  const [userImage, setUserImage] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiClient.get("/profile");
+        setUserImage(res.data.image);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <main className="flex justify-end w-full p-3 items-center">
       <div className="flex items-center justify-between gap-4">
@@ -41,7 +58,7 @@ const Header = () => {
           href={user.role === "ADMIN" ? "/admin" : "/profile"}
           className="rounded-full cursor-pointer overflow-hidden"
         >
-          <Image src={"/avatar.png"} width={50} height={50} alt="avatar" />
+          <Image src={userImage || "/avatar.png"} width={50} height={50} alt="avatar" />
         </Link>
       </div>
     </main>

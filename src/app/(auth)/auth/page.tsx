@@ -5,6 +5,7 @@ import { useRole, useUser } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getRoleLabel } from "@/lib/helpers";
 
 const Auth = () => {
   const router = useRouter();
@@ -18,11 +19,11 @@ const Auth = () => {
 
       if (result.status === 200) {
         setOutput(
-          `Authentication successful, redirecting to ${result.data.role} page`
+          `Authentication successful, redirecting to ${getRoleLabel(result.data.role).toUpperCase()} page`
         );
         setUser(result.data);
         setRole(result.data.role);
-        router.push(`/${result.data.role.toLowerCase()}`);
+        router.push(`/${getRoleLabel(result.data.role)}`);
       }
     } catch (error) {
       console.log(error);

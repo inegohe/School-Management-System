@@ -5,6 +5,7 @@ import { useRole, useSchool } from "@/store";
 import Link from "next/link";
 import Image from "next/image";
 import { BookText } from "lucide-react";
+import { getRoleLabel } from "@/lib/helpers";
 
 const Menu = () => {
   const role = useRole((state) => state.role);
@@ -16,7 +17,7 @@ const Menu = () => {
         {
           title: "Dashboard",
           icon: "/home.png",
-          link: `/${role.toLowerCase()}`,
+          link: `/${getRoleLabel(role)}`,
           visible: ["admin", "teacher", "student", "parent"],
         },
         {
@@ -76,7 +77,7 @@ const Menu = () => {
           title: "Profile",
           icon: "/profile.png",
           link: "/profile",
-          visible: ["teacher", "student", "parent", "nonteaching"],
+          visible: ["admin", "teacher", "student", "parent", "nonteaching"],
         },
         {
           title: "Settings",

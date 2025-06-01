@@ -17,3 +17,10 @@ export function updateColors(colors: ColorVariables){
       key in colors ? root.style.setProperty(`--${key}`, colors[key as keyof ColorVariables]) : null;
   }
 }
+
+export function getRoleLabel(role: string): string {
+  if (role === "TEACHER" || role === "NONTEACHING") {
+    return "staff";
+  }
+  return role.toLowerCase();
+}

@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cookies, headers } from "next/headers";
 import crypto from "crypto";
+import { getRoleLabel } from "@/lib/helpers";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
@@ -115,7 +116,7 @@ export const GET = async (req: Request) => {
     });
 
     return NextResponse.redirect(
-      `${process.env.BASE_URL}/${user.role.toLowerCase()}`
+      `${process.env.BASE_URL}/${getRoleLabel(user.role)}`
     );
   } catch (err) {
     console.error(err);
