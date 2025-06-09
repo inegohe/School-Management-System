@@ -1,7 +1,7 @@
 "use client";
 
 import apiClient from "@/lib/apiclient";
-import { useRecents, useUser } from "@/store";
+import { useRecents, useUser, useUserData } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 // Code: Header component
 const Header = () => {
   const user = useUser((state) => state.user);
+  const setUserData = useUserData((state) => state.setUserData);
   const recents = useRecents(state => state.recents);
   const [userImage, setUserImage] = useState("");
 
@@ -16,6 +17,7 @@ const Header = () => {
     const fetchUser = async () => {
       try {
         const res = await apiClient.get("/profile");
+        setUserData(res.data);
         setUserImage(res.data.image);
       } catch (error) {
         console.log(error);
@@ -56,9 +58,9 @@ const Header = () => {
         </div>
         <Link
           href={user.role === "ADMIN" ? "/admin" : "/profile"}
-          className="rounded-full cursor-pointer overflow-hidden"
+          className="cursor-pointer"
         >
-          <Image src={userImage || "/avatar.png"} width={50} height={50} alt="avatar" />
+          <Image src={userImage || "/avatar.png"} width={50} height={50} alt="avatar" className="rounded-full object-cover w-16 h-16"/>
         </Link>
       </div>
     </main>

@@ -1,7 +1,7 @@
 "use client";
 
 import apiClient from "@/lib/apiclient";
-import { LoaderCircle } from "lucide-react";
+import { Edit, LoaderCircle, Trash } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -144,7 +144,7 @@ const FormModal = ({
         className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
         onClick={() => setOpen(true)}
       >
-        <Image src={`/${type}.png`} alt="" width={16} height={16} />
+        {type === "update" ? <Edit className="size-4"/> : type === "delete"  ? <Trash className="size-4"/> : <Image src={`/${type}.png`} alt="" width={16} height={16} className="text-transparent" />}
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-start justify-center overflow-y-scroll py-4">

@@ -27,6 +27,8 @@ export const GET = withAuthRoute(async (req, user) => {
           phoneNo: true,
           address: true,
           image: true,
+          teaching: true,
+          admin: true,
         },
       });
     } else if (user.role === "PARENT") {

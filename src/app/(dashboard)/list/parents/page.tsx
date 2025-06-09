@@ -115,7 +115,7 @@ const ParentListPageInner = () => {
   useEffect(() => {
     if (role === "AUTH") {
       getUserRole();
-    } else if (!["ADMIN", "TEACHER"].includes(role)) {
+    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     } else {
       toast.loading("Fetching Data...");
@@ -124,13 +124,13 @@ const ParentListPageInner = () => {
     }
   }, [role, page, refresh, search, order]);
 
-  if (!["ADMIN", "TEACHER"].includes(role)) {
+  if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" />{" "}
         {role === "AUTH"
           ? "Authenticating..."
-          : `You are not an ADMIN or TEACHER,
+          : `You are not an ADMIN or STAFF,
         redirecting to ${role} page`}
       </div>
     );

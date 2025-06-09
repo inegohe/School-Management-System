@@ -8,7 +8,7 @@ import apiClient from "@/lib/apiclient";
 import { getUser } from "@/server-actions";
 import { useRole, useUser } from "@/store";
 import { Student } from "@prisma/client";
-import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
+import { Eye, LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -102,7 +102,7 @@ const StudentListPageInner = () => {
         <div className="flex items-center gap-2">
           <Link href={`/list/students/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
-              <Image src="/view.png" alt="" width={16} height={16} />
+              <Eye className="size-4"/>
             </button>
           </Link>
           {role === "ADMIN" && (
@@ -127,7 +127,7 @@ const StudentListPageInner = () => {
   useEffect(() => {
     if (role === "AUTH") {
       getUserRole();
-    } else if (!["ADMIN", "TEACHER"].includes(role)) {
+    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     } else {
       toast.loading("Fetching Data...");
@@ -136,13 +136,13 @@ const StudentListPageInner = () => {
     }
   }, [role, page, refresh, search, order]);
 
-  if (!["ADMIN", "TEACHER"].includes(role)) {
+  if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" />{" "}
         {role === "AUTH"
           ? "Authenticating..."
-          : `You are not an ADMIN or TEACHER,
+          : `You are not an ADMIN or STAFF,
         redirecting to ${role} page`}
       </div>
     );

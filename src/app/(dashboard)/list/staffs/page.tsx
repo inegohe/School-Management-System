@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
+import { Eye, LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 const columns = [
@@ -86,7 +86,7 @@ const StaffListPageInner = () => {
   useEffect(() => {
     if (role === "AUTH") {
       getUserRole();
-    } else if (!["ADMIN", "TEACHER"].includes(role)) {
+    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
     } else {
       toast.loading("Fetching Data...");
@@ -124,7 +124,7 @@ const StaffListPageInner = () => {
         <div className="flex items-center gap-2">
           <Link href={`/list/staffs/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
-              <Image src="/view.png" alt="" width={16} height={16} />
+              <Eye className="size-4"/>
             </button>
           </Link>
           {role === "ADMIN" && (
@@ -140,13 +140,13 @@ const StaffListPageInner = () => {
     </tr>
   );
 
-  if (!["ADMIN", "TEACHER"].includes(role)) {
+  if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" />{" "}
         {role === "AUTH"
           ? "Authenticating..."
-          : `You are not an ADMIN or TEACHER,
+          : `You are not an ADMIN or STAFF,
         redirecting to ${role} page`}
       </div>
     );

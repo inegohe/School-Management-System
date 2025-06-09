@@ -4,7 +4,19 @@ interface UserStoreType {
   user: UserDataType;
   setUser: (user: UserDataType) => void;
 }
-
+interface UserDataType2 {
+  id: string;
+  name: string;
+  image?: string;
+  phoneNo?: string;
+  address?: string;
+  teaching?: boolean;
+  admin?: boolean;
+}
+interface UserDataStoreType {
+  userData: UserDataType2;
+  setUserData: (userData: UserDataType2) => void;
+}
 interface RoleStoreType {
   role: "ADMIN" | "TEACHER" | "NONTEACHING" | "STUDENT" | "PARENT" | "AUTH";
   setRole: (
@@ -56,6 +68,15 @@ export const useUser = create<UserStoreType>((set) => ({
     role: "AUTH",
   },
   setUser: (user: UserDataType) => set({ user }),
+}));
+
+export const useUserData = create<UserDataStoreType>((set) => ({
+  userData: {
+    id: "",
+    name: "John Doe",
+    image: "",
+  },
+  setUserData: (userData: UserDataType2) => set({ userData }),
 }));
 
 export const useRole = create<RoleStoreType>((set) => ({

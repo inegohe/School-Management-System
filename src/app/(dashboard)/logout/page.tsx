@@ -4,10 +4,12 @@ import axios from "axios";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Logout = () => {
   const router = useRouter();
   useEffect(() => {
+    toast.dismiss();
     const fetch = async () => {
       const res = await axios.get("/api/auth/logout");
       if (res.status === 200) {
