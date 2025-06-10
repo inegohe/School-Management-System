@@ -88,7 +88,7 @@ const Profile = () => {
         <div className="mb-4 flex justify-center gap-6 w-full p-2">
           <div
             className={
-              "w-[40%] border cursor-pointer rounded-md h-40 flex justify-center items-center font-bold md:text-large " +
+              "w-[40%] border cursor-pointer rounded-md h-20 lg:h-40 flex justify-center items-center font-bold md:text-large " +
               (roleState === "ADMIN"
                 ? "border-accent-3 bg-accent-3 text-primary"
                 : " opacity-60 select-none")
@@ -99,7 +99,7 @@ const Profile = () => {
           </div>
           <div
             className={
-              "w-[40%] border cursor-pointer rounded-md h-40 flex justify-center items-center font-bold md:text-large " +
+              "w-[40%] border cursor-pointer rounded-md h-20 lg:h-40 flex justify-center items-center font-bold md:text-large " +
               (roleState !== "ADMIN"
                 ? "border-accent-3 bg-accent-3 text-primary"
                 : " opacity-60 select-none")
@@ -127,10 +127,10 @@ const Profile = () => {
 
   // STAFF, STUDENT, PARENT
   return (
-    <div className="flex bg-primary-light p-4 gap-3 rounded-md m-4 mt-0">
+    <div className="flex flex-col lg:flex-row bg-primary-light p-4 gap-3 rounded-md m-4 mt-0">
       <label
         htmlFor="image"
-        className="flex items-center justify-center w-1/2 h-full rounded-md overflow-hidden relative bg-black"
+        className="flex items-center justify-center w-full lg:w-1/2 h-60 lg:h-full rounded-md overflow-hidden relative bg-black"
       >
         <Image
           width={200}
@@ -191,7 +191,7 @@ const Profile = () => {
           <div className="flex justify-center items-center w-full gap-6">
             <div
               className={
-                "w-[40%] border cursor-pointer rounded-md h-40 flex justify-center items-center font-bold md:text-large " +
+                "w-[40%] border cursor-pointer rounded-md h-20 lg:h-40 flex justify-center items-center font-bold md:text-large " +
                 (roleState === "ADMIN"
                   ? "border-accent-3 bg-accent-3 text-primary"
                   : "opacity-60 select-none")
@@ -202,7 +202,7 @@ const Profile = () => {
             </div>
             <div
               className={
-                "w-[40%] border cursor-pointer rounded-md h-40 flex justify-center items-center font-bold md:text-large " +
+                "w-[40%] border cursor-pointer rounded-md h-20 lg:h-40 flex justify-center items-center font-bold md:text-large " +
                 (roleState !== "ADMIN"
                   ? "border-accent-3 bg-accent-3 text-primary"
                   : "opacity-60 select-none")

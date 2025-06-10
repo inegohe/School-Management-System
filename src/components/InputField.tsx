@@ -33,6 +33,8 @@ const InputField = ({
               ? (value: string) => new Date(value).toISOString()
               : type === "checkbox"
               ? (value: string) => (value === "true" ? true : false)
+              : type === "array"
+              ? (value: string) => value.split(",").map((x: string) => x.trim())
               : (value: any) => value,
         })}
         className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"

@@ -269,6 +269,32 @@ const SettingsForm = ({
               </div>
             ))}
           </div>
+          <div className="flex flex-col gap-4 w-full md:flex-row md:flex-wrap items-center justify-center mt-4">
+            {["startHour", "closeHour"].map((key: string, i: number) => (
+              <div
+                className="flex flex-col gap-2 items-start justify-start w-full md:w-[49%]"
+                key={i}
+              >
+                <div className="input p-2 border-b border-primary rounded-md w-full flex gap-2 items-center justify-between">
+                  <input
+                    disabled={key in editables ? !editables[key] : true}
+                    type="time"
+                    {...register(key as keyof FormData)}
+                    className="outline-none bg-transparent w-full disabled:opacity-50 text-sm"
+                  />
+                  <Edit
+                    className="size-5 cursor-pointer"
+                    onClick={() =>
+                      setEditables((prev) => ({
+                        ...prev,
+                        [key]: key in editables ? !editables[key] : true,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="flex flex-col gap-2 mt-4">
             <h1 className="font-bold md:text-lg">Card Samples</h1>
             <ColorCardSamples colors={colors} />

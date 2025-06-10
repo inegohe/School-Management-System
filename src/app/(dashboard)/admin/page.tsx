@@ -53,7 +53,7 @@ const AdminPage = () => {
         "accent-2-light": schoolData.accentColor2Light,
         "accent-3": schoolData.accentColor3,
         "accent-3-light": schoolData.accentColor3Light,
-      })
+      });
       toast.dismiss();
     }
   };
@@ -65,11 +65,15 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
+    toast.dismiss();
     if (role === "AUTH") {
       getUserRole();
     } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
-    } else if (Object.keys(school).length === 0 || (value instanceof Date && value.getDay() !== initDate.getDay())) {
+    } else if (
+      !school.id ||
+      (value instanceof Date && value.getDay() !== initDate.getDay())
+    ) {
       getData();
     }
   }, [value, role]);

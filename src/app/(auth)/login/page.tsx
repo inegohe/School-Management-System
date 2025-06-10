@@ -45,6 +45,7 @@ const LoginPage = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     setError("");
+    toast.loading("Logging in");
 
     if (!pns) {
       try {
@@ -60,6 +61,7 @@ const LoginPage = () => {
         }
       } catch (err: any) {
         console.log(err);
+        toast.dismiss();
         if (err.response?.data?.error === "PNS" || err.message === "PNS") {
           setValue("password", "");
           setPNSNote(
@@ -85,6 +87,7 @@ const LoginPage = () => {
         } else toast.error("Error sending confirmation email");
       } catch (err: any) {
         console.log(err.response);
+        toast.dismiss();
         setError(
           err.response?.data?.error || err.message || "An error occurred"
         );

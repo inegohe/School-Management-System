@@ -89,15 +89,21 @@ const SingleStudentPage = () => {
               <p className="text-sm text-gray-500">{student.class}</p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <div><Mail className="text-secondary-light size-5" /></div>
+                  <div>
+                    <Mail className="text-secondary-light size-5" />
+                  </div>
                   <span>{student.email}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <div><Calendar className="text-secondary-light size-5" /></div>
+                  <div>
+                    <Calendar className="text-secondary-light size-5" />
+                  </div>
                   <span>{student.birthdate}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <div><Home className="text-secondary-light size-5" /></div>
+                  <div>
+                    <Home className="text-secondary-light size-5" />
+                  </div>
                   <span>{student.address}</span>
                 </div>
               </div>
@@ -107,7 +113,7 @@ const SingleStudentPage = () => {
         {/* BOTTOM */}
         <div className="flex flex-col gap-1 mt-4 bg-primary-light rounded-md p-4 h-[800px]">
           <h1>Student&apos;s Schedule</h1>
-          <ScheduleCalendar />
+          <ScheduleCalendar classes={[student.class]} subjects={[]} />
         </div>
       </div>
       {/* RIGHT */}

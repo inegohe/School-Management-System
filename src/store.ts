@@ -25,8 +25,8 @@ interface RoleStoreType {
 }
 
 interface SchoolStoreType {
-  school: SchoolDataType | {};
-  setSchool: (school: SchoolDataType | {}) => void;
+  school: SchoolDataType;
+  setSchool: (school: SchoolDataType) => void;
 }
 
 interface CountType {
@@ -87,8 +87,33 @@ export const useRole = create<RoleStoreType>((set) => ({
 }));
 
 export const useSchool = create<SchoolStoreType>((set) => ({
-  school: {},
-  setSchool: (school: SchoolDataType | {}) => set({ school }),
+  school: {
+    id: "",
+    name: "MySchool",
+    address: "",
+    principal: "",
+    vicePrincipal: "",
+    slogan: "",
+    type: "PRIMARY",
+    startHour: "8:00",
+    closeHour: "15:00",
+    missionStatement: "",
+    visionStatement: "",
+    primaryColor: "",
+    primaryColorLight: "",
+    secondaryColor: "",
+    secondaryColorLight: "",
+    accentColor1: "",
+    accentColor1Light: "",
+    accentColor2: "",
+    accentColor2Light: "",
+    accentColor3: "",
+    accentColor3Light: "",
+    logo: "",
+    admins: [],
+    timetableHtml: "",
+  },
+  setSchool: (school: SchoolDataType) => set({ school }),
 }));
 
 export const useCounts = create<CountsStoreType>((set) => ({

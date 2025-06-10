@@ -112,7 +112,7 @@
 }
 
 .rbc-event-content {
-  @apply !font-bold;
+  @apply !font-bold text-black mt-5;
 }
 
 .rbc-today,

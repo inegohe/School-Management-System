@@ -53,12 +53,12 @@ const StudentPage = () => {
               <div className="w-full justify-between flex items-center">
                 <h1 className="font-bold text-lg">Schedule (4A)</h1>
               </div>
-              <ScheduleCalendar />
+              <ScheduleCalendar classes={[]} subjects={[]} />
             </div>
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2 h-full">
             <div className="w-full rounded-md bg-primary-light flex flex-col gap-4 p-2">
-              <Calender value={value} onChange={onChange}/>
+              <Calender value={value} onChange={onChange} />
               <Event />
             </div>
             <Announcement />

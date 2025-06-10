@@ -50,6 +50,8 @@ model Staff {
   yearOfExit     Int
   schoolId       String
   admin          Boolean @default(false)
+  classesTeaching String[] @default([])
+  subjectsTaught String[] @default([])
   school         School  @relation(fields: [schoolId], references: [id])
 }
 

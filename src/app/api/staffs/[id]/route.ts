@@ -15,7 +15,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     }
 
     const staff = await prisma.staff.findUnique({
-      where: { id },
+      where: { id: id !== "self" ? id : user.id },
     });
 
     if (!staff || staff.schoolId !== user.schoolId) {

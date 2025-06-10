@@ -46,7 +46,7 @@ const ParentPage = () => {
               <div className="w-full justify-between flex items-center">
                 <h1 className="font-bold text-lg">Schedule (John Doe)</h1>
               </div>
-              <ScheduleCalendar />
+              <ScheduleCalendar classes={[]} subjects={[]} />
             </div>
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2">

@@ -37,6 +37,14 @@ const columns = [
     className: "hidden lg:table-cell",
   },
   {
+    header: "Classes Teaching",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Subjects Teaching",
+    className: "hidden lg:table-cell",
+  },
+  {
     header: "Address",
     className: "hidden lg:table-cell",
   },
@@ -55,12 +63,16 @@ const StaffListPageInner = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
+  const [order, setOrder] = useState(
+    (searchParams.get("sort") as "asc" | "desc") || "asc"
+  );
 
   const fetchStaffs = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/staffs?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
+        `/staffs?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setStaffs(res.data.staffs);
@@ -98,19 +110,28 @@ const StaffListPageInner = () => {
   const renderRow = (item: Staff) => (
     <tr
       key={item.id}
-      className="border-b border-gray-200 even:bg-primary-light text-sm hover:cursor-pointer"
+      className="even:bg-primary-light text-sm hover:cursor-pointer"
     >
-      <td className="flex justify-start items-center gap-4 p-4">
-        <Image
-          src={item.image || "/avatar.png"}
-          alt=""
-          width={40}
-          height={40}
-          className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
-        />
-        <div className="flex flex-col items-start justify-center">
-          <h3 className="font-semibold">{item.name}</h3>
-          <p className="text-xs text-gray-500 w-20 truncate md:w-full">{item.email}</p>
+      <td className="flex p-3 h-full">
+        <div className="flex justify-start items-center gap-4 h-full">
+          <Link
+            href={`/list/staffs/${item.id}`}
+            className="md:hidden xl:block w-10 h-10"
+          >
+            <Image
+              src={item.image || "/avatar.png"}
+              alt=""
+              width={40}
+              height={40}
+              className="w-full h-full rounded-full object-cover"
+            />
+          </Link>
+          <div className="flex flex-col items-start justify-center">
+            <h3 className="font-semibold">{item.name}</h3>
+            <p className="text-xs text-gray-500 w-20 truncate md:w-32">
+              {item.email}
+            </p>
+          </div>
         </div>
       </td>
       <td className="hidden md:table-cell">
@@ -119,12 +140,20 @@ const StaffListPageInner = () => {
       <td className="hidden md:table-cell">{item.post}</td>
       <td className="hidden md:table-cell">{item.level}</td>
       <td className="hidden md:table-cell">{item.phoneNo}</td>
-      <td className="hidden md:table-cell">{item.address}</td>
+      <td className="hidden md:table-cell">
+        <p className="w-16 truncate">{item.classesTeaching.join(",")}</p>
+      </td>
+      <td className="hidden md:table-cell">
+        <p className="w-20 truncate">{item.subjectsTaught.join(",")}</p>
+      </td>
+      <td className="hidden md:table-cell">
+        <p className="w-20 truncate">{item.address}</p>
+      </td>
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/staffs/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
-              <Eye className="size-4"/>
+              <Eye className="size-4" />
             </button>
           </Link>
           {role === "ADMIN" && (
@@ -166,7 +195,17 @@ const StaffListPageInner = () => {
                 />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
+                {order !== "asc" ? (
+                  <SortAsc
+                    onClick={() => setOrder("asc")}
+                    className="stroke-primary"
+                  />
+                ) : (
+                  <SortDesc
+                    onClick={() => setOrder("desc")}
+                    className="stroke-primary"
+                  />
+                )}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -191,11 +230,13 @@ const StaffListPageInner = () => {
 };
 
 const StaffListPage = () => (
-  <Suspense fallback={
+  <Suspense
+    fallback={
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> Loading...
       </div>
-    }>
+    }
+  >
     <StaffListPageInner />
   </Suspense>
 );

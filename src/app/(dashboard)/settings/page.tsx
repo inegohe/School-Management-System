@@ -54,7 +54,7 @@ const Settings = () => {
         "accent-2-light": schoolData.accentColor2Light,
         "accent-3": schoolData.accentColor3,
         "accent-3-light": schoolData.accentColor3Light,
-      })
+      });
       toast.dismiss();
     }
   };
@@ -70,7 +70,7 @@ const Settings = () => {
       getUserRole();
     } else if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
-    } else if (Object.keys(school).length === 0) {
+    } else if (!school.id) {
       getData();
     } else {
       const { timetableHtml, id, admins, ...schoolInfo } = school as School;
@@ -92,7 +92,7 @@ const Settings = () => {
     return (
       <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
         {"schoolInfo" in data ? (
-          <SettingsForm data={data} setData={setData}/>
+          <SettingsForm data={data} setData={setData} />
         ) : (
           <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
             <LoaderCircle className="animate-spin" /> Loading

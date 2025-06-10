@@ -1,16 +1,25 @@
 "use client";
 
+import { fetchSchool } from "@/actions";
 import Announcement from "@/components/Announcements";
 import ScheduleCalendar from "@/components/ScheduleCalender";
+import apiClient from "@/lib/apiclient";
+import { updateColors } from "@/lib/helpers";
 import { getUser } from "@/server-actions";
-import { useRole, useUser } from "@/store";
+import { useCounts, useRole, useSchool, useUser, useUserData } from "@/store";
+import { Staff } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const TeacherPage = () => {
   const router = useRouter();
+  const [staff, setStaff] = useState<Staff>();
+  const setUserData = useUserData((state) => state.setUserData);
   const setUser = useUser((state) => state.setUser);
+  const { school, setSchool } = useSchool();
+  const setCounts = useCounts((state) => state.setCounts);
   const { role, setRole } = useRole();
 
   const getUserRole = async () => {
@@ -19,11 +28,66 @@ const TeacherPage = () => {
     setUser(result);
   };
 
+  const fetchStaff = async () => {
+    try {
+      const res = await apiClient.get("/staffs/self");
+      if (res.status === 200) {
+        setStaff(res.data);
+        setUserData({
+          id: res.data.id,
+          name: res.data.name,
+          image: res.data.image,
+          phoneNo: res.data.phoneNo,
+          address: res.data.address,
+          teaching: res.data.teaching,
+          admin: res.data.admin,
+        });
+      } else {
+        console.error("Failed to fetch teacher:", res.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching teacher:", error);
+    }
+  };
+
+  const getData = async () => {
+    toast.loading("Fetching Data...");
+    const result = await fetchSchool(new Date(Date.now()));
+    await fetchStaff();
+    if (!result.success) {
+      toast.dismiss();
+      toast.error(result.data);
+      toast.error(
+        "An error occured while fetching data, please refresh the page"
+      );
+    } else {
+      const { _count, ...schoolData } = result.data;
+      setSchool(schoolData);
+      setCounts(_count);
+      updateColors({
+        primary: schoolData.primaryColor,
+        "primary-light": schoolData.primaryColorLight,
+        secondary: schoolData.secondaryColor,
+        "secondary-light": schoolData.secondaryColorLight,
+        "accent-1": schoolData.accentColor1,
+        "accent-1-light": schoolData.accentColor1Light,
+        "accent-2": schoolData.accentColor2,
+        "accent-2-light": schoolData.accentColor2Light,
+        "accent-3": schoolData.accentColor3,
+        "accent-3-light": schoolData.accentColor3Light,
+      });
+      toast.dismiss();
+    }
+  };
+
   useEffect(() => {
+    toast.dismiss();
     if (role === "AUTH") {
       getUserRole();
     } else if (!["TEACHER", "NONTEACHING", "ADMIN"].includes(role)) {
       router.push(`/${role.toLowerCase()}`);
+    } else if (!school.id) {
+      getData();
     }
   }, [role]);
   if (!["TEACHER", "NONTEACHING", "ADMIN"].includes(role)) {
@@ -45,7 +109,11 @@ const TeacherPage = () => {
               <div className="w-full justify-between flex items-center">
                 <h1 className="font-bold text-lg">Schedule</h1>
               </div>
-              <ScheduleCalendar />
+              <ScheduleCalendar
+                classes={staff ? staff.classesTeaching : []}
+                subjects={staff ? staff.subjectsTaught : []}
+                isStaff={true}
+              />
             </div>
           </div>
           <div className="xl:w-1/3 flex flex-col gap-4 p-2">

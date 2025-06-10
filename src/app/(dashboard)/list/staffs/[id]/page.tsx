@@ -11,11 +11,12 @@ import Image from "next/image";
 import apiClient from "@/lib/apiclient";
 import { Home, LoaderCircle, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
+import { Staff } from "@prisma/client";
 
 const SingleTeacherPage = () => {
   const { id } = useParams();
   const role = useRole((state) => state.role);
-  const [teacher, setTeacher] = useState<any>(null);
+  const [teacher, setTeacher] = useState<Staff | null>(null);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -89,15 +90,21 @@ const SingleTeacherPage = () => {
               <p className="text-sm text-gray-500">{teacher.post}</p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <div><Mail className="text-secondary-light size-5" /></div>
+                  <div>
+                    <Mail className="text-secondary-light size-5" />
+                  </div>
                   <span>{teacher.email}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                   <div><PhoneCall className="text-secondary-light size-5" /></div>
+                  <div>
+                    <PhoneCall className="text-secondary-light size-5" />
+                  </div>
                   <span>{teacher.phoneNo}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                   <div><Home className="text-secondary-light size-5" /></div>
+                  <div>
+                    <Home className="text-secondary-light size-5" />
+                  </div>
                   <span>{teacher.address}</span>
                 </div>
               </div>
@@ -105,9 +112,13 @@ const SingleTeacherPage = () => {
           </div>
         </div>
         {/* BOTTOM */}
-        <div className="flex flex-col gap-1 mt-4 bg-primary-light rounded-md p-4 h-[800px]">
+        <div className="flex flex-col gap-1 mt-4 bg-primary-light rounded-md p-4 h-[1080px]">
           <h1>Teacher&apos;s Schedule</h1>
-          <ScheduleCalendar />
+          <ScheduleCalendar
+            classes={teacher.classesTeaching}
+            subjects={teacher.subjectsTaught}
+            isStaff={true}
+          />
         </div>
       </div>
       {/* RIGHT */}
@@ -133,6 +144,32 @@ const SingleTeacherPage = () => {
             >
               Teacher&apos;s Subjects
             </Link>
+          </div>
+        </div>
+        <div className="bg-primary-light p-4 rounded-md">
+          <h1 className="text-xl font-semibold">Classes Teaching</h1>
+          <div className="mt-4 flex gap-4 flex-wrap text-xs">
+            {teacher.classesTeaching.map((x, i) => (
+              <p
+                key={i}
+                className="p-3 rounded-md odd:bg-accent-2 even:bg-accent-1 text-gray-500"
+              >
+                {x}
+              </p>
+            ))}
+          </div>
+        </div>
+        <div className="bg-primary-light p-4 rounded-md">
+          <h1 className="text-xl font-semibold">Subjects Teaching</h1>
+          <div className="mt-4 flex gap-4 flex-wrap text-xs">
+            {teacher.subjectsTaught.map((x, i) => (
+              <p
+                key={i}
+                className="p-3 rounded-md odd:bg-accent-3 even:bg-accent-2 text-gray-500"
+              >
+                {x}
+              </p>
+            ))}
           </div>
         </div>
         <Performance level={parseInt(teacher.level) || 0} />
