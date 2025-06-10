@@ -143,19 +143,19 @@ const LoginPage = () => {
           {pns && pnsNote && (
             <p className="text-green-600 font-semibold text-xs">{pnsNote}</p>
           )}
-          <button type="submit" className="button w-full justify-center">
-            {loading && <LoaderCircle className="animate-spin" />}
-            {pns ? "Set Password" : "Login"}
-          </button>
-          <div className="font-sm mt-10">
+          <div className="font-sm mt-10 flex gap-1">
             Forgot password?
             <p
-              href="/createtrue; 
+              onClick={() => { setPNSNote("Set new password and confirm with email"); setPNS(true); }}
               className="ml-2 text-accent underline font-semibold"
             >
               Set new password
             </p>
           </div>
+          <button type="submit" className="button w-full justify-center">
+            {loading && <LoaderCircle className="animate-spin" />}
+            {pns ? "Set Password" : "Login"}
+          </button>
           <p className="font-sm mt-10">
             New here?
             <a
