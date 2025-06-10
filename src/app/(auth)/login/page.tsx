@@ -147,6 +147,15 @@ const LoginPage = () => {
             {loading && <LoaderCircle className="animate-spin" />}
             {pns ? "Set Password" : "Login"}
           </button>
+          <div className="font-sm mt-10">
+            Forgot password?
+            <p
+              href="/createtrue; 
+              className="ml-2 text-accent underline font-semibold"
+            >
+              Set new password
+            </p>
+          </div>
           <p className="font-sm mt-10">
             New here?
             <a
