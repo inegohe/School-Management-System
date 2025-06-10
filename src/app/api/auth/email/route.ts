@@ -59,7 +59,7 @@ const mailOptions = (
       <style>
           body {
               font-family: Arial, sans-serif;
-              background-color: #000;
+              background-color: #fff;
               color: #333;
               margin: 0;
               padding: 0;
@@ -69,8 +69,10 @@ const mailOptions = (
               min-height: 100vh;
           }
           .container {
+              background-color: #fff;
               padding: 20px;
               border-radius: 8px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
               width: 80%;
               max-width: 600px;
           }
