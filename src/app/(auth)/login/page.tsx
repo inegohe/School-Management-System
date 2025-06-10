@@ -45,7 +45,6 @@ const LoginPage = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     setError("");
-    toast.loading("Logging in");
 
     if (!pns) {
       try {
@@ -57,6 +56,7 @@ const LoginPage = () => {
         if (status === 200) {
           setUser(result);
           setRole(result.role);
+          toast.loading("Redirecting");
           router.push(`/${getRoleLabel(result.role)}`);
         }
       } catch (err: any) {

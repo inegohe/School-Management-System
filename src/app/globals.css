@@ -122,6 +122,7 @@
 
 .rbc-event {
   @apply !text-black !p-[10px] !m-[5px] !w-[99%] !border-none;
+  flex-flow: column !important;
 }
 
 .rbc-event:nth-child(odd) {

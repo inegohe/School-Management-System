@@ -32,11 +32,12 @@ export const GET = async (req: Request) => {
     }
 
     // Hash the password and clear the token
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(user.tempPassword, 10);
     await prisma.user.update({
       where: { email: user.email },
       data: {
         password: hashedPassword,
+        tempPassword: null,
         resetToken: null,
         resetTokenExpiry: null,
       },

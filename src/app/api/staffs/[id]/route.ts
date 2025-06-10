@@ -15,10 +15,10 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     }
 
     const staff = await prisma.staff.findUnique({
-      where: { id: id !== "self" ? id : user.id },
+      where: { id: id !== "self" ? id : user.id, schoolId: user.schoolId },
     });
-
-    if (!staff || staff.schoolId !== user.schoolId) {
+    
+    if (!staff) {
       return NextResponse.json(
         { message: "Staff not found or unauthorized" },
         { status: 404 }
