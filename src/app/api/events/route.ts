@@ -8,28 +8,34 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
-    const order = searchParams.get("sort") as "asc" | "desc" || "asc";
+    const order = (searchParams.get("sort") as "asc" | "desc") || "asc";
     const skip = (page - 1) * limit;
 
     const events = await prisma.event.findMany({
-      where: { schoolId: user.schoolId, ...(search && {
-      OR: [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-      ],
-    }), },
+      where: {
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ],
+        }),
+      },
       skip,
       take: limit,
-      orderBy: { title: order },
+      orderBy: { date: order },
     });
 
     const total = await prisma.event.count({
-      where: { schoolId: user.schoolId, ...(search && {
-      OR: [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-      ],
-    }), },
+      where: {
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ],
+        }),
+      },
     });
 
     return NextResponse.json(

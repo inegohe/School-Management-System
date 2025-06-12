@@ -7,13 +7,12 @@ import Calender from "@/components/Calender";
 import Cards from "@/components/Cards";
 import CountChart from "@/components/CountChart";
 import Event from "@/components/Event";
-import { useCounts, useRole, useSchool, useUser } from "@/store";
+import { useCounts, useRole, useSchool } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchSchool } from "@/actions";
 import toast from "react-hot-toast";
-import { getUser } from "@/server-actions";
 import { updateColors } from "@/lib/helpers";
 
 type ValuePiece = Date | null;
@@ -23,11 +22,10 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 const AdminPage = () => {
   const initDate = new Date();
   const router = useRouter();
-  const setUser = useUser((state) => state.setUser);
   const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
   const [value, onChange] = useState<Value>(new Date());
-  const { role, setRole } = useRole();
+  const role = useRole(state => state.role);
 
   const getData = async () => {
     toast.loading("Fetching Data...");
@@ -58,17 +56,9 @@ const AdminPage = () => {
     }
   };
 
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
-
   useEffect(() => {
     toast.dismiss();
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (role !== "ADMIN") {
+    if (role !== "ADMIN") {
       router.push(`/${role.toLowerCase()}`);
     } else if (
       !school.id ||

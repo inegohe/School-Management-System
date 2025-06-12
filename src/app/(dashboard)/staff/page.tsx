@@ -2,13 +2,16 @@
 
 import { fetchSchool } from "@/actions";
 import Announcement from "@/components/Announcements";
+import Event from "@/components/Event";
 import ScheduleCalendar from "@/components/ScheduleCalender";
+import SchoolCard from "@/components/SchoolCard";
 import apiClient from "@/lib/apiclient";
 import { updateColors } from "@/lib/helpers";
 import { getUser } from "@/server-actions";
 import { useCounts, useRole, useSchool, useUser, useUserData } from "@/store";
 import { Staff } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -102,10 +105,10 @@ const TeacherPage = () => {
     );
   } else
     return (
-      <>
+      <div className="flex gap-2 flex-col w-full h-full mb-4">
         <section className="w-full flex gap-2 flex-col xl:flex-row h-fit">
           <div className="xl:w-2/3 flex flex-col gap-4 p-2 h-full">
-            <div className="h-[850px] lg:h-full flex flex-col bg-primary-light p-3 lg:p-4">
+            <div className="h-[850px] lg:h-[850px] flex flex-col bg-primary-light p-3 lg:p-4">
               <div className="w-full justify-between flex items-center">
                 <h1 className="font-bold text-lg">Schedule</h1>
               </div>
@@ -116,11 +119,17 @@ const TeacherPage = () => {
               />
             </div>
           </div>
-          <div className="xl:w-1/3 flex flex-col gap-4 p-2">
+          <div className="hidden md:flex xl:w-1/3 h-fit p-2 flex-col gap-4">
+            <SchoolCard school={school} />
             <Announcement />
           </div>
         </section>
-      </>
+        <section className="hidden md:flex w-full h-fit p-2">
+          <div className="bg-primary-light rounded-md w-full flex h-full">
+            <Event />
+          </div>
+        </section>
+      </div>
     );
 };
 

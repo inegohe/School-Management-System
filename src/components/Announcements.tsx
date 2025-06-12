@@ -12,12 +12,16 @@ const Announcement = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const res = await apiClient.get("/announcements");
+        const res = await apiClient.get(
+          "/announcements?page=1&order=desc&limit=3"
+        );
         if (res.status === 200) {
           setAnnouncements(res.data.announcements);
           setRecents({
             announcements: res.data.announcements.filter(
-              (x: AnnouncementType) => new Date(x.date).getDay() === new Date(Date.now()).getDay()
+              (x: AnnouncementType) =>
+                new Date(x.date).toDateString() ===
+                new Date(Date.now()).toDateString()
             ).length,
             events: recents.events,
           });

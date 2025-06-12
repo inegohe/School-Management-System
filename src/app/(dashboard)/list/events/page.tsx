@@ -7,11 +7,12 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import { useRecents, useRole } from "@/store";
 import { Event } from "@prisma/client";
-import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
+import { Eye, LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import { Event as EventType } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const columns = [
   {
@@ -39,6 +40,10 @@ const EventListPageInner = () => {
   const role = useRole((state) => state.role);
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
+  const [show, setShow] = useState<{
+    state: boolean;
+    data: Event | null;
+  }>({ state: false, data: null });
   const { recents, setRecents } = useRecents();
   const [refresh, setRefresh] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -89,6 +94,11 @@ const EventListPageInner = () => {
       <td className="hidden md:table-cell">{item.endTime}</td>
       <td>
         <div className="flex items-center gap-2">
+          <div onClick={() => setShow({ state: true, data: item })}>
+            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
+              <Eye className="size-4" />
+            </button>
+          </div>
           {role === "ADMIN" && (
             <>
               <FormModal
@@ -161,6 +171,13 @@ const EventListPageInner = () => {
         totalPages={totalPages}
         onPageChange={(newPage) => setPage(newPage)}
       />
+      {/* Full Details Dialog */}
+      {show.state && (
+        <FullDetails
+          data={show.data!}
+          close={() => setShow({ state: false, data: null })}
+        />
+      )}
     </div>
   );
 };
@@ -176,5 +193,39 @@ const EventListPage = () => (
     <EventListPageInner />
   </Suspense>
 );
+
+const FullDetails = ({ data, close }: { data: Event; close: () => void }) => {
+  return (
+    <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-start justify-center overflow-y-scroll py-4">
+      <div className="bg-primary-light p-4 rounded-md relative my-auto w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]">
+        <h2 className="text-2xl font-bold mb-4 text-secondary w-full mx-auto">
+          {data.title}
+        </h2>
+        <div className="mb-4 flex gap-1 flex-wrap w-full bg-black rounded-md p-2">
+          <p className="font-bold text-secondary-light">ID:</p>
+          <p className="text-secondary">{data.id}</p>
+        </div>
+        <div className="flex gap-2 flex-col md:flex-row">
+          <div className="mb-4 rounded-md p-2 bg-accent-2">
+            <p className="font-semibold text-primary-light">Description:</p>
+            <p className="text-black">{data.description}</p>
+          </div>
+          <div className="mb-4 rounded-md p-2 bg-accent-3">
+            <p className="font-semibold text-primary-light">Date:</p>
+            <p className="text-black">{new Date(data.date).toDateString()}</p>
+            <p className="font-semibold text-primary-light">School ID:</p>
+            <p className="text-black">{data.schoolId}</p>
+          </div>
+        </div>
+        <div
+          className="absolute top-4 right-4 cursor-pointer"
+          onClick={() => close()}
+        >
+          <Image src="/close.png" alt="" width={14} height={14} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default EventListPage;

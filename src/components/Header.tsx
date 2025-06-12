@@ -1,17 +1,25 @@
 "use client";
 
 import apiClient from "@/lib/apiclient";
-import { useRecents, useUser, useUserData } from "@/store";
+import { getUser } from "@/server-actions";
+import { useRecents, useRole, useUser, useUserData } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
 // Code: Header component
 const Header = () => {
-  const user = useUser((state) => state.user);
+  const { user, setUser } = useUser();
+  const { role, setRole } = useRole();
   const setUserData = useUserData((state) => state.setUserData);
   const recents = useRecents((state) => state.recents);
   const [userImage, setUserImage] = useState("");
+
+  const getUserRole = async () => {
+    const result = await getUser();
+    setRole(result.role);
+    setUser(result);
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -24,6 +32,9 @@ const Header = () => {
       }
     };
 
+    if (role === "AUTH") {
+      getUserRole();
+    }
     fetchUser();
   }, []);
 
