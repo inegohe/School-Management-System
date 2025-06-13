@@ -475,7 +475,7 @@
     }],
     "background-color": "#000",
     "scope": "/",
-    "start_url": "/login",
+    "start_url": "/",
     "display": "standalone",
     "orientation": "portrait",
     "lang": "en"
