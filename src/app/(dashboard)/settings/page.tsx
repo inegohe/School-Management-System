@@ -58,6 +58,7 @@ const Settings = () => {
   };
 
   useEffect(() => {
+    toast.dismiss()
     if (role !== "AUTH") {
       if (role !== "ADMIN") {
         router.push(`/${role.toLowerCase()}`);

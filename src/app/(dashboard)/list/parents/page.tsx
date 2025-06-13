@@ -110,6 +110,7 @@ const ParentListPageInner = () => {
   );
 
   useEffect(() => {
+    toast.dismiss()
     if (role !== "AUTH") {
       if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
         router.push(`/${role.toLowerCase()}`);

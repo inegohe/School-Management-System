@@ -81,7 +81,7 @@ const TeacherPage = () => {
         router.push(`/${getRoleLabel(role)}`);
       } else if (!school.id) {
         getData();
-      }
+      } else fetchStaff()
     }
   }, [role]);
 

@@ -82,12 +82,13 @@ const ParentPage = () => {
   };
 
   useEffect(() => {
+    toast.dismiss()
     if (role !== "AUTH") {
       if (role !== "PARENT") {
         router.push(`/${role.toLowerCase()}`);
       } else if (!school.id) {
         getData();
-      }
+      } else fetchParent()
     }
   }, [role]);
 

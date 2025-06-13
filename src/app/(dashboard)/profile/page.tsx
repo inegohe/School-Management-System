@@ -19,6 +19,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    toast.dismiss()
     const fetchUser = async () => {
       try {
         const res = await apiClient.get("/profile");

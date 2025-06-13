@@ -86,7 +86,7 @@ const StudentPage = () => {
         router.push(`/${getRoleLabel(role)}`);
       } else if (!school.id) {
         getData();
-      }
+      } else fetchStudent();
     }
   }, [role]);
 

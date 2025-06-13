@@ -97,6 +97,7 @@ const ClassListPageInner = () => {
   );
 
   useEffect(() => {
+    toast.dismiss()
     if (role !== "AUTH") {
       if (
         !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT"].includes(role)
