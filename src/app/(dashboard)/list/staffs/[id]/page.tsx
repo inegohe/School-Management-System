@@ -11,6 +11,7 @@ import Image from "next/image";
 import apiClient from "@/lib/apiclient";
 import { Home, LoaderCircle, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { Staff } from "@prisma/client";
 
 const SingleTeacherPage = () => {

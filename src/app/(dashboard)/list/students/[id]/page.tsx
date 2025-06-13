@@ -10,6 +10,7 @@ import Image from "next/image";
 import apiClient from "@/lib/apiclient";
 import { Calendar, Home, LoaderCircle, Mail } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { Student } from "@prisma/client";
 
 const SingleStudentPage = () => {
