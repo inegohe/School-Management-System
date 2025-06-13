@@ -29,17 +29,41 @@ const ICONS = [
   { url: "/favicon.ico", type: "image/x-icon" },
 ];
 
+const APP_NAME = "School Control"
+const APP_DEFAULT_TITLE = "School Control: School Management System"
+const APP_TITLE_TEMPLATE = "%s - SchoolCtrl"
+const APP_DESCRIPTION = "Revolutionize your school management with our comprehensive app designed to connect admins, teachers, parents, and students. This platform offers seamless management of school data, including staff, parents, and students, with full editing capabilities for administrators. Teachers can easily take attendance and access real-time analytics on attendance rates, while students and teachers receive personalized schedule calendars based on the school timetable. Parents can conveniently view the schedules of all their children, ensuring they stay informed. Plus, share important announcements and events school-wide to keep everyone in the loop. Enhance communication, boost efficiency, and elevate your school community with our powerful management tool";
+
 export const metadata: Metadata = {
-  applicationName: "School Control",
+  themeColor: "#000",
+  applicationName: APP_NAME,
   icons: ICONS,
   title: {
-    default: "School Control: School Management System",
-    template: "%s - SchoolCtrl"
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
   },
-  themeColor: "#000",
-  description:
-    "Revolutionize your school management with our comprehensive app designed to connect admins, teachers, parents, and students. This platform offers seamless management of school data, including staff, parents, and students, with full editing capabilities for administrators. Teachers can easily take attendance and access real-time analytics on attendance rates, while students and teachers receive personalized schedule calendars based on the school timetable. Parents can conveniently view the schedules of all their children, ensuring they stay informed. Plus, share important announcements and events school-wide to keep everyone in the loop. Enhance communication, boost efficiency, and elevate your school community with our powerful management tool.",
-  manifest: "/manifest.json"
+  description: APP_DESCRIPTION,
+  manifest: "/manifest.json",
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
