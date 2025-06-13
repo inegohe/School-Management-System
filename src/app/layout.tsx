@@ -26,7 +26,6 @@ const ICONS = [
     sizes: "512x512",
   },
   { url: "/apple-touch-icon.png", type: "image/png" },
-  { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" }, { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
   { url: "/favicon.ico", type: "image/x-icon" },
 ];
 
