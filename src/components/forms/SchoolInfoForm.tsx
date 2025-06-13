@@ -94,7 +94,7 @@ const SchoolInfoForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="flex items-center justify-center h-full overflow-y-scroll"
+      className="flex items-center justify-center w-full h-full overflow-y-scroll"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -102,9 +102,9 @@ const SchoolInfoForm = ({
       >
         <h1 className="text-2xl font-bold mb-4">Register Your School</h1>
         <div className="w-full flex-col flex items-between">
-          <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex">
+          <div className="gap-4 w-full md:flex-row md:flex-wrap flex-col flex justify-center">
             {Object.keys(schema.shape).map((key) => (
-              <div className="w-full md:w-1/4 flex flex-col" key={key}>
+              <div className="min-w-[250px] flex-1 flex flex-col" key={key}>
                 <label className="block text-sm font-medium capitalize">
                   School&apos;s {key.replace(/([A-Z])/g, " $1")}
                 </label>
@@ -157,11 +157,11 @@ const SchoolInfoForm = ({
                 )}
               </div>
             ))}
-            <p className="text-xs font-semibold text-secondary-light">
-              All field&apos;s are required except color palette as you can
-              leave it default and change it later in the settings
-            </p>
           </div>
+          <p className="text-xs font-semibold text-secondary-light mt-2">
+            All field&apos;s are required except color palette as you can leave
+            it default and change it later in the settings
+          </p>
         </div>
         <div className="w-full flex gap-4 justify-between">
           <button
@@ -169,7 +169,7 @@ const SchoolInfoForm = ({
             onClick={() => setPage((prev) => prev - 1)}
             className="button"
           >
-            <ArrowLeft /> Prev
+            <ArrowLeft className="stroke-black" /> Prev
           </button>
           <div className="flex gap-2 items-center">
             {Array(7)
@@ -185,7 +185,7 @@ const SchoolInfoForm = ({
               ))}
           </div>
           <button type="submit" className="button justify-end">
-            Next <ArrowRight />
+            Next <ArrowRight className="stroke-black" />
           </button>
         </div>
       </form>

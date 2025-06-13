@@ -3,6 +3,7 @@ import apiClient from "@/lib/apiclient";
 import { useRecents } from "@/store";
 import { Event as EventType } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Event = () => {
@@ -35,7 +36,9 @@ const Event = () => {
     <div className="flex flex-col gap-4 p-2 w-full">
       <div className="w-full justify-between flex items-center">
         <h1 className="font-bold text-lg">Events</h1>
-        <Image src="/moreDark.png" alt="more" width={20} height={20} />
+        <Link className="text-sm text-gray-400" href="/list/events">
+          View all
+        </Link>
       </div>
       {!events.length && (
         <p className="font-bold text-gray-400 text-lg">No Events</p>

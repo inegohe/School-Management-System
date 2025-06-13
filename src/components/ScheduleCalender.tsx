@@ -76,7 +76,7 @@ const ScheduleCalendar = ({
         console.log(error);
       }
     };
-    fetchSchedule();
+    if (classes.length > 0 || subjects.length > 0) fetchSchedule();
   }, [classes, subjects]);
 
   return (

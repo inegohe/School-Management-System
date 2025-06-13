@@ -43,14 +43,15 @@ const columns = [
 const StudentListPageInner = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const setUser = useUser((state) => state.setUser);
-  const { role, setRole } = useRole();
+  const role = useRole((state) => state.role);
   const [students, setStudents] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
+  const [order, setOrder] = useState(
+    (searchParams.get("sort") as "asc" | "desc") || "asc"
+  );
 
   const fetchStudents = async (page: number, searchQuery = "") => {
     try {
@@ -102,7 +103,7 @@ const StudentListPageInner = () => {
         <div className="flex items-center gap-2">
           <Link href={`/list/students/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
-              <Eye className="size-4"/>
+              <Eye className="size-4" />
             </button>
           </Link>
           {role === "ADMIN" && (
@@ -118,21 +119,15 @@ const StudentListPageInner = () => {
     </tr>
   );
 
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
-
   useEffect(() => {
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
-      router.push(`/${role.toLowerCase()}`);
-    } else {
-      toast.loading("Fetching Data...");
-      fetchStudents(page, search);
-      setRefresh(false);
+    if (role !== "AUTH") {
+      if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
+        router.push(`/${role.toLowerCase()}`);
+      } else {
+        toast.loading("Fetching Data...");
+        fetchStudents(page, search);
+        setRefresh(false);
+      }
     }
   }, [role, page, refresh, search, order]);
 
@@ -163,7 +158,17 @@ const StudentListPageInner = () => {
                 />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
+                {order !== "asc" ? (
+                  <SortAsc
+                    onClick={() => setOrder("asc")}
+                    className="stroke-primary"
+                  />
+                ) : (
+                  <SortDesc
+                    onClick={() => setOrder("desc")}
+                    className="stroke-primary"
+                  />
+                )}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -186,11 +191,13 @@ const StudentListPageInner = () => {
 };
 
 const StudentListPage = () => (
-  <Suspense fallback={
+  <Suspense
+    fallback={
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> Loading...
       </div>
-    }>
+    }
+  >
     <StudentListPageInner />
   </Suspense>
 );

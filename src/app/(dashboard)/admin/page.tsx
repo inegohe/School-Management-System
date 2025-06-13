@@ -25,7 +25,7 @@ const AdminPage = () => {
   const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
   const [value, onChange] = useState<Value>(new Date());
-  const role = useRole(state => state.role);
+  const role = useRole((state) => state.role);
 
   const getData = async () => {
     toast.loading("Fetching Data...");
@@ -58,13 +58,15 @@ const AdminPage = () => {
 
   useEffect(() => {
     toast.dismiss();
-    if (role !== "ADMIN") {
-      router.push(`/${role.toLowerCase()}`);
-    } else if (
-      !school.id ||
-      (value instanceof Date && value.getDay() !== initDate.getDay())
-    ) {
-      getData();
+    if (role !== "AUTH") {
+      if (role !== "ADMIN") {
+        router.push(`/${role.toLowerCase()}`);
+      } else if (
+        !school.id ||
+        (value instanceof Date && value.getDay() !== initDate.getDay())
+      ) {
+        getData();
+      }
     }
   }, [value, role]);
 

@@ -1,8 +1,7 @@
 "use client";
 
 import { fetchSchool } from "@/actions";
-import { getUser } from "@/server-actions";
-import { useCounts, useRole, useSchool, useUser } from "@/store";
+import { useCounts, useRole, useSchool } from "@/store";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SettingsForm from "@/components/forms/SettingsForm";
@@ -13,9 +12,8 @@ import { updateColors } from "@/lib/helpers";
 
 const Settings = () => {
   const router = useRouter();
-  const { role, setRole } = useRole();
+  const role = useRole((state) => state.role);
   const { school, setSchool } = useSchool();
-  const setUser = useUser((state) => state.setUser);
   const setCounts = useCounts((state) => state.setCounts);
   const [data, setData] = useState<
     | {
@@ -59,22 +57,16 @@ const Settings = () => {
     }
   };
 
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
-
   useEffect(() => {
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (role !== "ADMIN") {
-      router.push(`/${role.toLowerCase()}`);
-    } else if (!school.id) {
-      getData();
-    } else {
-      const { timetableHtml, id, admins, ...schoolInfo } = school as School;
-      setData({ schoolInfo, timetableHtml, id, admins });
+    if (role !== "AUTH") {
+      if (role !== "ADMIN") {
+        router.push(`/${role.toLowerCase()}`);
+      } else if (!school.id) {
+        getData();
+      } else {
+        const { timetableHtml, id, admins, ...schoolInfo } = school as School;
+        setData({ schoolInfo, timetableHtml, id, admins });
+      }
     }
   }, [role]);
 

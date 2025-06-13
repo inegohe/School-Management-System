@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <main className="h-screen flex overflow-hidden">
+        <main className="h-screen flex overflow-hidden bg-primary">
           <div className="w-[16%] md:w-[20%] lg:w-[16%] xl:w-[14%] group p-2 bg-primary-light cursor-pointer relative">
             <Menu />
           </div>

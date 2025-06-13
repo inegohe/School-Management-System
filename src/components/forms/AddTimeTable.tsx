@@ -116,7 +116,7 @@ const AddTimeTableForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
+      className="p-6 rounded-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <h1 className="text-2xl font-bold mb-4">Add Timetable</h1>
       {!timetableHtml && (
@@ -136,14 +136,14 @@ const AddTimeTableForm = ({
           disabled={loading}
           className="button w-full md:w-fit"
         >
-          <Download /> Download Excel Template
+          <Download className="stroke-black" /> Download Excel Template
         </button>
         <input
           type="file"
           accept=".xlsx,.xls,.xlsm"
           onChange={handleFileUpload}
           disabled={loading}
-          className="input flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+          className="input flex w-full md:w-fit text-sm text-primary p-2 bg-secondary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-secondary file:cursor-pointer cursor-pointer"
         />
       </div>
       {fileLoading && (
@@ -164,7 +164,7 @@ const AddTimeTableForm = ({
           onClick={() => setPage((prev) => prev - 1)}
           className="button"
         >
-          <ArrowLeft /> Prev
+          <ArrowLeft className="stroke-black" /> Prev
         </button>
         <div className="flex gap-2 items-center">
           {Array(7)
@@ -185,7 +185,7 @@ const AddTimeTableForm = ({
           className="button justify-end"
         >
           {loading && <LoaderCircle className="animate-spin" />} Finish{" "}
-          <ArrowRight />
+          <ArrowRight className="stroke-black" />
         </button>
       </div>
     </motion.div>

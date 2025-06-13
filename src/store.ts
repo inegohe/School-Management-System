@@ -9,6 +9,7 @@ interface UserDataType2 {
   name: string;
   image?: string;
   phoneNo?: string;
+  parentNo?: string;
   address?: string;
   teaching?: boolean;
   admin?: boolean;

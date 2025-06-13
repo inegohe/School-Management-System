@@ -11,9 +11,8 @@ import { useState, useEffect } from "react";
 const Header = () => {
   const { user, setUser } = useUser();
   const { role, setRole } = useRole();
-  const setUserData = useUserData((state) => state.setUserData);
+  const { userData, setUserData } = useUserData();
   const recents = useRecents((state) => state.recents);
-  const [userImage, setUserImage] = useState("");
 
   const getUserRole = async () => {
     const result = await getUser();
@@ -26,7 +25,6 @@ const Header = () => {
       try {
         const res = await apiClient.get("/profile");
         setUserData(res.data);
-        setUserImage(res.data.image);
       } catch (error) {
         console.log(error);
       }
@@ -76,20 +74,22 @@ const Header = () => {
           )}
         </Link>
         <div className="flex flex-col items-end justify-center gap-1 text-sm">
-          <h1 className="font-bold">{user.name}</h1>
+          <h1 className="font-bold">{userData.name || user.name}</h1>
           <p className="text-xs text-gray-400 capitalize">
             {user.role.toLowerCase()}
           </p>
         </div>
-        <Link href="/profile" className="cursor-pointer">
-          <Image
-            src={userImage || "/avatar.png"}
-            width={50}
-            height={50}
-            alt="avatar"
-            className="rounded-full object-cover w-14 h-14"
-          />
-        </Link>
+        {user.role !== "PARENT" && (
+          <Link href="/profile" className="cursor-pointer">
+            <Image
+              src={userData.image || "/avatar.png"}
+              width={50}
+              height={50}
+              alt="avatar"
+              className="rounded-full object-cover w-14 h-14"
+            />
+          </Link>
+        )}
       </div>
     </main>
   );

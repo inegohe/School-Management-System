@@ -38,19 +38,22 @@ const columns = [
 const ParentListPageInner = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const setUser = useUser((state) => state.setUser);
-  const { role, setRole } = useRole();
+  const role = useRole((state) => state.role);
   const [parents, setParents] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [order, setOrder] = useState((searchParams.get("sort") as "asc" | "desc") || "asc");
+  const [order, setOrder] = useState(
+    (searchParams.get("sort") as "asc" | "desc") || "asc"
+  );
 
   const fetchParents = async (page: number, searchQuery = "") => {
     try {
       const res = await apiClient.get(
-        `/parents?page=${page}&limit=10&search=${encodeURIComponent(searchQuery)}&sort=${encodeURIComponent(order)}`
+        `/parents?page=${page}&limit=10&search=${encodeURIComponent(
+          searchQuery
+        )}&sort=${encodeURIComponent(order)}`
       );
       if (res.status === 200) {
         setParents(res.data.parents);
@@ -106,21 +109,15 @@ const ParentListPageInner = () => {
     </tr>
   );
 
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
-
   useEffect(() => {
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
-      router.push(`/${role.toLowerCase()}`);
-    } else {
-      toast.loading("Fetching Data...");
-      fetchParents(page, search);
-      setRefresh(false);
+    if (role !== "AUTH") {
+      if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
+        router.push(`/${role.toLowerCase()}`);
+      } else {
+        toast.loading("Fetching Data...");
+        fetchParents(page, search);
+        setRefresh(false);
+      }
     }
   }, [role, page, refresh, search, order]);
 
@@ -150,7 +147,17 @@ const ParentListPageInner = () => {
                 />
               </button>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-                {order !== "asc" ? <SortAsc onClick={() => setOrder("asc")} className="stroke-primary" /> : <SortDesc onClick={() => setOrder("desc")} className="stroke-primary" />}
+                {order !== "asc" ? (
+                  <SortAsc
+                    onClick={() => setOrder("asc")}
+                    className="stroke-primary"
+                  />
+                ) : (
+                  <SortDesc
+                    onClick={() => setOrder("desc")}
+                    className="stroke-primary"
+                  />
+                )}
               </button>
               {role === "ADMIN" && (
                 <FormModal
@@ -175,11 +182,13 @@ const ParentListPageInner = () => {
 };
 
 const ParentListPage = () => (
-  <Suspense fallback={
+  <Suspense
+    fallback={
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" /> Loading...
       </div>
-    }>
+    }
+  >
     <ParentListPageInner />
   </Suspense>
 );

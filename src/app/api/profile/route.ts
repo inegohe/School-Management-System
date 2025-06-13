@@ -12,6 +12,7 @@ export const GET = withAuthRoute(async (req, user) => {
           id: true,
           name: true,
           address: true,
+          parentNo: true,
           image: true,
         },
       });

@@ -14,9 +14,7 @@ const Profile = () => {
   const { userData, setUserData } = useUserData();
   const [roleState, setRoleState] = useState(role);
   const [user, setUser] = useState<typeof userData>({
-    id: "",
-    name: "",
-    image: "",
+    ...userData,
   });
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +30,6 @@ const Profile = () => {
     };
 
     if (!userData.id) fetchUser();
-    else setUser(userData);
   }, [userData.id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +52,7 @@ const Profile = () => {
           return;
         }
         setUser(res.data);
+        setUserData(res.data);
       } else {
         toast.error(res.data.message || "Update failed");
       }
@@ -128,29 +126,31 @@ const Profile = () => {
   // STAFF, STUDENT, PARENT
   return (
     <div className="flex flex-col lg:flex-row bg-primary-light p-4 gap-3 rounded-md m-4 mt-0">
-      <label
-        htmlFor="image"
-        className="flex items-center justify-center w-full lg:w-1/2 h-60 lg:h-full rounded-md overflow-hidden relative bg-black"
-      >
-        <Image
-          width={200}
-          height={400}
-          src={user.image || "/avatar.png"}
-          alt="Preview"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute top-0 left-0 w-full z-10 h-full flex items-center justify-center cursor-pointer p-2 rounded-md bg-primary-light opacity-0 hover:opacity-60">
-          <Upload className="size-8" />
-        </div>
-        <input
-          type="file"
-          accept="image/*"
-          id="image"
-          hidden
-          onChange={handleFileChange}
-          className="input"
-        />
-      </label>
+      {role !== "PARENT" && (
+        <label
+          htmlFor="image"
+          className="flex items-center justify-center w-full lg:w-1/2 h-60 lg:h-full rounded-md overflow-hidden relative bg-black"
+        >
+          <Image
+            width={200}
+            height={400}
+            src={user.image || "/avatar.png"}
+            alt="Preview"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-0 left-0 w-full z-10 h-full flex items-center justify-center cursor-pointer p-2 rounded-md bg-primary-light opacity-0 hover:opacity-60">
+            <Upload className="size-8" />
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            id="image"
+            hidden
+            onChange={handleFileChange}
+            className="input"
+          />
+        </label>
+      )}
       <form
         className="flex flex-col gap-4 h-full w-full"
         onSubmit={(e) => {
@@ -164,17 +164,19 @@ const Profile = () => {
             name="name"
             value={user.name}
             onChange={handleChange}
-            className="p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
+            className="input p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
             required
           />
         </div>
         <div>
-          <label className="block mb-1 font-semibold">Phone Number</label>
+          <label className="block mb-1 font-semibold">
+            {role === "STUDENT" ? "Parent's " : ""}Phone Number
+          </label>
           <input
-            name="phoneNo"
-            value={user.phoneNo}
+            name={role === "STUDENT" ? "parentNo" : "phoneNo"}
+            value={user.phoneNo || user.parentNo}
             onChange={handleChange}
-            className="p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
+            className="input p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
             disabled={role === "STUDENT"}
           />
         </div>

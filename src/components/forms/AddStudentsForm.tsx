@@ -122,7 +122,7 @@ const AddStudentsForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
+      className="p-6 rounded-lg w-full h-full flex flex-col justify-between gap-2 mb-4 mt-5"
     >
       <div className="w-full flex flex-col gap-4">
         <h1 className="text-2xl font-bold mb-4">Add Students</h1>
@@ -142,13 +142,13 @@ const AddStudentsForm = ({
             }}
             className="button w-full md:w-fit p-3"
           >
-            <Download /> Download Excel Template
+            <Download className="stroke-black" /> Download Excel Template
           </button>
           <input
             type="file"
             accept=".xlsx,.xls,.xlsm"
             onChange={handleFileUpload}
-            className="flex w-full md:w-fit text-sm text-secondary p-2 bg-primary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-secondary hover:file:bg-primary file:cursor-pointer cursor-pointer"
+            className="input flex w-full md:w-fit text-sm text-primary p-2 bg-secondary rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-secondary file:cursor-pointer cursor-pointer"
           />
         </div>
         {fileLoading && (
@@ -190,7 +190,7 @@ const AddStudentsForm = ({
       </div>
       <div className="w-full flex gap-4 justify-between">
         <button onClick={() => setPage((prev) => prev - 1)} className="button">
-          <ArrowLeft /> Prev
+          <ArrowLeft className="stroke-black" /> Prev
         </button>
         <div className="flex gap-2 items-center">
           {Array(7)
@@ -210,7 +210,7 @@ const AddStudentsForm = ({
           onClick={() => setPage((prev) => prev + 1)}
           className="button justify-end"
         >
-          Next <ArrowRight />
+          Next <ArrowRight className="stroke-black" />
         </button>
       </div>
     </motion.div>

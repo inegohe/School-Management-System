@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const columns = [
   {
@@ -36,6 +37,7 @@ const columns = [
 ];
 
 const EventListPageInner = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const role = useRole((state) => state.role);
   const [events, setEvents] = useState([]);
@@ -64,7 +66,8 @@ const EventListPageInner = () => {
         setRecents({
           events: res.data.events.filter(
             (x: EventType) =>
-              new Date(x.date).getDay() === new Date(Date.now()).getDay()
+              new Date(x.date).toDateString() ===
+              new Date(Date.now()).toDateString()
           ).length,
           announcements: recents.announcements,
         });
@@ -121,65 +124,88 @@ const EventListPageInner = () => {
   );
 
   useEffect(() => {
-    toast.loading("Fetching Data...");
-    fetchEvents(page, search);
-    setRefresh(false);
+    if (role !== "AUTH") {
+      if (
+        !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT"].includes(role)
+      ) {
+        router.push("/login");
+      } else {
+        toast.loading("Fetching Data...");
+        fetchEvents(page, search);
+        setRefresh(false);
+      }
+    }
   }, [page, refresh, search, order]);
 
-  return (
-    <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
-      {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Events</h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch value={search} onChange={setSearch} />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              <RefreshCcw
-                className={`stroke-primary ${refresh && "animate-spin"}`}
-                onClick={() => setRefresh(!refresh)}
-              />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-              {order !== "asc" ? (
-                <SortAsc
-                  onClick={() => setOrder("asc")}
-                  className="stroke-primary"
+  if (
+    !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT", "AUTH"].includes(
+      role
+    )
+  ) {
+    return (
+      <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
+        <LoaderCircle className="animate-spin" />{" "}
+        {role === "AUTH"
+          ? "Authenticating..."
+          : `You do not have a valid role,
+        redirecting to login page`}
+      </div>
+    );
+  } else
+    return (
+      <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
+        {/* TOP */}
+        <div className="flex items-center justify-between">
+          <h1 className="hidden md:block text-lg font-semibold">All Events</h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+            <TableSearch value={search} onChange={setSearch} />
+            <div className="flex items-center gap-4 self-end">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                <RefreshCcw
+                  className={`stroke-primary ${refresh && "animate-spin"}`}
+                  onClick={() => setRefresh(!refresh)}
                 />
-              ) : (
-                <SortDesc
-                  onClick={() => setOrder("desc")}
-                  className="stroke-primary"
+              </button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
+                {order !== "asc" ? (
+                  <SortAsc
+                    onClick={() => setOrder("asc")}
+                    className="stroke-primary"
+                  />
+                ) : (
+                  <SortDesc
+                    onClick={() => setOrder("desc")}
+                    className="stroke-primary"
+                  />
+                )}
+              </button>
+              {role === "ADMIN" && (
+                <FormModal
+                  table="events"
+                  type="create"
+                  refresh={() => setRefresh(!refresh)}
                 />
               )}
-            </button>
-            {role === "ADMIN" && (
-              <FormModal
-                table="events"
-                type="create"
-                refresh={() => setRefresh(!refresh)}
-              />
-            )}
+            </div>
           </div>
         </div>
-      </div>
-      {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={events} />
-      {/* PAGINATION */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={(newPage) => setPage(newPage)}
-      />
-      {/* Full Details Dialog */}
-      {show.state && (
-        <FullDetails
-          data={show.data!}
-          close={() => setShow({ state: false, data: null })}
+        {/* LIST */}
+        <Table columns={columns} renderRow={renderRow} data={events} />
+        {/* PAGINATION */}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
         />
-      )}
-    </div>
-  );
+        {/* Full Details Dialog */}
+        {show.state && (
+          <FullDetails
+            data={show.data!}
+            close={() => setShow({ state: false, data: null })}
+          />
+        )}
+      </div>
+    );
 };
 
 const EventListPage = () => (

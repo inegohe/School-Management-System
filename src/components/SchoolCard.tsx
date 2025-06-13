@@ -9,7 +9,7 @@ const SchoolCard = ({ school }: { school: SchoolDataType }) => {
         width={100}
         height={100}
         alt="School Logo"
-        className="rounded-md w-full h-40 mb-1"
+        className="object-cover rounded-md w-full h-40 mb-1"
       />
       <div className="bg-accent-1 rounded-md p-2 w-full flex flex-col gap-1">
         <label className="text-xs text-primary-light font-bold">Name</label>

@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Announcements from "@/components/Announcements";
 import FormModal from "@/components/FormModal";
-import Performance from "@/components/Performance";
 import ScheduleCalendar from "@/components/ScheduleCalender";
 import { useRole } from "@/store";
 import Image from "next/image";
 import apiClient from "@/lib/apiclient";
 import { Calendar, Home, LoaderCircle, Mail } from "lucide-react";
 import Link from "next/link";
+import { Student } from "@prisma/client";
 
 const SingleStudentPage = () => {
   const { id } = useParams();
   const role = useRole((state) => state.role);
-  const [student, setStudent] = useState<any>(null);
+  const [student, setStudent] = useState<Student>();
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -123,21 +123,21 @@ const SingleStudentPage = () => {
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link
               className="p-3 rounded-md bg-accent-1"
-              href={`/list/staffs?q=${student.name}`}
+              href={`/list/classes?q=${student.class}`}
             >
               Student&apos;s Classes
             </Link>
             <Link
               className="p-3 rounded-md bg-accent-2"
-              href={`/list/students?q=${student.name}`}
+              href={`/list/staffs?q=${student.class}`}
             >
-              Student&apos;s Students
+              Student&apos;s Teacher
             </Link>
             <Link
               className="p-3 rounded-md bg-accent-3"
-              href={`/list/subjects?q=${student.name}`}
+              href={`/list/parent?q=${student.parentName}`}
             >
-              Student&apos;s Subjects
+              Student&apos;s Parent
             </Link>
           </div>
         </div>

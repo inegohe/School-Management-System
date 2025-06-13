@@ -88,7 +88,7 @@ const LoginPage = () => {
       } catch (err: any) {
         console.log(err.response);
         toast.dismiss();
-        setPNSNote("")
+        setPNSNote("");
         setError(
           err.response?.data?.error || err.message || "An error occurred"
         );
@@ -113,7 +113,7 @@ const LoginPage = () => {
           }
         />
       </div>
-      <div className="flex items-center justify-center p-6 md:w-[40%]">
+      <div className="flex items-center justify-center w-full p-6 md:w-[40%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-2 w-full justify-start items-start overflow-x-hidden"
@@ -147,14 +147,18 @@ const LoginPage = () => {
           <div className="text-xs flex gap-1 self-end">
             Forgot password?
             <p
-              onClick={() => { setPNSNote("Set new password and confirm with email"); setValue("password", ""); setPNS(true); }}
+              onClick={() => {
+                setPNSNote("Set new password and confirm with email");
+                setValue("password", "");
+                setPNS(true);
+              }}
               className="text-accent underline font-semibold cursor-pointer"
             >
               Set new password
             </p>
           </div>
           <button type="submit" className="button w-full justify-center">
-            {loading && <LoaderCircle className="animate-spin" />}
+            {loading && <LoaderCircle className="animate-spin stroke-black" />}
             {pns ? "Set Password" : "Login"}
           </button>
           <p className="text-sm mt-10 mx-auto">

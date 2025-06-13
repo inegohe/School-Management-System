@@ -56,8 +56,7 @@ const columns = [
 const StaffListPageInner = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const setUser = useUser((state) => state.setUser);
-  const { role, setRole } = useRole();
+  const role = useRole((state) => state.role);
   const [staffs, setStaffs] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
@@ -89,21 +88,17 @@ const StaffListPageInner = () => {
     }
   };
 
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
-
   useEffect(() => {
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
-      router.push(`/${role.toLowerCase()}`);
-    } else {
-      toast.loading("Fetching Data...");
-      fetchStaffs(page, search);
-      setRefresh(false);
+    if (role !== "AUTH") {
+      if (
+        !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT"].includes(role)
+      ) {
+        router.push("/login");
+      } else {
+        toast.loading("Fetching Data...");
+        fetchStaffs(page, search);
+        setRefresh(false);
+      }
     }
   }, [role, page, refresh, search, order]);
 
@@ -169,14 +164,18 @@ const StaffListPageInner = () => {
     </tr>
   );
 
-  if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {
+  if (
+    !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT", "AUTH"].includes(
+      role
+    )
+  ) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
         <LoaderCircle className="animate-spin" />{" "}
         {role === "AUTH"
           ? "Authenticating..."
-          : `You are not an ADMIN or STAFF,
-        redirecting to ${role} page`}
+          : `You do not have a valid role,
+        redirecting to login page`}
       </div>
     );
   } else

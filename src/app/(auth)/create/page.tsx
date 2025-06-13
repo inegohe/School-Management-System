@@ -75,7 +75,7 @@ const RegisterSchoolPage = () => {
           "accent-2-light": res.data.accentColor2Light,
           "accent-3": res.data.accentColor3,
           "accent-3-light": res.data.accentColor3Light,
-        })
+        });
         router.push("/newschool");
       } else {
         toast.dismiss();
@@ -91,56 +91,63 @@ const RegisterSchoolPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full justify-start items-start overflow-x-hidden">
-      {page === 0 ? (
-        <SchoolInfoForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.schoolData}
-        />
-      ) : page === 1 ? (
-        <AddStaffsForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.staffsData}
-        />
-      ) : page === 2 ? (
-        <AddStudentsForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.studentsData}
-        />
-      ) : page === 3 ? (
-        <AddParentsForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.parentsData}
-        />
-      ) : page === 4 ? (
-        <AddClassesForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.classes}
-        />
-      ) : page === 5 ? (
-        <AddSubjectsForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={totalData.subjects}
-        />
-      ) : page === 6 ? (
-        <AddTimeTableForm
-          setTotalData={setTotalData}
-          setPage={setPage}
-          defaultValues={{
-            timetableData: totalData.timetable,
-            timetableHtml: totalData.timetableHtml,
-          }}
-          submit={onSubmit}
-          loading={loading}
-        />
-      ) : null}
-      <div className="w-full flex justify-center items-center text-center text-sm text-secondary-light gap-1 font-bold">Already have a school? <Link href="/login" className="underline">Login</Link></div>
+    <div className="flex flex-col gap-4 w-full h-full overflow-x-hidden">
+      <div className="flex flex-col w-full min-h-[90%] justify-start items-start overflow-y-scroll">
+        {page === 0 ? (
+          <SchoolInfoForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.schoolData}
+          />
+        ) : page === 1 ? (
+          <AddStaffsForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.staffsData}
+          />
+        ) : page === 2 ? (
+          <AddStudentsForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.studentsData}
+          />
+        ) : page === 3 ? (
+          <AddParentsForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.parentsData}
+          />
+        ) : page === 4 ? (
+          <AddClassesForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.classes}
+          />
+        ) : page === 5 ? (
+          <AddSubjectsForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={totalData.subjects}
+          />
+        ) : page === 6 ? (
+          <AddTimeTableForm
+            setTotalData={setTotalData}
+            setPage={setPage}
+            defaultValues={{
+              timetableData: totalData.timetable,
+              timetableHtml: totalData.timetableHtml,
+            }}
+            submit={onSubmit}
+            loading={loading}
+          />
+        ) : null}
+      </div>
+      <div className="w-full flex justify-center items-center text-center text-sm text-secondary-light gap-1 font-bold">
+        Already have a school?{" "}
+        <Link href="/login" className="underline">
+          Login
+        </Link>
+      </div>
       <Toaster
         toastOptions={{
           className: "!bg-primary !text-secondary",

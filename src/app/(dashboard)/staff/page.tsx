@@ -6,12 +6,10 @@ import Event from "@/components/Event";
 import ScheduleCalendar from "@/components/ScheduleCalender";
 import SchoolCard from "@/components/SchoolCard";
 import apiClient from "@/lib/apiclient";
-import { updateColors } from "@/lib/helpers";
-import { getUser } from "@/server-actions";
-import { useCounts, useRole, useSchool, useUser, useUserData } from "@/store";
+import { getRoleLabel, updateColors } from "@/lib/helpers";
+import { useCounts, useRole, useSchool, useUserData } from "@/store";
 import { Staff } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -20,16 +18,9 @@ const TeacherPage = () => {
   const router = useRouter();
   const [staff, setStaff] = useState<Staff>();
   const setUserData = useUserData((state) => state.setUserData);
-  const setUser = useUser((state) => state.setUser);
   const { school, setSchool } = useSchool();
   const setCounts = useCounts((state) => state.setCounts);
-  const { role, setRole } = useRole();
-
-  const getUserRole = async () => {
-    const result = await getUser();
-    setRole(result.role);
-    setUser(result);
-  };
+  const role = useRole((state) => state.role);
 
   const fetchStaff = async () => {
     try {
@@ -85,14 +76,15 @@ const TeacherPage = () => {
 
   useEffect(() => {
     toast.dismiss();
-    if (role === "AUTH") {
-      getUserRole();
-    } else if (!["TEACHER", "NONTEACHING", "ADMIN"].includes(role)) {
-      router.push(`/${role.toLowerCase()}`);
-    } else if (!school.id) {
-      getData();
+    if (role !== "AUTH") {
+      if (!["TEACHER", "NONTEACHING", "ADMIN"].includes(role)) {
+        router.push(`/${getRoleLabel(role)}`);
+      } else if (!school.id) {
+        getData();
+      }
     }
   }, [role]);
+
   if (!["TEACHER", "NONTEACHING", "ADMIN"].includes(role)) {
     return (
       <div className="flex justify-center items-center w-full h-full gap-2 font-bold">
@@ -108,24 +100,47 @@ const TeacherPage = () => {
       <div className="flex gap-2 flex-col w-full h-full mb-4">
         <section className="w-full flex gap-2 flex-col xl:flex-row h-fit">
           <div className="xl:w-2/3 flex flex-col gap-4 p-2 h-full">
-            <div className="h-[850px] lg:h-[850px] flex flex-col bg-primary-light p-3 lg:p-4">
+            <div
+              className={
+                "flex flex-col bg-primary-light p-3 lg:p-4 " +
+                (role === "NONTEACHING" ? "h-fit" : "h-[850px]")
+              }
+            >
               <div className="w-full justify-between flex items-center">
-                <h1 className="font-bold text-lg">Schedule</h1>
+                <h1 className="font-bold text-lg">Your Schedule</h1>
               </div>
-              <ScheduleCalendar
-                classes={staff ? staff.classesTeaching : []}
-                subjects={staff ? staff.subjectsTaught : []}
-                isStaff={true}
-              />
+              {role === "NONTEACHING" ? (
+                <p className="font-bold text-secondary-light">
+                  {" "}
+                  No schedule for non teaching staff
+                </p>
+              ) : (
+                <ScheduleCalendar
+                  classes={staff ? staff.classesTeaching : []}
+                  subjects={staff ? staff.subjectsTaught : []}
+                  isStaff={true}
+                />
+              )}
+              {role === "NONTEACHING" && <SchoolCard school={school} />}
             </div>
           </div>
-          <div className="hidden md:flex xl:w-1/3 h-fit p-2 flex-col gap-4">
-            <SchoolCard school={school} />
+          <div
+            className={
+              "xl:w-1/3 h-fit p-2 flex-col gap-4 " +
+              (role === "NONTEACHING" ? "flex" : "hidden md:flex")
+            }
+          >
+            {role !== "NONTEACHING" && <SchoolCard school={school} />}
             <Announcement />
           </div>
         </section>
-        <section className="hidden md:flex w-full h-fit p-2">
-          <div className="bg-primary-light rounded-md w-full flex h-full">
+        <section className="w-full h-fit p-2">
+          <div
+            className={
+              "bg-primary-light rounded-md w-full h-full " +
+              (role === "NONTEACHING" ? "flex" : "hidden md:flex")
+            }
+          >
             <Event />
           </div>
         </section>

@@ -18,7 +18,7 @@ const Menu = () => {
           title: "Dashboard",
           icon: "/home.png",
           link: `/${getRoleLabel(role)}`,
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["admin", "teacher", "student", "parent", "nonteaching"],
         },
         {
           title: "Staffs",
@@ -104,7 +104,12 @@ const Menu = () => {
           alt="logo"
           className="text-transparent rounded-full w-[32px] h-[32px] max-w-[32px] bg-transparent"
         />
-        <h1 title={school.name} aria-label={school.name} aria-description={school.name} className="font-bold hidden md:block group-hover:block w-40 truncate">
+        <h1
+          title={school.name}
+          aria-label={school.name}
+          aria-description={school.name}
+          className="font-bold hidden md:block group-hover:block w-40 truncate"
+        >
           {school.name || ""}
         </h1>
       </div>
@@ -117,22 +122,25 @@ const Menu = () => {
               </h1>
               {x.items.map(
                 (y, index) =>
-                  (y.visible.includes(role.toLowerCase()) || y.title === "Dashboard") && (
+                  (y.visible.includes(role.toLowerCase()) ||
+                    y.title === "Dashboard") && (
                     <Link
                       key={index}
                       href={y.link}
-                      {...(y.title === "Logout"
-                        ? { prefetch: false }
-                        : {})}
+                      {...(y.title === "Logout" ? { prefetch: false } : {})}
                       className="flex items-center justify-center group-hover:justify-start md:justify-start text-gray-500 gap-2 p-2 rounded-md hover:bg-primary"
                     >
-                      {y.title === "Subjects" ? <BookText className="stroke-gray-500 size-5"/> : <Image
-                        src={y.icon}
-                        alt={y.title}
-                        width={20}
-                        height={20}
-                        className="text-transparent w-[20px] h-[20px] max-w-[20px] bg-transparent"
-                      />}
+                      {y.title === "Subjects" ? (
+                        <BookText className="stroke-gray-500 size-5" />
+                      ) : (
+                        <Image
+                          src={y.icon}
+                          alt={y.title}
+                          width={20}
+                          height={20}
+                          className="text-transparent w-[20px] h-[20px] max-w-[20px] bg-transparent"
+                        />
+                      )}
                       <span className="hidden md:block group-hover:block">
                         {y.title}
                       </span>

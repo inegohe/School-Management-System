@@ -612,7 +612,7 @@ const Timetable = ({
           disabled={loading}
           className="button w-full md:w-fit"
         >
-          <Download /> Download Excel
+          <Download className="stroke-black" /> Download Excel
         </button>
         <input
           type="file"

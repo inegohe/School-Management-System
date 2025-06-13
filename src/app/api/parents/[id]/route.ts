@@ -9,25 +9,33 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     if (!id) {
       return NextResponse.json(
-        { message: "Student ID is required" },
+        { message: "Parent ID is required" },
         { status: 400 }
       );
     }
 
-    const student = await prisma.student.findUnique({
+    const parent = await prisma.parent.findUnique({
       where: { id: id !== "self" ? id : user.id, schoolId: user.schoolId },
+      include: {
+        Student: {
+          select: {
+            name: true,
+            class: true,
+          },
+        },
+      },
     });
 
-    if (!student) {
+    if (!parent) {
       return NextResponse.json(
-        { message: "Student not found or unauthorized" },
+        { message: "Parent not found or unauthorized" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(student, { status: 200 });
+    return NextResponse.json(parent, { status: 200 });
   } catch (error) {
-    console.error("Error fetching student:", error);
+    console.error("Error fetching parent:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

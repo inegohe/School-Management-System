@@ -8,7 +8,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
-    const order = searchParams.get("sort") as "asc" | "desc" || "asc";
+    const order = (searchParams.get("sort") as "asc" | "desc") || "asc";
     const skip = (page - 1) * limit;
 
     const staffs = await prisma.staff.findMany({
@@ -21,6 +21,8 @@ export const GET = withAuthRoute(async (req: Request, user) => {
             { post: { contains: search, mode: "insensitive" } },
             { phoneNo: { contains: search, mode: "insensitive" } },
             { address: { contains: search, mode: "insensitive" } },
+            { classesTeaching: { has: search } },
+            { subjectsTaught: { has: search } },
           ],
         }),
       },
@@ -39,6 +41,8 @@ export const GET = withAuthRoute(async (req: Request, user) => {
             { post: { contains: search, mode: "insensitive" } },
             { phoneNo: { contains: search, mode: "insensitive" } },
             { address: { contains: search, mode: "insensitive" } },
+            { classesTeaching: { has: search } },
+            { subjectsTaught: { has: search } },
           ],
         }),
       },

@@ -31,7 +31,9 @@ const AddSubjectsForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const filteredSubjects = subjects.filter(
-      (subject) => subject.name.trim() !== "" || subject.teachers.filter(x => x.trim() !== "").length > 0
+      (subject) =>
+        subject.name.trim() !== "" ||
+        subject.teachers.filter((x) => x.trim() !== "").length > 0
     );
     if (filteredSubjects.length < 10) {
       toast("A school must have atleast 10 subjects");
@@ -46,7 +48,7 @@ const AddSubjectsForm = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="p-6 rounded-lg shadow-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
+      className="p-6 rounded-lg w-full h-full flex flex-col gap-4 mb-4 mt-5"
     >
       <form
         onSubmit={handleSubmit}
@@ -121,7 +123,7 @@ const AddSubjectsForm = ({
               onClick={() => setPage((prev) => prev - 1)}
               className="button"
             >
-              <ArrowLeft /> Prev
+              <ArrowLeft className="stroke-black" /> Prev
             </button>
             <div className="flex gap-2 items-center">
               {Array(7)
@@ -141,7 +143,7 @@ const AddSubjectsForm = ({
               type="submit"
               className="button justify-end"
             >
-              Next <ArrowRight />
+              Next <ArrowRight className="stroke-black" />
             </button>
           </div>
         </div>
