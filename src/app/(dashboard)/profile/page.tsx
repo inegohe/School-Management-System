@@ -29,8 +29,8 @@ const Profile = () => {
       }
     };
 
-    if (!userData.id) fetchUser();
-  }, [userData.id]);
+    if (!userData?.id) fetchUser();
+  }, [userData?.id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -103,7 +103,7 @@ const Profile = () => {
                 : " opacity-60 select-none")
             }
             onClick={() =>
-              setRoleState(userData.teaching ? "TEACHER" : "NONTEACHING")
+              setRoleState(userData?.teaching ? "TEACHER" : "NONTEACHING")
             }
           >
             STAFF
@@ -189,7 +189,7 @@ const Profile = () => {
             className="p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
           />
         </div>
-        {userData.admin && (
+        {userData?.admin && (
           <div className="flex justify-center items-center w-full gap-6">
             <div
               className={
@@ -210,7 +210,7 @@ const Profile = () => {
                   : "opacity-60 select-none")
               }
               onClick={() =>
-                setRoleState(userData.teaching ? "TEACHER" : "NONTEACHING")
+                setRoleState(userData?.teaching ? "TEACHER" : "NONTEACHING")
               }
             >
               STAFF
