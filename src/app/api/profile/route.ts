@@ -48,7 +48,7 @@ export const GET = withAuthRoute(async (req, user) => {
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error("Error fetching classes:", error);
+    console.error("Error fetching profile :", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
@@ -125,7 +125,7 @@ export const POST = withAuthRoute(async (req, user) => {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
   } catch (error) {
-    console.error("Error fetching classes:", error);
+    console.error("Error fetching profile :", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
