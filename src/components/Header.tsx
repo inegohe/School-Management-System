@@ -5,7 +5,7 @@ import { getUser } from "@/server-actions";
 import { useRecents, useRole, useUser, useUserData } from "@/store";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 // Code: Header component
 const Header = () => {
@@ -74,7 +74,7 @@ const Header = () => {
           )}
         </Link>
         <div className="flex flex-col items-end justify-center gap-1 text-sm">
-          <h1 className="font-bold">{userData.name || user.name}</h1>
+          <h1 className="font-bold">{userData?.name || user.name}</h1>
           <p className="text-xs text-gray-400 capitalize">
             {user.role.toLowerCase()}
           </p>
@@ -82,7 +82,7 @@ const Header = () => {
         {user.role !== "PARENT" && (
           <Link href="/profile" className="cursor-pointer">
             <Image
-              src={userData.image || "/avatar.png"}
+              src={userData?.image || "/avatar.png"}
               width={50}
               height={50}
               alt="avatar"
