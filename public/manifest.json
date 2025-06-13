@@ -473,6 +473,8 @@
       "type": "image/png",
       "purpose": "maskable"
     }],
+    "background-color": "#000",
+    "scope": "/",
     "start_url": "/login",
     "display": "standalone",
     "orientation": "portrait",
