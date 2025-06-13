@@ -12,9 +12,30 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const ICONS = [
+  { url: "/android-chrome-192x192.png", type: "image/png", sizes: "192x192" },
+  {
+    url: "/android-chrome-maskable-192x192.png",
+    type: "image/png",
+    sizes: "192x192",
+  },
+  { url: "/android-chrome-512x512.png", type: "image/png", sizes: "512x512" },
+  {
+    url: "/android-chrome-maskable-512x512.png",
+    type: "image/png",
+    sizes: "512x512",
+  },
+  { url: "/apple-touch-icon.png", type: "image/png" },
+  { url: "/favicon.ico", type: "image/x-icon" },
+];
 
 export const metadata: Metadata = {
-  title: "School Control",
+  applicationName: "School Control",
+  icons: ICONS,
+  title: {
+    default: "School Control: School Management System",
+    template: "%s - SchoolCtrl"
+  },
   description:
     "Revolutionize your school management with our comprehensive app designed to connect admins, teachers, parents, and students. This platform offers seamless management of school data, including staff, parents, and students, with full editing capabilities for administrators. Teachers can easily take attendance and access real-time analytics on attendance rates, while students and teachers receive personalized schedule calendars based on the school timetable. Parents can conveniently view the schedules of all their children, ensuring they stay informed. Plus, share important announcements and events school-wide to keep everyone in the loop. Enhance communication, boost efficiency, and elevate your school community with our powerful management tool.",
   manifest: "/manifest.json"
