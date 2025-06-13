@@ -9,11 +9,10 @@ import { useRecents, useRole } from "@/store";
 import { Event } from "@prisma/client";
 import { Eye, LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import { Event as EventType } from "@prisma/client";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 const columns = [
   {

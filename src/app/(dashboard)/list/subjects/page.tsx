@@ -8,8 +8,7 @@ import apiClient from "@/lib/apiclient";
 import { useRole } from "@/store";
 import { Subject } from "@prisma/client";
 import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 

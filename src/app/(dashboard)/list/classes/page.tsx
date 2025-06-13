@@ -9,8 +9,7 @@ import { useRole } from "@/store";
 import { Class } from "@prisma/client";
 import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 

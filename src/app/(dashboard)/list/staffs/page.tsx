@@ -10,11 +10,10 @@ import { useRole, useUser } from "@/store";
 import { Staff } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Eye, LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const columns = [
   {
