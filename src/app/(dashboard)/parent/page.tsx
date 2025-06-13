@@ -115,7 +115,7 @@ const ParentPage = () => {
                   >
                     <div className="w-full justify-between flex items-center">
                       <h1 className="font-bold text-lg">
-                        {student.name}'s Schedule
+                        {student.name}&apos;s Schedule
                       </h1>
                     </div>
                     <ScheduleCalendar
