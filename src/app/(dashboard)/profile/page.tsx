@@ -135,7 +135,7 @@ const Profile = () => {
           <Image
             width={200}
             height={400}
-            src={user.image || "/avatar.png"}
+            src={user?.image || "/avatar.png"}
             alt="Preview"
             className="w-full h-full object-cover"
           />
@@ -163,7 +163,7 @@ const Profile = () => {
           <label className="block mb-1 font-semibold">Name</label>
           <input
             name="name"
-            value={user.name}
+            value={user?.name}
             onChange={handleChange}
             className="input p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
             required
@@ -175,7 +175,7 @@ const Profile = () => {
           </label>
           <input
             name={role === "STUDENT" ? "parentNo" : "phoneNo"}
-            value={user.phoneNo || user.parentNo}
+            value={user?.phoneNo || user?.parentNo}
             onChange={handleChange}
             className="input p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
             disabled={role === "STUDENT"}
@@ -185,7 +185,7 @@ const Profile = () => {
           <label className="block mb-1 font-semibold">Address</label>
           <input
             name="address"
-            value={user.address}
+            value={user?.address}
             onChange={handleChange}
             className="p-2 border-b-2 border-primary outline-none rounded-md w-full bg-transparent"
           />
