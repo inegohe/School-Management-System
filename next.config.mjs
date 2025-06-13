@@ -1,8 +1,16 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-    images: {
-        remotePatterns: [{hostname: "images.pexels.com"}, {hostname: "img.freepik.com"}, {hostname: "images.unsplash.com"}]
-    }
-};
+import("next").nextConfig;
+import withPWAInit from "@ducanh2912/next-pwa";
 
-export default nextConfig;
+const withPWA = withPWAInit({
+  dest: "public",
+});
+
+export default withPWA({
+  images: {
+    remotePatterns: [
+      { hostname: "images.pexels.com" },
+      { hostname: "img.freepik.com" },
+      { hostname: "images.unsplash.com" },
+    ],
+  },
+});

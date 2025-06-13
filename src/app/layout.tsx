@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Geist, Geist_Mono } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "School Management System",
-  description: "Next.js School Management System",
+  title: "School Control",
+  description:
+    "Revolutionize your school management with our comprehensive app designed to connect admins, teachers, parents, and students. This platform offers seamless management of school data, including staff, parents, and students, with full editing capabilities for administrators. Teachers can easily take attendance and access real-time analytics on attendance rates, while students and teachers receive personalized schedule calendars based on the school timetable. Parents can conveniently view the schedules of all their children, ensuring they stay informed. Plus, share important announcements and events school-wide to keep everyone in the loop. Enhance communication, boost efficiency, and elevate your school community with our powerful management tool.",
+  manifest: "/manifest.json"
 };
 
 export default function RootLayout({
@@ -16,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }
