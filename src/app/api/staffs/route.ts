@@ -157,6 +157,12 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
         id,
       },
     });
+    
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
 
     return NextResponse.json(
       { message: "Delete successfull" },

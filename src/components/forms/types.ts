@@ -10,7 +10,7 @@ type Timetable = Omit<TimetableType, "id" | "schoolId">;
 type SubjectData = Omit<SubjectDataType, "id" | "schoolId">;
 
 type TotalData = {
-  schoolData: SchoolInfo | {};
+  schoolData: SchoolInfo;
   staffsData: StaffData[] | [];
   admins: StaffData[] | [];
   studentsData: StudentData[] | [];

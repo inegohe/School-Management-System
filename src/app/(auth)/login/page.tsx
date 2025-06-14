@@ -100,7 +100,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex justify-center items-center w-full h-full">
-      <div className="rounded-lg h-full w-full hidden md:flex overflow-hidden">
+      <div className="rounded-lg h-full w-full hidden lg:flex overflow-hidden">
         <Image
           width={740}
           height={100}
@@ -113,7 +113,7 @@ const LoginPage = () => {
           }
         />
       </div>
-      <div className="flex items-center justify-center w-full p-6 md:w-[40%]">
+      <div className="flex items-center justify-center w-full p-6 md:w-[80%] lg:w-[40%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-2 w-full justify-start items-start overflow-x-hidden"

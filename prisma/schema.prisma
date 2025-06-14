@@ -8,17 +8,20 @@ datasource db {
 }
 
 model User {
-  id               String          @id @default(uuid())
+  id               String          @id
   name             String
   email            String          @unique
-  password         String          @default("") 
-  tempPassword     String?
+  password         String          @default("")
   role             Role
   schoolId         String
   resetToken       String?
   resetTokenExpiry DateTime?
+  tempPassword     String?
+  Parent           Parent?
   RefreshTokens    RefreshTokens[]
-  school           School          @relation(fields: [schoolId], references: [id])
+  Staff            Staff?
+  Student          Student?
+  school           School          @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model RefreshTokens {
@@ -30,45 +33,47 @@ model RefreshTokens {
   createdAt  DateTime @default(now())
   expiresOn  DateTime
   lastUsed   DateTime
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Staff {
-  id             String  @id @default(uuid())
-  name           String
-  image          String  @default("")
-  email          String  @unique
-  oracleNo       String
-  registrationNo String
-  designation    String
-  post           String
-  payrollNo      String
-  level          String
-  yearOfService  Int
-  teaching       Boolean
-  address        String
-  phoneNo        String
-  yearOfExit     Int
-  schoolId       String
-  admin          Boolean @default(false)
+  id              String   @id
+  name            String
+  image           String   @default("")
+  email           String   @unique
+  oracleNo        String
+  registrationNo  String
+  designation     String
+  post            String
+  payrollNo       String
+  level           String
+  yearOfService   Int
+  teaching        Boolean
+  address         String
+  phoneNo         String
+  yearOfExit      Int
+  schoolId        String
+  admin           Boolean  @default(false)
   classesTeaching String[] @default([])
-  subjectsTaught String[] @default([])
-  school         School  @relation(fields: [schoolId], references: [id])
+  subjectsTaught  String[] @default([])
+  User            User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Parent {
-  id       String    @id @default(uuid())
+  id       String    @id
   email    String    @unique
   name     String
   phoneNo  String
   address  String
   schoolId String
-  school   School    @relation(fields: [schoolId], references: [id])
+  User     User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  school   School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   Student  Student[]
 }
 
 model Student {
-  id             String       @id @default(uuid())
+  id             String       @id
   name           String
   image          String       @default("")
   email          String       @unique
@@ -84,27 +89,28 @@ model Student {
   address        String
   schoolId       String
   Attendance     Attendance[]
-  parent         Parent       @relation(fields: [parentId], references: [id])
-  school         School       @relation(fields: [schoolId], references: [id])
+  User           User         @relation(fields: [id], references: [id], onDelete: Cascade)
+  parent         Parent       @relation(fields: [parentId], references: [id], onDelete: Restrict)
+  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model School {
-  id                  String       @id @default(uuid())
+  id                  String         @id @default(uuid())
   name                String
   address             String
-  primaryColor        String       @default("")
-  primaryColorLight   String       @default("")
-  secondaryColor      String       @default("")
-  secondaryColorLight String       @default("")
-  accentColor1        String       @default("")
-  accentColor1Light   String       @default("")
-  accentColor2        String       @default("")
-  accentColor2Light   String       @default("")
-  accentColor3        String       @default("")
-  accentColor3Light   String       @default("")
+  primaryColor        String         @default("")
+  primaryColorLight   String         @default("")
+  secondaryColor      String         @default("")
+  secondaryColorLight String         @default("")
+  accentColor1        String         @default("")
+  accentColor1Light   String         @default("")
+  accentColor2        String         @default("")
+  accentColor2Light   String         @default("")
+  accentColor3        String         @default("")
+  accentColor3Light   String         @default("")
   logo                String
-  missionStatement    String       @default("")
-  visionStatement     String       @default("")
+  missionStatement    String         @default("")
+  visionStatement     String         @default("")
   principal           String
   vicePrincipal       String
   slogan              String
@@ -113,27 +119,25 @@ model School {
   closeHour           String
   timetableHtml       String
   admins              String[]
-  
+  announcements       Announcement[]
   attendances         Attendance[]
   classes             Class[]
+  events              Event[]
   parents             Parent[]
   staffs              Staff[]
   students            Student[]
+  subjects            Subject[]
   timetables          Timetable[]
   users               User[]
-  events              Event[]
-  announcements       Announcement[]
-  subjects            Subject[]
 }
 
 model Subject {
-  id           String       @id @default(uuid())
-  name         String
-  teachers     String[]     @default([])
-  schoolId     String
-  school       School       @relation(fields: [schoolId], references: [id])
+  id       String   @id @default(uuid())
+  name     String
+  teachers String[] @default([])
+  schoolId String
+  school   School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
-
 
 model Class {
   id           String       @id @default(uuid())
@@ -142,7 +146,7 @@ model Class {
   classTeacher String
   schoolId     String
   Attendance   Attendance[]
-  school       School       @relation(fields: [schoolId], references: [id])
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Timetable {
@@ -155,7 +159,7 @@ model Timetable {
   period     Int
   periodSpan Int
   schoolId   String
-  school     School @relation(fields: [schoolId], references: [id])
+  school     School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Attendance {
@@ -165,37 +169,37 @@ model Attendance {
   studentId String
   classId   String
   status    AttendanceType
-  class     Class          @relation(fields: [classId], references: [id])
-  school    School         @relation(fields: [schoolId], references: [id])
+  class     Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
+  school    School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   student   Student        @relation(fields: [studentId], references: [id])
 }
 
 model Event {
-  id          String         @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   date        DateTime
   startTime   String
   endTime     String
   schoolId    String
-  school    School         @relation(fields: [schoolId], references: [id])
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model Announcement {
-  id          String         @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   date        DateTime
   schoolId    String
-  school    School         @relation(fields: [schoolId], references: [id])
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   ADMIN
   TEACHER
-  NONTEACHING
   STUDENT
   PARENT
+  NONTEACHING
 }
 
 enum SchoolType {

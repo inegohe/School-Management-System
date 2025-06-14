@@ -6,7 +6,7 @@ import AddStudentsForm from "@/components/forms/AddStudentsForm";
 import AddSubjectsForm from "@/components/forms/AddSubjectsForm";
 import AddTimeTableForm from "@/components/forms/AddTimeTable";
 import SchoolInfoForm from "@/components/forms/SchoolInfoForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSchool } from "@/store";
 import toast, { Toaster } from "react-hot-toast";
@@ -63,6 +63,8 @@ const RegisterSchoolPage = () => {
       if (res.status === 201) {
         toast.dismiss();
         toast.success("School created successfully");
+        localStorage.removeItem("temp-data");
+        localStorage.removeItem("curr-page");
         setSchool(res.data);
         updateColors({
           primary: res.data.primaryColor,
@@ -89,6 +91,37 @@ const RegisterSchoolPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const loadData = () => {
+      const storedData = localStorage.getItem("temp-data");
+      const storedPage = localStorage.getItem("curr-page");
+
+      if (storedData) {
+        try {
+          const parsedData: TotalData = JSON.parse(storedData);
+          const parsedPage = storedPage ? parseInt(storedPage, 10) : 0;
+
+          if (
+            !totalData.schoolData.name &&
+            Object.keys(parsedData).length > 0
+          ) {
+            setTotalData(parsedData);
+            setPage(parsedPage);
+          }
+        } catch (error) {
+          console.error("Failed to load data from localStorage", error);
+        }
+      }
+    };
+
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("temp-data", JSON.stringify(totalData));
+    localStorage.setItem("curr-page", page.toString());
+  }, [page]);
 
   return (
     <div className="flex flex-col gap-4 w-full h-full overflow-x-hidden">
