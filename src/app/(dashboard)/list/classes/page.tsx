@@ -109,7 +109,7 @@ const ClassListPageInner = () => {
         setRefresh(false);
       }
     }
-  }, [page, refresh, search, order]);
+  }, [role, page, refresh, search, order]);
 
   if (
     !["ADMIN", "TEACHER", "NONTEACHING", "PARENT", "STUDENT", "AUTH"].includes(
