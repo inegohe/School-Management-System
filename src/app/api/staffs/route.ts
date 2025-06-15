@@ -74,19 +74,14 @@ export const POST = withAuthRoute(async (req: Request, user) => {
       return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
 
-    type === "create" &&
-      (await prisma.user.create({
-        data: {
-          name: data.name,
-          email: data.email,
-          schoolId: user.schoolId,
-          role: data.admin
-            ? "ADMIN"
-            : data.teaching
-            ? "TEACHER"
-            : "NONTEACHING",
-        },
-      }));
+    await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        schoolId: user.schoolId,
+        role: data.admin ? "ADMIN" : data.teaching ? "TEACHER" : "NONTEACHING",
+      },
+    });
 
     type === "create"
       ? await prisma.staff.create({
@@ -157,7 +152,7 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
         id,
       },
     });
-    
+
     await prisma.user.delete({
       where: {
         id,

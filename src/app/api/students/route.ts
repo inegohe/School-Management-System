@@ -10,7 +10,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
-    const order = searchParams.get("sort") as "asc" | "desc" || "asc";
+    const order = (searchParams.get("sort") as "asc" | "desc") || "asc";
     const skip = (page - 1) * limit;
 
     const students = await prisma.student.findMany({
@@ -88,15 +88,14 @@ export const POST = withAuthRoute(async (req: Request, user) => {
 
     let parentId = v4();
 
-    type === "create" &&
-      (await prisma.user.create({
-        data: {
-          name: data.name,
-          email: data.email,
-          schoolId: user.schoolId,
-          role: "STUDENT",
-        },
-      }));
+    await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        schoolId: user.schoolId,
+        role: "STUDENT",
+      },
+    });
 
     const existingParent =
       type === "create"
@@ -193,7 +192,7 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
         id,
       },
     });
-    
+
     await prisma.user.delete({
       where: {
         id,

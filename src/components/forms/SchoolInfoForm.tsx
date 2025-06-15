@@ -135,7 +135,20 @@ const SchoolInfoForm = ({
                     )}
                   </div>
                 )}
-                {key !== "logo" && (
+                {key === "type" ? (
+                  <select
+                    {...register("type")}
+                    className="input p-2 border-b border-primary rounded-md outline-none w-full"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select School Type
+                    </option>
+                    <option value="PRIMARY">Primary</option>
+                    <option value="JUNIOR">Junior</option>
+                    <option value="SENIOR">Senior</option>
+                  </select>
+                ) : key !== "logo" && (
                   <input
                     type={
                       key.includes("Color")
