@@ -55,22 +55,21 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     });
 
     // Fetch students in this class
-    const where = {
-      schoolId: user.schoolId,
-      class: teacherClass.name,
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { address: { contains: search, mode: "insensitive" } },
-            { parentName: { contains: search, mode: "insensitive" } },
-            { gender: { equals: search.toUpperCase() as Gender } },
-          ],
-        }),
-    };
 
     const students = await prisma.student.findMany({
-      where,
+      where: {
+  schoolId: user.schoolId,
+  class: teacherClass.name,
+  ...(search && {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+      { parentName: { contains: search, mode: "insensitive" } },
+      { gender: { equals: search.toUpperCase() as Gender } },
+    ],
+  }),
+},
       skip,
       take: limit,
       orderBy: { name: "asc" },
@@ -81,7 +80,22 @@ export const GET = withAuthRoute(async (req: Request, user) => {
       },
     });
 
-    const total = await prisma.student.count({ where });
+    const total = await prisma.student.count({ 
+      where: {
+  schoolId: user.schoolId,
+  class: teacherClass.name,
+  ...(search && {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+      { parentName: { contains: search, mode: "insensitive" } },
+      { gender: { equals: search.toUpperCase() as Gender } },
+    ],
+  }),
+}
+      
+    });
 
     // If attendance already marked for all students, return attendance status
     const attendanceMap = Object.fromEntries(

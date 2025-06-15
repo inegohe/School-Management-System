@@ -10,27 +10,37 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const search = searchParams.get("search") || "";
     const order = (searchParams.get("sort") as "asc" | "desc") || "asc";
     const skip = (page - 1) * limit;
-    const where = {
-        schoolId: user.schoolId,
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { address: { contains: search, mode: "insensitive" } },
-            { phoneNo: { contains: search, mode: "insensitive" } },
-            { address: { contains: search, mode: "insensitive" } },
-          ],
-        }),
-      }
     const parents = await prisma.parent.findMany({
-      where,
+      where: {
+  schoolId: user.schoolId,
+  ...(search && {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+      { phoneNo: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+    ],
+  }),
+},
       skip,
       take: limit,
       orderBy: { name: order },
     });
 
     const total = await prisma.parent.count({
-      where,
+      where: {
+  schoolId: user.schoolId,
+  ...(search && {
+    OR: [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+      { phoneNo: { contains: search, mode: "insensitive" } },
+      { address: { contains: search, mode: "insensitive" } },
+    ],
+  }),
+},
     });
 
     return NextResponse.json(
