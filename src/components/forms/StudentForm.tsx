@@ -45,8 +45,8 @@ const StudentForm = ({
     resolver: zodResolver(schema),
   });
   const [loading, setLoading] = useState(false);
+
   const onSubmit = handleSubmit(async (formData) => {
-    console.log("Trying");
     try {
       setLoading(true);
       const res = await apiClient.post(`/students`, {
@@ -157,9 +157,9 @@ const StudentForm = ({
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Gender</label>
           <select
-            className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
             {...register("gender")}
-            defaultValue={data?.gender}
+            className="bg-transparent outline-none border-b border-secondary p-2 rounded-md text-sm w-full"
+            defaultValue={data?.gender || ""}
           >
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
@@ -170,7 +170,7 @@ const StudentForm = ({
         </div>
       </div>
       <div className="w-full flex justify-end">
-        <button type="submit" className="button text-secondary p-2 rounded-md">
+        <button className="button p-2 rounded-md">
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </button>

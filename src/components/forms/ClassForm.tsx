@@ -89,7 +89,7 @@ const ClassForm = ({
         />
       </div>
       <div className="w-full flex justify-end">
-        <button className="button text-secondary p-2 rounded-m">
+        <button className="button p-2 rounded-m">
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {type === "create" ? "Create" : "Update"}
         </button>

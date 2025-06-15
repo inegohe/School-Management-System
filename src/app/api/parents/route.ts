@@ -10,9 +10,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const search = searchParams.get("search") || "";
     const order = (searchParams.get("sort") as "asc" | "desc") || "asc";
     const skip = (page - 1) * limit;
-
-    const parents = await prisma.parent.findMany({
-      where: {
+    const where = {
         schoolId: user.schoolId,
         ...(search && {
           OR: [
@@ -23,25 +21,16 @@ export const GET = withAuthRoute(async (req: Request, user) => {
             { address: { contains: search, mode: "insensitive" } },
           ],
         }),
-      },
+      }
+    const parents = await prisma.parent.findMany({
+      where,
       skip,
       take: limit,
       orderBy: { name: order },
     });
 
     const total = await prisma.parent.count({
-      where: {
-        schoolId: user.schoolId,
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { address: { contains: search, mode: "insensitive" } },
-            { phoneNo: { contains: search, mode: "insensitive" } },
-            { address: { contains: search, mode: "insensitive" } },
-          ],
-        }),
-      },
+      where,
     });
 
     return NextResponse.json(

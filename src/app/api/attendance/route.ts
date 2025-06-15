@@ -62,8 +62,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
           { name: { contains: search, mode: "insensitive" } },
           { email: { contains: search, mode: "insensitive" } },
           { address: { contains: search, mode: "insensitive" } },
-          { parentName: { contains: search, mode: "insensitive" } },
-          { admissionNo: { contains: search, mode: "insensitive" } },
+          { parentName: { contains: search, mode: "insensitive" } }
         ],
       }),
     };

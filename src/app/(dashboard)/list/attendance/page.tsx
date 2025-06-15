@@ -104,16 +104,16 @@ const AttendancePage = () => {
       <td>
         <input
           type="checkbox"
-          checked={attendance[student.id] === "PRESENT"}
-          onChange={() => handleCheck(student.id, "PRESENT")}
+          defaultChecked={attendance[student.id] === "PRESENT"}
+          onChange={(e) => handleCheck(student.id, e.target.checked ? "PRESENT" : "ABSENT")}
           disabled={attendance[student.id] === "ABSENT"}
         />
       </td>
       <td>
         <input
           type="checkbox"
-          checked={attendance[student.id] === "ABSENT"}
-          onChange={() => handleCheck(student.id, "ABSENT")}
+          defaultChecked={attendance[student.id] === "ABSENT"}
+          onChange={(e) => handleCheck(student.id, e.target.checked ? "ABSENT" : "PRESENT")}
           disabled={attendance[student.id] === "PRESENT"}
         />
       </td>
@@ -164,9 +164,10 @@ const AttendancePage = () => {
         />
         <button
           type="submit"
-          className="button bg-accent-1 text-primary font-bold px-6 py-2 rounded-md self-end"
+          className="button self-end"
           disabled={loading}
         >
+          {loading && <LoaderCircle className="animate-spin" />}{" "}
           {attendanceMarked
             ? "Update Attendance"
             : loading
