@@ -90,7 +90,7 @@ model Student {
   schoolId       String
   Attendance     Attendance[]
   User           User         @relation(fields: [id], references: [id], onDelete: Cascade)
-  parent         Parent       @relation(fields: [parentId], references: [id], onDelete: Restrict)
+  parent         Parent       @relation(fields: [parentId], references: [id])
   school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
