@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { withAuthRoute } from "@/lib/routeauth";
 import { NextResponse } from "next/server";
+import { v4 } from "uuid";
 
 export const GET = withAuthRoute(async (req: Request, user) => {
   try {
@@ -12,17 +13,17 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const skip = (page - 1) * limit;
     const parents = await prisma.parent.findMany({
       where: {
-  schoolId: user.schoolId,
-  ...(search && {
-    OR: [
-      { name: { contains: search, mode: "insensitive" } },
-      { email: { contains: search, mode: "insensitive" } },
-      { address: { contains: search, mode: "insensitive" } },
-      { phoneNo: { contains: search, mode: "insensitive" } },
-      { address: { contains: search, mode: "insensitive" } },
-    ],
-  }),
-},
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { address: { contains: search, mode: "insensitive" } },
+            { phoneNo: { contains: search, mode: "insensitive" } },
+            { address: { contains: search, mode: "insensitive" } },
+          ],
+        }),
+      },
       skip,
       take: limit,
       orderBy: { name: order },
@@ -30,17 +31,17 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     const total = await prisma.parent.count({
       where: {
-  schoolId: user.schoolId,
-  ...(search && {
-    OR: [
-      { name: { contains: search, mode: "insensitive" } },
-      { email: { contains: search, mode: "insensitive" } },
-      { address: { contains: search, mode: "insensitive" } },
-      { phoneNo: { contains: search, mode: "insensitive" } },
-      { address: { contains: search, mode: "insensitive" } },
-    ],
-  }),
-},
+        schoolId: user.schoolId,
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { address: { contains: search, mode: "insensitive" } },
+            { phoneNo: { contains: search, mode: "insensitive" } },
+            { address: { contains: search, mode: "insensitive" } },
+          ],
+        }),
+      },
     });
 
     return NextResponse.json(
@@ -68,19 +69,31 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     if (!data) {
       return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
+    
+    const newId = v4();
 
-    await prisma.user.create({
+    type === "create" ? await prisma.user.create({
       data: {
+        id: newId,
         name: data.name,
         email: data.email,
         schoolId: user.schoolId,
         role: "PARENT",
       },
-    });
+    }) : await prisma.user.update({
+          where: { id },
+          data: {
+            name: data.name,
+            email: data.email,
+            schoolId: user.schoolId,
+            role: "PARENT",
+          },
+        });
 
     type === "create"
       ? await prisma.parent.create({
           data: {
+            id: newId,
             ...data,
             schoolId: user.schoolId,
           },

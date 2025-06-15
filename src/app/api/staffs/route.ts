@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { withAuthRoute } from "@/lib/routeauth";
 import { NextResponse } from "next/server";
+import { v4 } from "uuid";
 
 export const GET = withAuthRoute(async (req: Request, user) => {
   try {
@@ -73,8 +74,18 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     if (!data) {
       return NextResponse.json({ error: "Data are required" }, { status: 400 });
     }
+    const newId = v4();
 
-    await prisma.user.create({
+    type === "create" ? await prisma.user.create({
+      data: {
+        id: newId,
+        name: data.name,
+        email: data.email,
+        schoolId: user.schoolId,
+        role: data.admin ? "ADMIN" : data.teaching ? "TEACHER" : "NONTEACHING",
+      },
+    }) : await prisma.user.update({
+      where: { id },
       data: {
         name: data.name,
         email: data.email,
@@ -82,10 +93,11 @@ export const POST = withAuthRoute(async (req: Request, user) => {
         role: data.admin ? "ADMIN" : data.teaching ? "TEACHER" : "NONTEACHING",
       },
     });
-
+    
     type === "create"
       ? await prisma.staff.create({
           data: {
+            id: newId,
             ...data,
             schoolId: user.schoolId,
           },

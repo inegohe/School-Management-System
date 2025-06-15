@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { withAuthRoute } from "@/lib/routeauth";
 import { Gender } from "@prisma/client";
+
 import { NextResponse } from "next/server";
 import { v4 } from "uuid";
 
@@ -88,7 +89,18 @@ export const POST = withAuthRoute(async (req: Request, user) => {
 
     let parentId = v4();
 
-    await prisma.user.create({
+    const newId = v4();
+
+    type === "create" ? await prisma.user.create({
+      data: {
+        id: newId,
+        name: data.name,
+        email: data.email,
+        schoolId: user.schoolId,
+        role: "STUDENT",
+      },
+    }) : await prisma.user.update({
+      where: { id },
       data: {
         name: data.name,
         email: data.email,
@@ -125,6 +137,7 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     type === "create"
       ? await prisma.student.create({
           data: {
+            id: newId,
             ...data,
             parentId,
             schoolId: user.schoolId,
