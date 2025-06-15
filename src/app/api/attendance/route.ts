@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { withAuthRoute } from "@/lib/routeauth";
 import { NextResponse } from "next/server";
+import { Gender } from "@prisma/client";
 
 function getDayRange(date: Date): { gte: Date; lt: Date } {
   const startOfDay = new Date(date);
@@ -57,14 +58,15 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const where = {
       schoolId: user.schoolId,
       class: teacherClass.name,
-      ...(search && {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { email: { contains: search, mode: "insensitive" } },
-          { address: { contains: search, mode: "insensitive" } },
-          { parentName: { contains: search, mode: "insensitive" } }
-        ],
-      }),
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { address: { contains: search, mode: "insensitive" } },
+            { parentName: { contains: search, mode: "insensitive" } },
+            { gender: { equals: search.toUpperCase() as Gender } },
+          ],
+        }),
     };
 
     const students = await prisma.student.findMany({
