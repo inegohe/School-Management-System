@@ -24,6 +24,7 @@ const AttendancePage = () => {
     Record<string, "PRESENT" | "ABSENT">
   >({});
   const [attendanceMarked, setAttendanceMarked] = useState(false);
+  const [attendanceMarkable, setAttendanceMarkable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const [search, setSearch] = useState("");
@@ -49,9 +50,11 @@ const AttendancePage = () => {
         `/attendance?page=${page}&limit=10&search=${encodeURIComponent(search)}`
       );
       if (res.status === 200) {
+        const day = (new Date(Date.now())).getDate();
         setStudents(res.data.students);
         setTotalPages(res.data.totalPages);
         setAttendanceMarked(res.data.attendanceMarked);
+        setAttendanceMarkable([0,6].includes(day) ? false : true);
         setAttendance(res.data.attendance || {});
       } else {
         toast.error(res.data.message || "Failed to fetch students");
@@ -105,16 +108,16 @@ const AttendancePage = () => {
         <input
           type="checkbox"
           defaultChecked={attendance[student.id] === "PRESENT"}
-          onChange={(e) => handleCheck(student.id, e.target.checked ? "PRESENT" : "ABSENT")}
-          disabled={attendance[student.id] === "ABSENT"}
+          onChange={(e) => attendanceMarkable && handleCheck(student.id, e.target.checked ? "PRESENT" : "ABSENT")}
+          disabled={!attendanceMarkable || attendance[student.id] === "ABSENT"}
         />
       </td>
       <td>
         <input
           type="checkbox"
           defaultChecked={attendance[student.id] === "ABSENT"}
-          onChange={(e) => handleCheck(student.id, e.target.checked ? "ABSENT" : "PRESENT")}
-          disabled={attendance[student.id] === "PRESENT"}
+          onChange={(e) => attendanceMarkable && handleCheck(student.id, e.target.checked ? "ABSENT" : "PRESENT")}
+          disabled={!attendanceMarkable && attendance[student.id] === "PRESENT"}
         />
       </td>
     </tr>
@@ -165,7 +168,7 @@ const AttendancePage = () => {
         <button
           type="submit"
           className="button self-end"
-          disabled={loading}
+          disabled={!attendanceMarkable || loading}
         >
           {loading && <LoaderCircle className="animate-spin" />}{" "}
           {attendanceMarked
