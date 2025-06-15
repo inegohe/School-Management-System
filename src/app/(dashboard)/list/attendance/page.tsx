@@ -50,7 +50,7 @@ const AttendancePage = () => {
         `/attendance?page=${page}&limit=10&search=${encodeURIComponent(search)}`
       );
       if (res.status === 200) {
-        const day = (new Date(Date.now())).getDate();
+        const day = (new Date(Date.now())).getDay();
         setStudents(res.data.students);
         setTotalPages(res.data.totalPages);
         setAttendanceMarked(res.data.attendanceMarked);
