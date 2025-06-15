@@ -86,7 +86,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const attendanceMap = Object.fromEntries(
       attendanceRecords.map((a) => [a.studentId, a.status])
     );
-    const attendanceMarked = attendanceRecords.length > 0;
+    const attendanceMarked = attendanceRecords.length === students.length;
 
     return NextResponse.json(
       {
@@ -131,20 +131,60 @@ export const POST = withAuthRoute(async (req: Request, user) => {
       return NextResponse.json({ message: "No class found for teacher" }, { status: 400 });
     }
 
-    // Check if attendance already marked for today
+    // Get today's attendance records for this class
     const today = new Date();
     const { gte, lt } = getDayRange(today);
-    const alreadyMarked = await prisma.attendance.findFirst({
+
+    const existingRecords = await prisma.attendance.findMany({
       where: {
         classId: teacherClass.id,
         date: { gte, lt },
       },
     });
-    if (alreadyMarked) {
-      return NextResponse.json({ message: "Attendance already marked for today" }, { status: 400 });
+
+    // If attendance already exists, update or create as needed
+    if (existingRecords.length > 0) {
+      // Map existing records by studentId for quick lookup
+      const existingMap = Object.fromEntries(
+        existingRecords.map((rec) => [rec.studentId, rec])
+      );
+
+      // Prepare update and create operations
+      const updateOps = [];
+      const createOps = [];
+
+      for (const item of data) {
+        if (existingMap[item.studentId]) {
+          // Update if status is different
+          if (existingMap[item.studentId].status !== item.status) {
+            updateOps.push(
+              prisma.attendance.update({
+                where: { id: existingMap[item.studentId].id },
+                data: { status: item.status },
+              })
+            );
+          }
+        } else {
+          // Create new record for latecomers
+          createOps.push(
+            prisma.attendance.create({
+              data: {
+                date: today,
+                schoolId: user.schoolId,
+                studentId: item.studentId,
+                classId: teacherClass.id,
+                status: item.status,
+              },
+            })
+          );
+        }
+      }
+
+      await Promise.all([...updateOps, ...createOps]);
+      return NextResponse.json({ message: "Attendance updated" }, { status: 200 });
     }
 
-    // Create attendance records
+    // If no attendance exists, create all
     await prisma.attendance.createMany({
       data: data.map((item: { studentId: string; status: "PRESENT" | "ABSENT" }) => ({
         date: today,
