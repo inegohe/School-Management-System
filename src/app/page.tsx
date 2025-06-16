@@ -364,7 +364,7 @@ export default function LandingPage() {
               <Link href="/login">
                 <Button size="lg" className="bg-secondary text-primary">
                   Get Started Now
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-5 w-5 stroke-black" />
                 </Button>
               </Link>
               <Link href="https://github.com/U22099/School-Management-System">
