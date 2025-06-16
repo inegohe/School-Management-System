@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
-    "@hookform/resolvers": "^5.0.0",
+    "@hookform/resolvers": "^5.1.1",
     "@prisma/client": "^6.6.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -79,7 +79,7 @@
     "uuid": "^11.1.0",
     "vaul": "^0.9.6",
     "xlsx": "^0.18.5",
-    "zod": "^3.24.2",
+    "zod": "^3.25.64",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
