@@ -297,7 +297,7 @@ export default function LandingPage() {
                     <h3 className="font-semibold text-white">
                       Clone the repository
                     </h3>
-                    <code className="text-sm text-gray-400 bg-gray-800 px-2 py-1 rounded mt-1 inline-block">
+                    <code className="text-sm text-gray-400 bg-gray-800 px-2 py-1 rounded mt-1 inline-block text-wrap">
                       git clone
                       https://github.com/U22099/School-Management-System.git
                     </code>
@@ -363,8 +363,8 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/login">
                 <Button size="lg" className="bg-secondary text-primary">
-                  <Github className="mr-2 h-5 w-5 stroke-black" />
                   Get Started Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="https://github.com/U22099/School-Management-System">
