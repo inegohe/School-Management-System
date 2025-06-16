@@ -12,6 +12,7 @@ export default withPWA({
       { hostname: "images.pexels.com" },
       { hostname: "img.freepik.com" },
       { hostname: "images.unsplash.com" },
+      { hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com" },
     ],
   },
 });

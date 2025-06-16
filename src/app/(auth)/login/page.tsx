@@ -9,9 +9,9 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { BACKGROUND_IMAGES, useRole, useUser } from "@/store";
-import apiClient from "@/lib/apiclient";
 import axios from "axios";
 import { getRoleLabel } from "@/lib/helpers";
+import { Label } from "@/components/ui/label";
 
 const schema = z.object({
   email: z.string().email("Input a valid email").trim(),
@@ -113,20 +113,23 @@ const LoginPage = () => {
           }
         />
       </div>
-      <div className="flex items-center justify-center w-full p-6 md:w-[80%] lg:w-[40%]">
+      <div className="flex flex-col items-center justify-center w-full p-6 md:w-[80%] lg:w-[40%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-2 w-full justify-start items-start overflow-x-hidden"
         >
-          <h1 className="text-3xl font-extrabold mb-4 text-center w-full">
-            Welcome Back
-          </h1>
+          <div className="flex flex-col w-full items-center text-center">
+            <h1 className="text-4xl font-bold">Welcome back</h1>
+            <p className="text-balance text-muted-foreground">
+              Login to your account
+            </p>
+          </div>
           {Object.keys(schema.shape).map((key, i) => {
             return (
               <div className="mb-4 w-full" key={i}>
-                <label className="block text-sm font-medium capitalize">
+                <Label htmlFor={key} className="capitalize">
                   {key.replace(/([A-Z])/g, " $1")}
-                </label>
+                </Label>
                 <input
                   {...(key === "password" && { type: key })}
                   {...register(key as keyof FormData)}
@@ -171,6 +174,10 @@ const LoginPage = () => {
             </a>
           </p>
         </form>
+        <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary mt-10">
+          By clicking continue, you agree to our{" "}
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </div>
       </div>
       <Toaster
         toastOptions={{
