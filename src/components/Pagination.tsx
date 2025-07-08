@@ -12,7 +12,7 @@ const Pagination = ({
   return (
     <div className="p-4 flex items-center justify-between text-primary">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={currentPage !== 1 ? () => onPageChange(currentPage - 1) : () => console.log("Nice Try")}
         disabled={currentPage === 1}
         className="py-2 px-4 rounded-md bg-secondary text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >
@@ -32,7 +32,7 @@ const Pagination = ({
         ))}
       </div>
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={currentPage !== totalPages ? () => onPageChange(currentPage + 1) : () => console.log("Nice Try")}
         disabled={currentPage === totalPages}
         className="py-2 px-4 rounded-md bg-secondary text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >

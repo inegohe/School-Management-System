@@ -181,7 +181,7 @@ const AddTimeTableForm = ({
         </div>
         <button
           disabled={timetableData.length < 1 || loading}
-          onClick={submit}
+          onClick={!(timetableData.length < 1 || loading) ? submit : console.log("Nice Try")}
           className="button justify-end"
         >
           {loading && <LoaderCircle className="animate-spin" />} Finish{" "}

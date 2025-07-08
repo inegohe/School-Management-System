@@ -140,7 +140,7 @@ const AddSubjectsForm = ({
             </div>
             <button
               disabled={subjects.length < 10}
-              type="submit"
+              type={!(subjects.length < 10) ? "submit" : "button"}
               className="button justify-end"
             >
               Next <ArrowRight className="stroke-black" />
