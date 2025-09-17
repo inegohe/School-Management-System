@@ -30,7 +30,11 @@ export const POST = async (req: Request) => {
 
     // Send confirmation email
     const confirmationUrl = `${process.env.BASE_URL}/api/auth/confirm?token=${token}`;
-    await transporter.sendMail(mailOptions(email, confirmationUrl, user.name));
+    try{
+      await transporter.sendMail(mailOptions(email, confirmationUrl, user.name));
+    } catch ( err ) {
+      console.log(err, "this is the edit")
+    }
 
     return NextResponse.json({ message: "Email sent" }, { status: 200 });
   } catch (err) {
