@@ -24,7 +24,21 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-export default function LandingPage() {
+import { useEffect } from "react";
+import { useRouter } from "next/router"
+
+export default function DefLandingPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/login"); // 👈 immediately redirect to login
+  }, [router]);
+
+  return null; // Don't render anything on this page
+}
+
+export function LandingPage() {
+  
   const features = [
     {
       icon: <Shield className="h-8 w-8" />,
