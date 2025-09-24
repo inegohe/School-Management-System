@@ -1,80 +1,73 @@
 "use client";
 
-import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
-import Table from "@/components/Table";
-import TableSearch from "@/components/TableSearch";
-import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 import { useEffect, useState } from "react";
+import Table from "@/components/Table";
+import Pagination from "@/components/Pagination";
+import TableSearch from "@/components/TableSearch";
+import { LoaderCircle, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import FormModal from "@/components/FormModal";
 
 interface Fee {
   id: number;
+  studentId: string;
+  student: { id: string; name: string };
   term: string;
   amount: number;
   status: string;
   paidAt: string;
+  paymentMethod?: string;
 }
 
-interface FeesTableProps {
-  studentId: string | number;
-}
-
-const columns = [
-  { header: "Term" },
-  { header: "Amount" },
-  { header: "Status" },
-  { header: "Date" },
-  { header: "Actions" },
-];
-
-export default function FeesTable({ studentId }: FeesTableProps) {
+export default function AllFeesTable() {
   const [fees, setFees] = useState<Fee[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
 
-  const fetchFees = async (page: number, searchQuery = "") => {
-    if (!studentId) return;
+  const fetchFees = async () => {
     setLoading(true);
     toast.dismiss();
-    toast.loading("Fetching Fees...");
+    toast.loading("Fetching fees...");
     try {
-      const res = await fetch(
-        `/api/fees/student/${studentId}?page=${page}&search=${encodeURIComponent(
-          searchQuery
-        )}&sort=${order}`
-      );
+      const res = await fetch(`/api/fees?page=${page}&limit=10&search=${search}`);
       const data = await res.json();
       if (res.ok) {
-        setFees(data.fees || []);
+        setFees(data.payments || []);
         setTotalPages(data.totalPages || 1);
-        toast.dismiss();
-      } else {
-        toast.dismiss();
-        toast.error(data.message || "Failed to fetch fees");
-      }
+      } else toast.error(data.message || "Failed to fetch fees");
     } catch (err) {
       console.error(err);
-      toast.dismiss();
-      toast.error("An error occurred while fetching fees");
+      toast.error("Error fetching fees");
     } finally {
+      toast.dismiss();
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchFees(page, search);
-  }, [studentId, page, refresh, search, order]);
+    fetchFees();
+  }, [page, refresh, search]);
+
+  const columns = [
+    { header: "Student Name" },
+    { header: "Term" },
+    { header: "Amount" },
+    { header: "Status" },
+    { header: "Payment Method" },
+    { header: "Date" },
+    { header: "Actions" },
+  ];
 
   const renderRow = (item: Fee) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-primary-light text-sm hover:bg-cursor-pointer">
+    <tr key={item.id} className="border-b even:bg-primary-light hover:bg-gray-100">
+      <td className="p-2">{item.student.name}</td>
       <td className="p-2">{item.term}</td>
       <td className="p-2">{item.amount}</td>
       <td className="p-2">{item.status}</td>
+      <td className="p-2">{item.paymentMethod || "Cash"}</td>
       <td className="p-2">{new Date(item.paidAt).toLocaleDateString()}</td>
       <td className="p-2 flex gap-2">
         <FormModal table="fees" type="update" data={item} refresh={() => setRefresh(!refresh)} />
@@ -84,22 +77,13 @@ export default function FeesTable({ studentId }: FeesTableProps) {
   );
 
   return (
-    <div className="bg-primary-light p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="bg-primary-light p-4 rounded-md">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Fees Payments</h2>
-        <div className="flex items-center gap-4">
+        <h2 className="text-lg font-semibold">All Students Fees</h2>
+        <div className="flex gap-4 items-center">
           <TableSearch value={search} onChange={setSearch} />
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3"
-            onClick={() => setRefresh(!refresh)}
-          >
+          <button onClick={() => setRefresh(!refresh)} className="p-2 rounded bg-accent-3">
             <RefreshCcw className={`stroke-primary ${refresh && "animate-spin"}`} />
-          </button>
-          <button
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3"
-            onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
-          >
-            {order === "asc" ? <SortAsc className="stroke-primary" /> : <SortDesc className="stroke-primary" />}
           </button>
           <FormModal table="fees" type="create" refresh={() => setRefresh(!refresh)} />
         </div>
@@ -107,7 +91,7 @@ export default function FeesTable({ studentId }: FeesTableProps) {
 
       {loading ? (
         <div className="flex justify-center items-center p-4">
-          <LoaderCircle className="animate-spin" /> Loading...
+          <LoaderCircle className="animate-spin" />
         </div>
       ) : (
         <Table columns={columns} renderRow={renderRow} data={fees} />

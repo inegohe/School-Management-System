@@ -141,6 +141,7 @@ model FeesPayment {
   term       String
   status     String   // "Paid", "Pending", "Overdue"
   paymentMethod String
+  schoolId   String
 }
 
 model Subject {
