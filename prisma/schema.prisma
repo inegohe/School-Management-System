@@ -187,6 +187,16 @@ model Attendance {
   student   Student        @relation(fields: [studentId], references: [id])
 }
 
+model ClassTermFee {
+  id        Int      @id @default(autoincrement())
+  className String   // e.g., "Grade 1", "Grade 2"
+  term      String   // e.g., "Term 1", "Term 2"
+  totalFee  Float
+  createdAt DateTime @default(now())
+
+  @@unique([className, term]) // ensures no duplicate fee for same class and term
+}
+
 model Event {
   id          String   @id @default(uuid())
   title       String

@@ -77,27 +77,29 @@ export default function AllFeesTable() {
   );
 
   return (
+    <div className="flex-1 p-4 flex flex-col gap-4">
     <div className="bg-primary-light p-4 rounded-md">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">All Students Fees</h2>
-        <div className="flex gap-4 items-center">
+    <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold">All Students Fees</h2>
+    <div className="flex gap-4 items-center">
           <TableSearch value={search} onChange={setSearch} />
           <button onClick={() => setRefresh(!refresh)} className="p-2 rounded bg-accent-3">
             <RefreshCcw className={`stroke-primary ${refresh && "animate-spin"}`} />
           </button>
           <FormModal table="fees" type="create" refresh={() => setRefresh(!refresh)} />
         </div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center p-4">
-          <LoaderCircle className="animate-spin" />
         </div>
-      ) : (
-        <Table columns={columns} renderRow={renderRow} data={fees} />
-      )}
-
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
-    </div>
+        
+        {loading ? (
+            <div className="flex justify-center items-center p-4">
+          <LoaderCircle className="animate-spin" />
+          </div>
+        ) : (
+            <Table columns={columns} renderRow={renderRow} data={fees} />
+        )}
+        
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+        </div>
+        </div>
   );
 }

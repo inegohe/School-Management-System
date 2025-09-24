@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" >
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <main className="h-screen flex overflow-hidden bg-primary">
           <div className="w-[16%] md:w-[20%] lg:w-[16%] xl:w-[14%] group p-2 bg-primary-light cursor-pointer relative">

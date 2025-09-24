@@ -58,9 +58,9 @@ const Menu = () => {
         },
         {
           title: "Fees Payments",
-          icon: "/attendance.png",
+          icon: "/finance.png",
           link: "/list/fees",
-          visible: ["admin, teacher"],
+          visible: ["admin", "teacher"],
         },
         {
           title: "Events",
