@@ -25,18 +25,17 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useEffect } from "react";
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation";
 
 export default function DefLandingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/login"); // 👈 immediately redirect to login
+    router.push("/login"); // redirect to login
   }, [router]);
 
-  return null; // Don't render anything on this page
+  return null; // nothing to render
 }
-
 export function LandingPage() {
   
   const features = [
