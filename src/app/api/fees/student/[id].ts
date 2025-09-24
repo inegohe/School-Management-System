@@ -1,29 +1,26 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '../../../../lib/prisma';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  if (req.method === 'GET') {
-    try {
-      const { id } = req.query;
+): Promise<void> {
+  const { studentId } = req.query;
 
-      if (!id || Array.isArray(id)) {
-        return res.status(400).json({ message: 'Invalid or missing student ID' });
-      }
+  if (!studentId || typeof studentId !== "string") {
+    return res.status(400).json({ message: "Student ID is required" });
+  }
 
-      const fees = await prisma.feesPayment.findMany({
-        where: { studentId: Number(id) },
-      });
+  try {
+    const fees = await prisma.feesPayment.findMany({
+      where: { studentId },
+      orderBy: { paidAt: "desc" },
+    });
 
-      res.status(200).json(fees);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    res.status(200).json({ fees });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch fees" });
   }
 }
+

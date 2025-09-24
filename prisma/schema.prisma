@@ -140,6 +140,7 @@ model FeesPayment {
   paidAt     DateTime @default(now())
   term       String
   status     String   // "Paid", "Pending", "Overdue"
+  paymentMethod String
 }
 
 model Subject {
