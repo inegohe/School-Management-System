@@ -89,6 +89,7 @@ model Student {
   address        String
   schoolId       String
   Attendance     Attendance[]
+  feesPayments   FeesPayment[]
   User           User         @relation(fields: [id], references: [id], onDelete: Cascade)
   parent         Parent       @relation(fields: [parentId], references: [id])
   school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -129,6 +130,16 @@ model School {
   subjects            Subject[]
   timetables          Timetable[]
   users               User[]
+}
+
+model FeesPayment {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String
+  amount     Float
+  paidAt     DateTime @default(now())
+  term       String
+  status     String   // "Paid", "Pending", "Overdue"
 }
 
 model Subject {
