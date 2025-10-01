@@ -154,6 +154,8 @@ model Subject {
   teachers String[] @default([])
   schoolId String
   school   School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  
+  results     ExamResult[]
 }
 
 model Class {
