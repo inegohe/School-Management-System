@@ -93,6 +93,8 @@ model Student {
   User           User         @relation(fields: [id], references: [id], onDelete: Cascade)
   parent         Parent       @relation(fields: [parentId], references: [id])
   school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  ExamResults   ExamResult[]
 }
 
 model School {
@@ -130,6 +132,8 @@ model School {
   subjects            Subject[]
   timetables          Timetable[]
   users               User[]
+
+  exams         Exam[]
 }
 
 model FeesPayment {
@@ -195,6 +199,33 @@ model ClassTermFee {
   createdAt DateTime @default(now())
 
   @@unique([className, term]) // ensures no duplicate fee for same class and term
+}
+
+model Exam {
+  id          String       @id @default(uuid())
+  name        String       // e.g. "Mid Term 1", "End of Term 2"
+  term        String       // e.g. "Term 1"
+  year        Int
+  startDate   DateTime
+  endDate     DateTime
+  schoolId    String
+  school      School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  results     ExamResult[]
+}
+
+model ExamResult {
+  id          String     @id @default(uuid())
+  studentId   String
+  subjectId   String
+  examId      String
+  score       Float
+  grade       String
+  remarks     String      @default("")
+  createdAt   DateTime    @default(now())
+
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  exam        Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
 }
 
 model Event {
