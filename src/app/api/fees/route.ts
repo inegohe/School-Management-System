@@ -22,34 +22,36 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     const results = await Promise.all(
       students.map(async (student) => {
-        // Get all payments for this student
         const payments = await prisma.feesPayment.findMany({
           where: { studentId: student.id, schoolId: user.schoolId },
           orderBy: { paidAt: "desc" },
         });
 
-        // Terms to always include
         const terms = ["Term 1", "Term 2", "Term 3"];
-        const termMap: Record<string, any[]> = { "Term 1": [], "Term 2": [], "Term 3": [] };
+        const termMap: Record<string, any[]> = {
+          "Term 1": [],
+          "Term 2": [],
+          "Term 3": [],
+        };
 
-        // Group existing payments by term
         payments.forEach((p) => {
           if (termMap[p.term]) termMap[p.term].push(p);
         });
 
-        // Build summary per term
         const termSummaries = await Promise.all(
           terms.map(async (term) => {
             const termPayments = termMap[term] || [];
-            const totalPaid = termPayments.reduce((acc, p) => acc + p.amount, 0);
+            const totalPaid = termPayments.reduce(
+              (acc, p) => acc + p.amount,
+              0
+            );
             const lastPayment = termPayments[0];
 
-            // Get expected total fee
             const classTermFee = await prisma.classTermFee.findUnique({
               where: { className_term: { className: student.class, term } },
             });
 
-            const totalFee = classTermFee?.totalFee || 0;
+            const totalFee = classTermFee ? classTermFee.totalFee : 0;
             const balance = totalFee - totalPaid;
 
             return {
@@ -58,16 +60,19 @@ export const GET = withAuthRoute(async (req: Request, user) => {
               balance,
               lastPaymentDate: lastPayment?.paidAt || null,
               lastPaymentAmount: lastPayment?.amount || 0,
-              lastPaymentMethod: lastPayment?.paymentMethod || "",
+              lastPaymentMethod: lastPayment?.paymentMethod || "Cash",
             };
           })
         );
 
-        return { student, termSummaries };
+        return {
+          student,
+          termSummaries,
+          allPayments: payments,
+        };
       })
     );
 
-    // Total students count
     const total = await prisma.student.count({ where: studentWhere });
 
     return NextResponse.json(
@@ -76,17 +81,22 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     );
   } catch (err) {
     console.error("Error fetching fees:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
-
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
     const { studentId, amount, term, status, paymentMethod } = await req.json();
 
     if (!studentId || !amount || !term || !status) {
-      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
     const payment = await prisma.feesPayment.create({
@@ -104,7 +114,10 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(payment, { status: 201 });
   } catch (err) {
     console.error("Error creating fees payment:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 
@@ -112,7 +125,8 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
   try {
     const { id, amount, term, status, paymentMethod } = await req.json();
 
-    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id)
+      return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     const updated = await prisma.feesPayment.update({
       where: { id: Number(id) },
@@ -122,7 +136,10 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(updated, { status: 200 });
   } catch (err) {
     console.error("Error updating fees payment:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 
@@ -130,13 +147,17 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
     const { id } = await req.json();
 
-    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id)
+      return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     await prisma.feesPayment.delete({ where: { id: Number(id) } });
 
     return NextResponse.json({ message: "Payment deleted" }, { status: 200 });
   } catch (err) {
     console.error("Error deleting fees payment:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });

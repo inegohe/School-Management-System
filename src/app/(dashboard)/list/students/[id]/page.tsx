@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { Student } from "@prisma/client";
 
 import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface FeeSummary {
   term: string;
@@ -24,12 +25,23 @@ interface FeeSummary {
   lastPaymentMethod?: string;
 }
 
+interface Payment {
+  id: string;
+  term: string;
+  amount: number;
+  status: string;
+  paymentMethod?: string;
+  paidAt: string;
+}
+
 const SingleStudentPage = () => {
   const { id } = useParams();
   const router = useRouter();
   const role = useRole((state) => state.role);
+
   const [student, setStudent] = useState<Student>();
   const [fees, setFees] = useState<FeeSummary[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -58,16 +70,19 @@ const SingleStudentPage = () => {
     }
   };
 
-  // Fetch student fees (term-based summary)
+  // Fetch fees and payments for the student
   const fetchStudentFees = async (studentId: string) => {
     try {
       const res = await apiClient.get(`/fees?studentid=${studentId}`);
       if (res.status === 200) {
-        // Assuming API returns a term-based summary
         const studentData = res.data.results.find(
           (r: any) => r.student.id === studentId
         );
-        setFees(studentData?.termSummaries || []);
+
+        if (studentData) {
+          setFees(studentData.termSummaries || []);
+          setPayments(studentData.allPayments || []);
+        }
       } else {
         console.error("Failed to fetch fees:", res.data.message);
       }
@@ -78,8 +93,7 @@ const SingleStudentPage = () => {
 
   // Generate PDF report for current year
   const generateFeesReport = () => {
-    require ("jspdf-autotable"); // optional, for table support
-    if (!student || fees.length === 0) {
+    if (!student || payments.length === 0) {
       toast.error("No fee records available for report.");
       return;
     }
@@ -93,37 +107,25 @@ const SingleStudentPage = () => {
     let yPos = 30;
 
     terms.forEach((term) => {
-      const termFees = fees.filter((f) => f.term === term);
+      const termPayments = payments.filter((p) => p.term === term);
 
       doc.setFontSize(14);
       doc.text(term, 14, yPos);
       yPos += 4;
 
-      const tableData = termFees.length
-        ? termFees.map((f) => [
-            f.term,
-            f.totalPaid,
-            f.balance,
-            f.lastPaymentAmount,
-            f.lastPaymentMethod || "Cash",
-            f.lastPaymentDate
-              ? new Date(f.lastPaymentDate).toLocaleDateString()
-              : "-",
+      const tableData = termPayments.length
+        ? termPayments.map((p) => [
+            p.term,
+            p.amount,
+            p.status,
+            p.paymentMethod || "Cash",
+            p.paidAt ? new Date(p.paidAt).toLocaleDateString() : "-",
           ])
-        : [["-", "0", "0", "0", "-", "-"]];
+        : [["-", "0", "-", "-", "-"]];
 
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: yPos,
-        head: [
-          [
-            "Term",
-            "Total Paid",
-            "Balance",
-            "Last Payment Amount",
-            "Payment Method",
-            "Last Payment Date",
-          ],
-        ],
+        head: [["Term", "Amount", "Status", "Payment Method", "Paid At"]],
         body: tableData,
         theme: "grid",
         headStyles: { fillColor: [22, 160, 133] },
@@ -337,7 +339,7 @@ const SingleStudentPage = () => {
                 e.preventDefault();
                 generateFeesReport();
               }}
-              className="p-3 rounded-md bg-accent-4 text-white"
+              className="p-3 rounded-md bg-accent-3"
             >
               Fees Report Summary
             </Link>
@@ -356,7 +358,9 @@ const SingleStudentPage = () => {
                 type="text"
                 placeholder="Term (e.g. Term 1)"
                 value={newFee.term}
-                onChange={(e) => setNewFee({ ...newFee, term: e.target.value })}
+                onChange={(e) =>
+                  setNewFee({ ...newFee, term: e.target.value })
+                }
                 className="border p-2 rounded"
                 required
               />

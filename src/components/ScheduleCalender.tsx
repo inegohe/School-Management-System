@@ -69,7 +69,7 @@ const ScheduleCalendar = ({
             title: `${x.subject} (${x.class})`,
           };
         });
-        console.log(data);
+        
         setEvents(data);
       } catch (error) {
         toast.error("An error occured while fetching schedule");
