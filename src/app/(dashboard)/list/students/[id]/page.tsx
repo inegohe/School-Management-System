@@ -13,13 +13,13 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { Student } from "@prisma/client";
 
-interface Fee {
-  id: number;
+interface FeeSummary {
   term: string;
-  amount: number;
-  status: string;
-  paidAt: string;
-  paymentMethod?: string;
+  totalPaid: number;
+  balance: number;
+  lastPaymentDate: string | null;
+  lastPaymentAmount: number;
+  lastPaymentMethod?: string;
 }
 
 const SingleStudentPage = () => {
@@ -27,10 +27,10 @@ const SingleStudentPage = () => {
   const router = useRouter();
   const role = useRole((state) => state.role);
   const [student, setStudent] = useState<Student>();
-  const [fees, setFees] = useState<Fee[]>([]);
+  const [fees, setFees] = useState<FeeSummary[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   const [showFeeModal, setShowFeeModal] = useState(false);
   const [newFee, setNewFee] = useState({
     term: "",
@@ -39,6 +39,7 @@ const SingleStudentPage = () => {
     paymentMethod: "Cash",
   });
 
+  // Fetch student details
   const fetchStudent = async () => {
     try {
       const res = await apiClient.get(`/students/${id}`);
@@ -55,11 +56,16 @@ const SingleStudentPage = () => {
     }
   };
 
+  // Fetch student fees (term-based summary)
   const fetchStudentFees = async (studentId: string) => {
     try {
       const res = await apiClient.get(`/fees?studentid=${studentId}`);
       if (res.status === 200) {
-        setFees(res.data?.payments);
+        // Assuming API returns a term-based summary
+        const studentData = res.data.results.find(
+          (r: any) => r.student.id === studentId
+        );
+        setFees(studentData?.termSummaries || []);
       } else {
         console.error("Failed to fetch fees:", res.data.message);
       }
@@ -109,12 +115,10 @@ const SingleStudentPage = () => {
     );
   }
 
-  //handle fees submission
-
+  // Handle fee submission
   const handleFeeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log(newFee)
       const res = await apiClient.post("/fees", {
         studentId: student?.id,
         schoolId: student?.schoolId,
@@ -125,7 +129,7 @@ const SingleStudentPage = () => {
       if (res.status === 201) {
         toast.success("Fee recorded successfully");
         setShowFeeModal(false);
-        setRefresh(!refresh); // refresh table
+        setRefresh(!refresh);
       } else {
         toast.error("Failed to record fee");
       }
@@ -139,7 +143,7 @@ const SingleStudentPage = () => {
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
-        {/* TOP: Student Info */}
+        {/* Student Info */}
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="bg-primary-light py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-fit">
@@ -188,34 +192,40 @@ const SingleStudentPage = () => {
           <ScheduleCalendar classes={[student.class]} subjects={[]} />
         </div>
 
-        {/* Fees Table */}
+        {/* Fees Summary Table */}
         <div className="flex flex-col gap-2 mt-4 bg-primary-light rounded-md p-4">
-          <h1 className="font-semibold text-lg">Fees Payments</h1>
+          <h1 className="font-semibold text-lg">Fees Payments Summary</h1>
           <div className="overflow-x-auto">
             <table className="table-auto w-full border">
               <thead>
                 <tr>
                   <th>Term</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                  <th>Total Paid</th>
+                  <th>Balance</th>
+                  <th>Last Payment Date</th>
+                  <th>Last Payment Amount</th>
                   <th>Payment Method</th>
-                  <th>Date</th>
                 </tr>
               </thead>
               <tbody>
                 {fees.length > 0 ? (
                   fees.map((f) => (
-                    <tr key={f.id} className="border-t">
+                    <tr key={f.term} className="border-t">
                       <td>{f.term}</td>
-                      <td>{f.amount}</td>
-                      <td>{f.status}</td>
-                      <td>{f.paymentMethod || "Cash"}</td>
-                      <td>{new Date(f.paidAt).toLocaleDateString()}</td>
+                      <td>{f.totalPaid}</td>
+                      <td>{f.balance}</td>
+                      <td>
+                        {f.lastPaymentDate
+                          ? new Date(f.lastPaymentDate).toLocaleDateString()
+                          : "-"}
+                      </td>
+                      <td>{f.lastPaymentAmount}</td>
+                      <td>{f.lastPaymentMethod || "Cash"}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="text-center py-2">
+                    <td colSpan={6} className="text-center py-2">
                       No fees records found.
                     </td>
                   </tr>
@@ -223,14 +233,11 @@ const SingleStudentPage = () => {
               </tbody>
             </table>
           </div>
-        </div>
 
-        <div className="flex justify-between items-center">
-          <h1 className="font-semibold text-lg">Fees Payments</h1>
           {role === "ADMIN" && (
             <button
               onClick={() => setShowFeeModal(true)}
-              className="bg-accent-1 text-white px-3 py-1 rounded-md"
+              className="mt-2 bg-accent-1 text-white px-3 py-1 rounded-md"
             >
               Record Payment
             </button>
@@ -238,6 +245,35 @@ const SingleStudentPage = () => {
         </div>
       </div>
 
+      {/* RIGHT: Shortcuts & Announcements */}
+      <div className="w-full xl:w-1/3 flex flex-col gap-4">
+        <div className="bg-primary-light p-4 rounded-md">
+          <h1 className="text-xl font-semibold">Shortcuts</h1>
+          <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
+            <Link
+              className="p-3 rounded-md bg-accent-1"
+              href={`/list/classes?q=${student.class}`}
+            >
+              Student&apos;s Classes
+            </Link>
+            <Link
+              className="p-3 rounded-md bg-accent-2"
+              href={`/list/staffs?q=${student.class}`}
+            >
+              Student&apos;s Teacher
+            </Link>
+            <Link
+              className="p-3 rounded-md bg-accent-3"
+              href={`/list/parent?q=${student.parentName}`}
+            >
+              Student&apos;s Parent
+            </Link>
+          </div>
+        </div>
+        <Announcements />
+      </div>
+
+      {/* Fee Modal */}
       {showFeeModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-md w-96">
@@ -247,7 +283,9 @@ const SingleStudentPage = () => {
                 type="text"
                 placeholder="Term (e.g. Term 1)"
                 value={newFee.term}
-                onChange={(e) => setNewFee({ ...newFee, term: e.target.value })}
+                onChange={(e) =>
+                  setNewFee({ ...newFee, term: e.target.value })
+                }
                 className="border p-2 rounded"
                 required
               />
@@ -303,34 +341,6 @@ const SingleStudentPage = () => {
           </div>
         </div>
       )}
-
-      {/* RIGHT: Shortcuts & Announcements */}
-      <div className="w-full xl:w-1/3 flex flex-col gap-4">
-        <div className="bg-primary-light p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Shortcuts</h1>
-          <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link
-              className="p-3 rounded-md bg-accent-1"
-              href={`/list/classes?q=${student.class}`}
-            >
-              Student&apos;s Classes
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-accent-2"
-              href={`/list/staffs?q=${student.class}`}
-            >
-              Student&apos;s Teacher
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-accent-3"
-              href={`/list/parent?q=${student.parentName}`}
-            >
-              Student&apos;s Parent
-            </Link>
-          </div>
-        </div>
-        <Announcements />
-      </div>
     </div>
   );
 };

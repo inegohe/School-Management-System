@@ -8,39 +8,78 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const search = searchParams.get("search") || "";
-    const studentId = searchParams.get("studentid"); // <-- get studentId from query
     const skip = (page - 1) * limit;
 
-    // Build filter
-    const whereClause: any = { schoolId: user.schoolId };
-
-    if (studentId) {
-      whereClause.studentId = studentId; // filter by student id
-    }
-
+    // Fetch students in the school (optional search by name)
+    const studentWhere: any = { schoolId: user.schoolId };
     if (search) {
-      whereClause.OR = [
-        { student: { name: { contains: search, mode: "insensitive" } } },
-        { term: { contains: search, mode: "insensitive" } },
-        { status: { contains: search, mode: "insensitive" } },
-      ];
+      studentWhere.name = { contains: search, mode: "insensitive" };
     }
 
-    // Count total
-    const total = await prisma.feesPayment.count({ where: whereClause });
-
-    // Fetch payments with student info
-    const payments = await prisma.feesPayment.findMany({
-      where: whereClause,
+    const students = await prisma.student.findMany({
+      where: studentWhere,
       skip,
       take: limit,
-      orderBy: { paidAt: "desc" },
-      include: { student: true }, // <-- include student details
     });
+
+    const results = await Promise.all(
+      students.map(async (student) => {
+        // Get all payments grouped by term
+        const payments = await prisma.feesPayment.findMany({
+          where: { studentId: student.id, schoolId: user.schoolId },
+          orderBy: { paidAt: "desc" },
+        });
+
+        // Group payments by term
+        const termMap: Record<string, any> = {};
+        for (const p of payments) {
+          if (!termMap[p.term]) termMap[p.term] = [];
+          termMap[p.term].push(p);
+        }
+
+        // Build summary per term
+        const termSummaries = await Promise.all(
+          Object.entries(termMap).map(async ([term, termPayments]) => {
+            const totalPaid = termPayments.reduce((acc, p) => acc + p.amount, 0);
+            const lastPayment = termPayments[0];
+
+            // Get expected total fee
+            const classTermFee = await prisma.classTermFee.findUnique({
+              where: {
+                className_term: {
+                  className: student.class,
+                  term,
+                },
+              },
+            });
+
+            const totalFee = classTermFee?.totalFee || 0;
+            const balance = totalFee - totalPaid;
+
+            return {
+              term,
+              totalPaid,
+              balance,
+              lastPaymentDate: lastPayment?.paidAt || null,
+              lastPaymentAmount: lastPayment?.amount || 0,
+              lastPaymentMethod: lastPayment?.paymentMethod || "",
+            };
+          })
+        );
+
+        return {
+          student,
+          termSummaries,
+        };
+      })
+    );
+
+    // Total students count
+    const total = await prisma.student.count({ where: studentWhere });
 
     return NextResponse.json(
       {
-        payments,
+        results,
         total,
         page,
         totalPages: Math.ceil(total / limit),
@@ -49,28 +88,22 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     );
   } catch (err) {
     console.error("Error fetching fees:", err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 });
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { studentId, amount, term, status, paymentMethod, schoolId } = await req.json();
+    const { studentId, amount, term, status, paymentMethod } = await req.json();
 
     if (!studentId || !amount || !term || !status) {
-      return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
     const payment = await prisma.feesPayment.create({
       data: {
         studentId,
-        schoolId,
+        schoolId: user.schoolId,
         amount: parseFloat(amount),
         term,
         status,
@@ -82,10 +115,7 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(payment, { status: 201 });
   } catch (err) {
     console.error("Error creating fees payment:", err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 });
 
@@ -93,8 +123,7 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
   try {
     const { id, amount, term, status, paymentMethod } = await req.json();
 
-    if (!id)
-      return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     const updated = await prisma.feesPayment.update({
       where: { id: Number(id) },
@@ -104,10 +133,7 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(updated, { status: 200 });
   } catch (err) {
     console.error("Error updating fees payment:", err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 });
 
@@ -115,17 +141,13 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
     const { id } = await req.json();
 
-    if (!id)
-      return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     await prisma.feesPayment.delete({ where: { id: Number(id) } });
 
     return NextResponse.json({ message: "Payment deleted" }, { status: 200 });
   } catch (err) {
     console.error("Error deleting fees payment:", err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 });
