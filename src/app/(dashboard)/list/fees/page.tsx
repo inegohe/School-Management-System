@@ -6,15 +6,19 @@ import Pagination from "@/components/Pagination";
 import TableSearch from "@/components/TableSearch";
 import { LoaderCircle, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
-import FormModal from "@/components/FormModal";
+import apiClient from "@/lib/apiclient";
+
+// Dummy role check; replace with your auth store
+const role = "ADMIN"; // or fetch from your useRole hook
 
 interface FeeSummary {
   studentId: string;
   studentName: string;
   term: string;
   totalPaid: number;
+  balance: number;
   lastPaymentAmount: number;
-  lastPaymentDate: string;
+  lastPaymentDate: string | null;
   lastPaymentMethod: string;
 }
 
@@ -26,6 +30,19 @@ export default function AllFeesTable() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<{
+    studentId: string;
+    studentName: string;
+    term: string;
+  } | null>(null);
+
+  const [newFee, setNewFee] = useState({
+    amount: "",
+    status: "Paid",
+    paymentMethod: "Cash",
+  });
+
   const fetchFees = async () => {
     setLoading(true);
     toast.dismiss();
@@ -33,38 +50,35 @@ export default function AllFeesTable() {
     try {
       const res = await fetch(`/api/fees?page=${page}&limit=50&search=${search}`);
       const data = await res.json();
-      
-      console.log(data);
 
       if (res.ok) {
-        // Aggregate payments per student per term
-        const summaryMap = new Map<string, FeeSummary>();
+        const flattened: FeeSummary[] = [];
 
-        data.payments.forEach((p: any) => {
-          const key = `${p.student.id}-${p.term}`;
-          const prev = summaryMap.get(key);
+        data.results.forEach((r: any) => {
+          const student = r.student;
+          const terms = ["Term 1", "Term 2", "Term 3"];
+          const termMap: Record<string, any> = {};
 
-          if (prev) {
-            prev.totalPaid += p.amount;
-            if (new Date(p.paidAt) > new Date(prev.lastPaymentDate)) {
-              prev.lastPaymentDate = p.paidAt;
-              prev.lastPaymentAmount = p.amount;
-              prev.lastPaymentMethod = p.paymentMethod || "Cash";
-            }
-          } else {
-            summaryMap.set(key, {
-              studentId: p.student.id,
-              studentName: p.student.name,
-              term: p.term,
-              totalPaid: p.amount,
-              lastPaymentAmount: p.amount,
-              lastPaymentDate: p.paidAt,
-              lastPaymentMethod: p.paymentMethod || "Cash",
+          r.termSummaries.forEach((t: any) => {
+            termMap[t.term] = t;
+          });
+
+          terms.forEach((term) => {
+            const t = termMap[term];
+            flattened.push({
+              studentId: student.id,
+              studentName: student.name,
+              term,
+              totalPaid: t?.totalPaid || 0,
+              balance: t?.balance || 0,
+              lastPaymentAmount: t?.lastPaymentAmount || 0,
+              lastPaymentDate: t?.lastPaymentDate || null,
+              lastPaymentMethod: t?.lastPaymentMethod || "",
             });
-          }
+          });
         });
 
-        setFees(Array.from(summaryMap.values()));
+        setFees(flattened);
         setTotalPages(data.totalPages || 1);
       } else toast.error(data.message || "Failed to fetch fees");
     } catch (err) {
@@ -80,10 +94,37 @@ export default function AllFeesTable() {
     fetchFees();
   }, [page, refresh, search]);
 
+  const handleFeeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudent) return;
+    try {
+      const res = await apiClient.post("/fees", {
+        studentId: selectedStudent.studentId,
+        term: selectedStudent.term,
+        amount: parseFloat(newFee.amount),
+        status: newFee.status,
+        paymentMethod: newFee.paymentMethod,
+      });
+
+      if (res.status === 201) {
+        toast.success("Fee recorded successfully");
+        setShowModal(false);
+        setNewFee({ amount: "", status: "Paid", paymentMethod: "Cash" });
+        setRefresh(!refresh);
+      } else {
+        toast.error("Failed to record fee");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error recording fee");
+    }
+  };
+
   const columns = [
     { header: "Student Name" },
     { header: "Term" },
     { header: "Total Paid" },
+    { header: "Balance" },
     { header: "Last Payment Amount" },
     { header: "Last Payment Method" },
     { header: "Last Payment Date" },
@@ -91,26 +132,35 @@ export default function AllFeesTable() {
   ];
 
   const renderRow = (item: FeeSummary) => (
-    <tr key={`${item.studentId}-${item.term}`} className="border-b even:bg-primary-light hover:bg-gray-100">
+    <tr
+      key={`${item.studentId}-${item.term}`}
+      className="border-b even:bg-primary-light hover:bg-gray-100"
+    >
       <td className="p-2">{item.studentName}</td>
       <td className="p-2">{item.term}</td>
       <td className="p-2">{item.totalPaid}</td>
+      <td className="p-2">{item.balance}</td>
       <td className="p-2">{item.lastPaymentAmount}</td>
       <td className="p-2">{item.lastPaymentMethod}</td>
-      <td className="p-2">{new Date(item.lastPaymentDate).toLocaleDateString()}</td>
+      <td className="p-2">
+        {item.lastPaymentDate ? new Date(item.lastPaymentDate).toLocaleDateString() : "-"}
+      </td>
       <td className="p-2 flex gap-2">
-        <FormModal
-          table="fees"
-          type="update"
-          data={{ studentId: item.studentId, term: item.term }}
-          refresh={() => setRefresh(!refresh)}
-        />
-        <FormModal
-          table="fees"
-          type="delete"
-          id={item.studentId}
-          refresh={() => setRefresh(!refresh)}
-        />
+        {role === "ADMIN" && (
+          <button
+            onClick={() => {
+              setSelectedStudent({
+                studentId: item.studentId,
+                studentName: item.studentName,
+                term: item.term,
+              });
+              setShowModal(true);
+            }}
+            className="px-2 py-1 bg-accent-1 text-white rounded"
+          >
+            Add Payment
+          </button>
+        )}
       </td>
     </tr>
   );
@@ -125,7 +175,6 @@ export default function AllFeesTable() {
             <button onClick={() => setRefresh(!refresh)} className="p-2 rounded bg-accent-3">
               <RefreshCcw className={`stroke-primary ${refresh && "animate-spin"}`} />
             </button>
-            <FormModal table="fees" type="create" refresh={() => setRefresh(!refresh)} />
           </div>
         </div>
 
@@ -139,6 +188,56 @@ export default function AllFeesTable() {
 
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
+
+      {showModal && selectedStudent && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-md w-96">
+            <h2 className="text-lg font-semibold mb-4">
+              Add Payment for {selectedStudent.studentName} ({selectedStudent.term})
+            </h2>
+            <form onSubmit={handleFeeSubmit} className="flex flex-col gap-3">
+              <input
+                type="number"
+                placeholder="Amount"
+                value={newFee.amount}
+                onChange={(e) => setNewFee({ ...newFee, amount: e.target.value })}
+                className="border p-2 rounded"
+                required
+              />
+              <select
+                value={newFee.status}
+                onChange={(e) => setNewFee({ ...newFee, status: e.target.value })}
+                className="border p-2 rounded"
+              >
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Overdue">Overdue</option>
+              </select>
+              <select
+                value={newFee.paymentMethod}
+                onChange={(e) => setNewFee({ ...newFee, paymentMethod: e.target.value })}
+                className="border p-2 rounded"
+              >
+                <option value="Cash">Cash</option>
+                <option value="Mobile Money">Mobile Money</option>
+                <option value="Bank">Bank</option>
+              </select>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-3 py-1 border rounded"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="px-3 py-1 bg-accent-1 text-white rounded">
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
