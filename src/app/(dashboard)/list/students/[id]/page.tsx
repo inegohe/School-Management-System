@@ -13,6 +13,8 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { Student } from "@prisma/client";
 
+import jsPDF from "jspdf";
+
 interface FeeSummary {
   term: string;
   totalPaid: number;
@@ -72,6 +74,67 @@ const SingleStudentPage = () => {
     } catch (err) {
       console.error("Error fetching fees:", err);
     }
+  };
+
+  // Generate PDF report for current year
+  const generateFeesReport = () => {
+    require ("jspdf-autotable"); // optional, for table support
+    if (!student || fees.length === 0) {
+      toast.error("No fee records available for report.");
+      return;
+    }
+
+    const currentYear = new Date().getFullYear();
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text(`Payment Report for ${student.name} (${currentYear})`, 14, 20);
+
+    const terms = ["Term 1", "Term 2", "Term 3"];
+    let yPos = 30;
+
+    terms.forEach((term) => {
+      const termFees = fees.filter((f) => f.term === term);
+
+      doc.setFontSize(14);
+      doc.text(term, 14, yPos);
+      yPos += 4;
+
+      const tableData = termFees.length
+        ? termFees.map((f) => [
+            f.term,
+            f.totalPaid,
+            f.balance,
+            f.lastPaymentAmount,
+            f.lastPaymentMethod || "Cash",
+            f.lastPaymentDate
+              ? new Date(f.lastPaymentDate).toLocaleDateString()
+              : "-",
+          ])
+        : [["-", "0", "0", "0", "-", "-"]];
+
+      (doc as any).autoTable({
+        startY: yPos,
+        head: [
+          [
+            "Term",
+            "Total Paid",
+            "Balance",
+            "Last Payment Amount",
+            "Payment Method",
+            "Last Payment Date",
+          ],
+        ],
+        body: tableData,
+        theme: "grid",
+        headStyles: { fillColor: [22, 160, 133] },
+        margin: { left: 14, right: 14 },
+        styles: { fontSize: 10 },
+      });
+
+      yPos = (doc as any).lastAutoTable.finalY + 10;
+    });
+
+    doc.save(`${student.name}_Fees_Report_${currentYear}.pdf`);
   };
 
   useEffect(() => {
@@ -268,6 +331,16 @@ const SingleStudentPage = () => {
             >
               Student&apos;s Parent
             </Link>
+            <Link
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                generateFeesReport();
+              }}
+              className="p-3 rounded-md bg-accent-4 text-white"
+            >
+              Fees Report Summary
+            </Link>
           </div>
         </div>
         <Announcements />
@@ -283,9 +356,7 @@ const SingleStudentPage = () => {
                 type="text"
                 placeholder="Term (e.g. Term 1)"
                 value={newFee.term}
-                onChange={(e) =>
-                  setNewFee({ ...newFee, term: e.target.value })
-                }
+                onChange={(e) => setNewFee({ ...newFee, term: e.target.value })}
                 className="border p-2 rounded"
                 required
               />
