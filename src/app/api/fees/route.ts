@@ -12,9 +12,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     // Fetch students in the school (optional search by name)
     const studentWhere: any = { schoolId: user.schoolId };
-    if (search) {
-      studentWhere.name = { contains: search, mode: "insensitive" };
-    }
+    if (search) studentWhere.name = { contains: search, mode: "insensitive" };
 
     const students = await prisma.student.findMany({
       where: studentWhere,
@@ -24,33 +22,31 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     const results = await Promise.all(
       students.map(async (student) => {
-        // Get all payments grouped by term
+        // Get all payments for this student
         const payments = await prisma.feesPayment.findMany({
           where: { studentId: student.id, schoolId: user.schoolId },
           orderBy: { paidAt: "desc" },
         });
 
-        // Group payments by term
-        const termMap: Record<string, any> = {};
-        for (const p of payments) {
-          if (!termMap[p.term]) termMap[p.term] = [];
-          termMap[p.term].push(p);
-        }
+        // Terms to always include
+        const terms = ["Term 1", "Term 2", "Term 3"];
+        const termMap: Record<string, any[]> = { "Term 1": [], "Term 2": [], "Term 3": [] };
+
+        // Group existing payments by term
+        payments.forEach((p) => {
+          if (termMap[p.term]) termMap[p.term].push(p);
+        });
 
         // Build summary per term
         const termSummaries = await Promise.all(
-          Object.entries(termMap).map(async ([term, termPayments]) => {
+          terms.map(async (term) => {
+            const termPayments = termMap[term] || [];
             const totalPaid = termPayments.reduce((acc, p) => acc + p.amount, 0);
             const lastPayment = termPayments[0];
 
             // Get expected total fee
             const classTermFee = await prisma.classTermFee.findUnique({
-              where: {
-                className_term: {
-                  className: student.class,
-                  term,
-                },
-              },
+              where: { className_term: { className: student.class, term } },
             });
 
             const totalFee = classTermFee?.totalFee || 0;
@@ -67,10 +63,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
           })
         );
 
-        return {
-          student,
-          termSummaries,
-        };
+        return { student, termSummaries };
       })
     );
 
@@ -78,12 +71,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const total = await prisma.student.count({ where: studentWhere });
 
     return NextResponse.json(
-      {
-        results,
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
-      },
+      { results, total, page, totalPages: Math.ceil(total / limit) },
       { status: 200 }
     );
   } catch (err) {
@@ -91,6 +79,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 });
+
 
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
