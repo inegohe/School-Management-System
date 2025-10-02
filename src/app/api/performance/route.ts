@@ -23,7 +23,10 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     // Summary mode
     if (summary) {
       if (!studentId) {
-        return NextResponse.json({ message: "studentId is required for summary" }, { status: 400 });
+        return NextResponse.json(
+          { message: "studentId is required for summary" },
+          { status: 400 }
+        );
       }
 
       const results = await prisma.examResult.findMany({
@@ -38,16 +41,28 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
       if (!results.length) return NextResponse.json({ summary: null });
 
-      const average = results.reduce((acc, r) => acc + r.score, 0) / results.length;
-      const best = results.reduce((prev, curr) => (curr.score > prev.score ? curr : prev));
-      const weakest = results.reduce((prev, curr) => (curr.score < prev.score ? curr : prev));
+      const average =
+        results.reduce((acc, r) => acc + r.score, 0) / results.length;
+      const best = results.reduce((prev, curr) =>
+        curr.score > prev.score ? curr : prev
+      );
+      const weakest = results.reduce((prev, curr) =>
+        curr.score < prev.score ? curr : prev
+      );
 
       return NextResponse.json({
         summary: {
           average,
           bestSubject: best.subject.name,
           weakestSubject: weakest.subject.name,
-          grade: average >= 80 ? "A" : average >= 70 ? "B" : average >= 60 ? "C" : "D",
+          grade:
+            average >= 80
+              ? "A"
+              : average >= 70
+              ? "B"
+              : average >= 60
+              ? "C"
+              : "D",
           totalSubjects: results.length,
         },
       });
@@ -62,6 +77,8 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     if (studentId) whereClause.studentId = studentId;
     if (subjectId) whereClause.subjectId = subjectId;
     if (examId) whereClause.examId = examId;
+    if (term) whereClause.exam = { ...whereClause.exam, term };
+    if (year) whereClause.exam = { ...whereClause.exam, year };
 
     if (search) {
       whereClause.OR = [
@@ -89,7 +106,10 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     });
   } catch (err) {
     console.error("Error fetching exam results:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 
@@ -99,10 +119,14 @@ export const GET = withAuthRoute(async (req: Request, user) => {
  */
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { studentId, subjectId, examId, score, grade, remarks } = await req.json();
+    const { studentId, subjectId, examId, score, grade, remarks } =
+      await req.json();
 
     if (!studentId || !subjectId || !examId || score === undefined) {
-      return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
     const result = await prisma.examResult.create({
@@ -119,7 +143,10 @@ export const POST = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     console.error("Error creating exam result:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 
@@ -131,7 +158,8 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
   try {
     const { id, score, grade, remarks } = await req.json();
 
-    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id)
+      return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     const updated = await prisma.examResult.update({
       where: { id },
@@ -145,7 +173,10 @@ export const PATCH = withAuthRoute(async (req: Request, user) => {
     return NextResponse.json(updated, { status: 200 });
   } catch (err) {
     console.error("Error updating exam result:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 
@@ -157,14 +188,21 @@ export const DELETE = withAuthRoute(async (req: Request, user) => {
   try {
     const { id } = await req.json();
 
-    if (!id) return NextResponse.json({ message: "Id required" }, { status: 400 });
+    if (!id)
+      return NextResponse.json({ message: "Id required" }, { status: 400 });
 
     await prisma.examResult.delete({ where: { id } });
 
-    return NextResponse.json({ message: "Exam result deleted" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Exam result deleted" },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Error deleting exam result:", err);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 });
 

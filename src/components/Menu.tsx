@@ -63,6 +63,12 @@ const Menu = () => {
           visible: ["admin", "teacher"],
         },
         {
+          title: "Performance Summary",
+          icon: "/lesson.png",
+          link: "/list/performance",
+          visible: ["admin"],
+        },
+        {
           title: "Events",
           icon: "/calendar.png",
           link: "/list/events",

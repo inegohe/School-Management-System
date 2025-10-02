@@ -99,7 +99,7 @@ const PerformanceSummaryPageInner = () => {
       <td>{item.bestSubject}</td>
       <td>{item.weakSubject}</td>
       <td>
-        <Link href={`/students/${item.studentId}/performance-full`}>
+        <Link href={`/list/performance/${item.studentId}`}>
           <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
             View
           </button>
