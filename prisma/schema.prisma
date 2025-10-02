@@ -133,6 +133,7 @@ model School {
   timetables          Timetable[]
   users               User[]
 
+  classTermFees  ClassTermFee[]   // relation back to fees
   exams         Exam[]
 }
 
@@ -200,7 +201,11 @@ model ClassTermFee {
   totalFee  Float
   createdAt DateTime @default(now())
 
-  @@unique([className, term]) // ensures no duplicate fee for same class and term
+  // New relation to School
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+
+  @@unique([className, term, schoolId]) // ensure uniqueness per school
 }
 
 model Exam {
