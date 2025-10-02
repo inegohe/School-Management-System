@@ -49,6 +49,7 @@ const SingleTeacherPage = () => {
         setRefresh(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, refresh]);
 
   if (loading) {

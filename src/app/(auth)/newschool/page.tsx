@@ -25,6 +25,8 @@ export default function NewSchool() {
     toast(`Welcome to ${school.name}`);
     window.addEventListener("resize", updateDimension);
     return () => window.removeEventListener("resize", updateDimension);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

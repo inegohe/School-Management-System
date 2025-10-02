@@ -57,6 +57,18 @@ const Menu = () => {
           visible: ["teacher"],
         },
         {
+          title: "Fees Payments",
+          icon: "/finance.png",
+          link: "/list/fees",
+          visible: ["admin", "teacher"],
+        },
+        {
+          title: "Performance Summary",
+          icon: "/lesson.png",
+          link: "/list/performance",
+          visible: ["admin"],
+        },
+        {
           title: "Events",
           icon: "/calendar.png",
           link: "/list/events",
@@ -107,7 +119,7 @@ const Menu = () => {
         <h1
           title={school.name}
           aria-label={school.name}
-          aria-description={school.name}
+          aria-describedby={school.name}
           className="font-bold hidden md:block group-hover:block w-40 truncate"
         >
           {school.name || ""}

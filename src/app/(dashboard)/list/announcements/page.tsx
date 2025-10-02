@@ -129,6 +129,8 @@ const AnnouncementListPageInner = () => {
         setRefresh(false);
       }
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, page, refresh, search, order]);
 
   if (

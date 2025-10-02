@@ -16,7 +16,7 @@ export const POST = async (req: Request) => {
       timetableHtml,
       admins,
     } = await req.json();
-    
+
     const schoolId = v4();
 
     const staffs = staffsData.map((staff: StaffData) => {
@@ -58,30 +58,6 @@ export const POST = async (req: Request) => {
       },
     });
 
-    await prisma.staff.createMany({
-      data: [...staffs],
-    });
-
-    await prisma.parent.createMany({
-      data: [...parents],
-    });
-
-    await prisma.student.createMany({
-      data: [...students],
-    });
-
-    await prisma.subject.createMany({
-      data: [...subjectData],
-    });
-
-    await prisma.class.createMany({
-      data: [...classData],
-    });
-
-    await prisma.timetable.createMany({
-      data: [...timetableData],
-    });
-
     //Creating Users
     await prisma.user.createMany({
       data: [
@@ -117,6 +93,31 @@ export const POST = async (req: Request) => {
           };
         }),
       ],
+    });
+
+    
+    await prisma.staff.createMany({
+      data: [...staffs],
+    });
+
+    await prisma.parent.createMany({
+      data: [...parents],
+    });
+
+    await prisma.student.createMany({
+      data: [...students],
+    });
+
+    await prisma.subject.createMany({
+      data: [...subjectData],
+    });
+
+    await prisma.class.createMany({
+      data: [...classData],
+    });
+
+    await prisma.timetable.createMany({
+      data: [...timetableData],
     });
 
     return NextResponse.json({ ...school }, { status: 201 });

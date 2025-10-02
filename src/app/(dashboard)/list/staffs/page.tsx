@@ -100,6 +100,7 @@ const StaffListPageInner = () => {
         setRefresh(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, page, refresh, search, order]);
 
   const renderRow = (item: Staff) => (

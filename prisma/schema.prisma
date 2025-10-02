@@ -89,9 +89,12 @@ model Student {
   address        String
   schoolId       String
   Attendance     Attendance[]
+  feesPayments   FeesPayment[]
   User           User         @relation(fields: [id], references: [id], onDelete: Cascade)
   parent         Parent       @relation(fields: [parentId], references: [id])
   school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  ExamResults   ExamResult[]
 }
 
 model School {
@@ -129,6 +132,21 @@ model School {
   subjects            Subject[]
   timetables          Timetable[]
   users               User[]
+
+  classTermFees  ClassTermFee[]   // relation back to fees
+  exams         Exam[]
+}
+
+model FeesPayment {
+  id         Int      @id @default(autoincrement())
+  student    Student  @relation(fields: [studentId], references: [id])
+  studentId  String
+  amount     Float
+  paidAt     DateTime @default(now())
+  term       String
+  status     String   // "Paid", "Pending", "Overdue"
+  paymentMethod String
+  schoolId   String
 }
 
 model Subject {
@@ -137,6 +155,8 @@ model Subject {
   teachers String[] @default([])
   schoolId String
   school   School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  
+  results     ExamResult[]
 }
 
 model Class {
@@ -172,6 +192,47 @@ model Attendance {
   class     Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
   school    School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   student   Student        @relation(fields: [studentId], references: [id])
+}
+
+model ClassTermFee {
+  id        Int      @id @default(autoincrement())
+  className String   // e.g., "Grade 1", "Grade 2"
+  term      String   // e.g., "Term 1", "Term 2"
+  totalFee  Float
+  createdAt DateTime @default(now())
+
+  // New relation to School
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+
+  @@unique([className, term, schoolId]) // ensure uniqueness per school
+}
+
+model Exam {
+  id          String       @id @default(uuid())
+  name        String       // e.g. "Mid Term 1", "End of Term 2"
+  term        String       // e.g. "Term 1"
+  year        Int
+  startDate   DateTime
+  endDate     DateTime
+  schoolId    String
+  school      School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  results     ExamResult[]
+}
+
+model ExamResult {
+  id          String     @id @default(uuid())
+  studentId   String
+  subjectId   String
+  examId      String
+  score       Float
+  grade       String
+  remarks     String      @default("")
+  createdAt   DateTime    @default(now())
+
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  exam        Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
 }
 
 model Event {
