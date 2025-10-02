@@ -100,7 +100,7 @@ const PerformanceSummaryPageInner = () => {
       <td>{item.weakSubject}</td>
       <td>
         <Link href={`/list/performance/${item.studentId}`}>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-accent-1">
+          <button className="px-2 py-1 bg-accent-1 text-white rounded">
             View
           </button>
         </Link>

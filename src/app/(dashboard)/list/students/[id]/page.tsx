@@ -344,7 +344,7 @@ const SingleStudentPage = () => {
               Fees Report Summary
             </Link>
             <Link
-              className="p-3 rounded-md bg-accent-4"
+              className="p-3 rounded-md bg-accent-2"
               href={`/list/performance/${student.id}`} // adjust path to match your route
             >
               View Performance
