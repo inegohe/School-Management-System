@@ -68,6 +68,8 @@ const AdminPage = () => {
         getData();
       }
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, role]);
 
   if (role !== "ADMIN") {

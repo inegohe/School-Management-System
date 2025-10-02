@@ -92,6 +92,8 @@ export default function AllFeesTable() {
 
   useEffect(() => {
     fetchFees();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, refresh, search]);
 
   const handleFeeSubmit = async (e: React.FormEvent) => {

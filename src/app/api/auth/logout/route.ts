@@ -5,26 +5,25 @@ import { prisma } from "@/lib/prisma";
 
 export const GET = async () => {
   try {
-    const cookiesStore = cookies();
-    const refreshtoken = cookiesStore.get("refreshtoken")?.value || "";
+    // Get request cookies
+    const cookieStore = await cookies();
+    const refreshtoken = cookieStore.get("refreshtoken")?.value;
 
-    // Delete cookies first
-    cookiesStore.delete("accesstoken");
-    cookiesStore.delete("refreshtoken");
+    // Prepare response to delete cookies
+    const response = NextResponse.json({ success: true });
+    response.cookies.set("accesstoken", "", { maxAge: 0 });
+    response.cookies.set("refreshtoken", "", { maxAge: 0 });
 
-    // Only try deleting from DB if token exists
+    // Delete refresh token from database if it exists
     if (refreshtoken) {
       await prisma.refreshTokens.deleteMany({
         where: {
-          tokenHash: crypto
-            .createHash("sha256")
-            .update(refreshtoken)
-            .digest("hex"),
+          tokenHash: crypto.createHash("sha256").update(refreshtoken).digest("hex"),
         },
       });
     }
 
-    return NextResponse.json({ success: true }, { status: 200 });
+    return response;
   } catch (error) {
     console.error("Logout error:", error);
     return NextResponse.json(
@@ -33,3 +32,4 @@ export const GET = async () => {
     );
   }
 };
+

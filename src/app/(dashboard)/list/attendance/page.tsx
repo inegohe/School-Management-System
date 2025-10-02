@@ -41,6 +41,8 @@ const AttendancePage = () => {
         setRefresh(false);
       }
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, page, refresh, search]);
 
   const fetchStudents = async () => {

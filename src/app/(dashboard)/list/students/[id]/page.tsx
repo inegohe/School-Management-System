@@ -149,6 +149,7 @@ const SingleStudentPage = () => {
         setRefresh(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, refresh]);
 
   if (loading) {
@@ -253,7 +254,7 @@ const SingleStudentPage = () => {
 
         {/* Schedule */}
         <div className="flex flex-col gap-4 mt-4 bg-primary-light rounded-md p-4">
-          <h1 className="font-semibold text-lg">Student's Schedule</h1>
+          <h1 className="font-semibold text-lg">Student&apos;s Schedule</h1>
           <ScheduleCalendar classes={[student.class]} subjects={[]} />
         </div>
 

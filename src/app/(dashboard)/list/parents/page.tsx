@@ -120,6 +120,7 @@ const ParentListPageInner = () => {
         setRefresh(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, page, refresh, search, order]);
 
   if (!["ADMIN", "TEACHER", "NONTEACHING"].includes(role)) {

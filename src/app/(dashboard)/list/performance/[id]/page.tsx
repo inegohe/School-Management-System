@@ -227,6 +227,7 @@ export default function StudentPerformanceFull() {
   useEffect(() => {
     fetchResults();
     fetchInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, term, year, order, refresh, search]);
 
   const renderRow = (item: any) => (

@@ -116,11 +116,15 @@ const RegisterSchoolPage = () => {
     };
 
     loadData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     localStorage.setItem("temp-data", JSON.stringify(totalData));
     localStorage.setItem("curr-page", page.toString());
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   return (
