@@ -158,10 +158,10 @@ export const useRecents = create<RecentsStoreType>((set) => ({
 }));
 
 export const BACKGROUND_IMAGES: string[] = [
-  "https://img.freepik.com/free-photo/education-day-arrangement-table-with-copy-space_23-2148721266.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/portrait-young-woman-with-laptop-hands-outside-school_641386-1029.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/portrait-male-student-with-books_23-2148882427.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/shallow-focus-shot-african-child-learning-school_181624-36498.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/book-with-green-board-background_1150-3837.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/happy-student-girl_23-2151936246.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/african-schoolboy-smiling-classroom_23-2149874562.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/group-african-children-school-uniforms-studying-classroom_181624-50289.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/teacher-helping-kids-with-classwork_23-2149005420.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/cheerful-african-students-class_181624-49267.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/group-african-children-doing-homework-together_181624-49265.jpg?semt=ais_hybrid&w=740",
+  "https://img.freepik.com/free-photo/teacher-standing-classroom-teaching-african-kids_181624-49270.jpg?semt=ais_hybrid&w=740",
 ];
