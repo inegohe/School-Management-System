@@ -6,7 +6,7 @@ import Pagination from "@/components/Pagination";
 import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import toast from "react-hot-toast";
-import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
+import { RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 
 const columns = [
   { header: "Term" },
@@ -27,6 +27,35 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
   const [refresh, setRefresh] = useState(false);
   const [search, setSearch] = useState("");
 
+  // --- Modal State ---
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [newResult, setNewResult] = useState({
+    subjectId: "",
+    examId: "",
+    score: "",
+    remarks: "",
+  });
+
+  const [exams, setExams] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<any[]>([]);
+
+  // Fetch exams and subjects for dropdowns
+  const fetchExamsAndSubjects = async () => {
+    try {
+      const [examRes, subjectRes] = await Promise.all([
+        apiClient.get(`/exams`),
+        apiClient.get(`/subjects`),
+      ]);
+
+      if (examRes.status === 200) setExams(examRes.data.results);
+      if (subjectRes.status === 200) setSubjects(subjectRes.data.results);
+
+      console.log(exams, subjects);
+    } catch (err) {
+      console.error("Error fetching exams/subjects:", err);
+    }
+  };
+
   const fetchResults = async () => {
     try {
       toast.loading("Fetching performance...", { id: "fetch" });
@@ -34,7 +63,7 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
         `/performance?studentId=${studentId}&page=${page}&limit=10&term=${term}&year=${year}&search=${search}&sort=${order}`
       );
       if (res.status === 200) {
-        setResults(res.data.performances);
+        setResults(res.data.results);
         setTotalPages(res.data.totalPages);
         toast.dismiss("fetch");
       } else {
@@ -50,12 +79,13 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
 
   useEffect(() => {
     fetchResults();
+    fetchExamsAndSubjects();
   }, [page, term, year, order, refresh, search]);
 
   const renderRow = (item: any) => (
     <tr key={item.id} className="even:bg-primary-light text-sm">
-      <td>{item.term}</td>
-      <td>{item.year}</td>
+      <td>{item.exam.term}</td>
+      <td>{item.exam.year}</td>
       <td>{item.subject.name}</td>
       <td>{item.exam.name}</td>
       <td>{item.score}</td>
@@ -81,11 +111,111 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
         <button onClick={() => setOrder(order === "asc" ? "desc" : "asc")} className="w-8 h-8 bg-accent-3 rounded-full flex justify-center items-center">
           {order === "asc" ? <SortDesc className="stroke-primary" /> : <SortAsc className="stroke-primary" />}
         </button>
+        <button
+          onClick={() => setShowResultModal(true)}
+          className="ml-auto px-3 py-1 bg-accent-1 text-white rounded"
+        >
+          Add Result
+        </button>
       </div>
 
       <Table columns={columns} renderRow={renderRow} data={results} />
 
       <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
+      {/* --- Modal --- */}
+      {showResultModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-md w-96">
+            <h2 className="text-lg font-semibold mb-4">Add Exam Result</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await apiClient.post("/exam-results", {
+                    studentId,
+                    subjectId: newResult.subjectId,
+                    examId: newResult.examId,
+                    score: parseFloat(newResult.score),
+                    remarks: newResult.remarks,
+                  });
+                  if (res.status === 201) {
+                    toast.success("Result added successfully");
+                    setShowResultModal(false);
+                    setRefresh(!refresh);
+                  } else {
+                    toast.error(res.data.message || "Failed to add result");
+                  }
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Error adding result");
+                }
+              }}
+              className="flex flex-col gap-3"
+            >
+              <select
+                value={newResult.examId}
+                onChange={(e) => setNewResult({ ...newResult, examId: e.target.value })}
+                className="border p-2 rounded"
+                required
+              >
+                <option value="">Select Exam</option>
+                {exams.map((exam) => (
+                  <option key={exam.id} value={exam.id}>
+                    {exam.name} ({exam.term} {exam.year})
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={newResult.subjectId}
+                onChange={(e) => setNewResult({ ...newResult, subjectId: e.target.value })}
+                className="border p-2 rounded"
+                required
+              >
+                <option value="">Select Subject</option>
+                {subjects.map((subj) => (
+                  <option key={subj.id} value={subj.id}>
+                    {subj.name}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="number"
+                placeholder="Score"
+                value={newResult.score}
+                onChange={(e) => setNewResult({ ...newResult, score: e.target.value })}
+                className="border p-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Remarks"
+                value={newResult.remarks}
+                onChange={(e) => setNewResult({ ...newResult, remarks: e.target.value })}
+                className="border p-2 rounded"
+              />
+
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowResultModal(false)}
+                  className="px-3 py-1 border rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-accent-1 text-white rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

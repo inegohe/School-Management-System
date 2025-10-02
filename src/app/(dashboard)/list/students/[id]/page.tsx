@@ -343,6 +343,12 @@ const SingleStudentPage = () => {
             >
               Fees Report Summary
             </Link>
+            <Link
+              className="p-3 rounded-md bg-accent-4"
+              href={`/list/performance/${student.id}`} // adjust path to match your route
+            >
+              View Performance
+            </Link>
           </div>
         </div>
         <Announcements />
@@ -358,9 +364,7 @@ const SingleStudentPage = () => {
                 type="text"
                 placeholder="Term (e.g. Term 1)"
                 value={newFee.term}
-                onChange={(e) =>
-                  setNewFee({ ...newFee, term: e.target.value })
-                }
+                onChange={(e) => setNewFee({ ...newFee, term: e.target.value })}
                 className="border p-2 rounded"
                 required
               />
