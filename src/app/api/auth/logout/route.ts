@@ -5,22 +5,24 @@ import { prisma } from "@/lib/prisma";
 
 export const GET = async () => {
   try {
-    const cookiesStore = await cookies();
-
+    const cookiesStore = cookies();
     const refreshtoken = cookiesStore.get("refreshtoken")?.value || "";
 
-    // Delete the access and refresh tokens
+    // Delete cookies first
     cookiesStore.delete("accesstoken");
     cookiesStore.delete("refreshtoken");
 
-    await prisma.refreshTokens.delete({
-      where: {
-        tokenHash: crypto
-          .createHash("sha256")
-          .update(refreshtoken)
-          .digest("hex"),
-      },
-    });
+    // Only try deleting from DB if token exists
+    if (refreshtoken) {
+      await prisma.refreshTokens.deleteMany({
+        where: {
+          tokenHash: crypto
+            .createHash("sha256")
+            .update(refreshtoken)
+            .digest("hex"),
+        },
+      });
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
