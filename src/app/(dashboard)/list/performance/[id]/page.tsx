@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Table from "@/components/Table";
 import Pagination from "@/components/Pagination";
 import TableSearch from "@/components/TableSearch";
@@ -17,7 +18,10 @@ const columns = [
   { header: "Grade" },
 ];
 
-export default function StudentPerformanceFull({ studentId }: { studentId: string }) {
+export default function StudentPerformanceFull() {
+  const params = useParams();
+  const studentId = params?.id;
+
   const [results, setResults] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -47,10 +51,10 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
         apiClient.get(`/subjects`),
       ]);
 
-      if (examRes.status === 200) setExams(examRes.data.results);
-      if (subjectRes.status === 200) setSubjects(subjectRes.data.results);
+      if (examRes.status === 200) setExams(examRes.data);
+      if (subjectRes.status === 200) setSubjects(subjectRes.data.subjects);
 
-      console.log(exams, subjects);
+      console.log(examRes.data, subjectRes.data.subjects);
     } catch (err) {
       console.error("Error fetching exams/subjects:", err);
     }
@@ -77,6 +81,40 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
     }
   };
 
+  const handleAddResult = async () => {
+    if (!studentId) {
+      toast.error("Student ID is missing. Cannot submit result.");
+      return;
+    }
+
+    if (!newResult.subjectId || !newResult.examId || !newResult.score) {
+      toast.error("Please select subject, exam, and enter a score");
+      return;
+    }
+
+    try {
+
+      const res = await apiClient.post("/performance", {
+        studentId,
+        subjectId: newResult.subjectId,
+        examId: newResult.examId,
+        score: parseFloat(newResult.score),
+        remarks: newResult.remarks || "",
+      });
+
+      if (res.status === 201) {
+        toast.success("Result added successfully");
+        setShowResultModal(false);
+        setRefresh(!refresh);
+      } else {
+        toast.error(res.data.message || "Failed to add result");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Error adding result");
+    }
+  };
+
   useEffect(() => {
     fetchResults();
     fetchExamsAndSubjects();
@@ -90,7 +128,13 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
       <td>{item.exam.name}</td>
       <td>{item.score}</td>
       <td>
-        {item.score >= 80 ? "A" : item.score >= 70 ? "B" : item.score >= 60 ? "C" : "D"}
+        {item.score >= 80
+          ? "A"
+          : item.score >= 70
+          ? "B"
+          : item.score >= 60
+          ? "C"
+          : "D"}
       </td>
     </tr>
   );
@@ -99,17 +143,36 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
     <div className="p-4 bg-primary-light rounded-md m-4 mt-0">
       <div className="flex items-center gap-4 mb-4">
         <TableSearch value={search} onChange={setSearch} />
-        <select value={term} onChange={(e) => setTerm(e.target.value)} className="border rounded px-2 py-1">
+        <select
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          className="border rounded px-2 py-1"
+        >
           <option>Term 1</option>
           <option>Term 2</option>
           <option>Term 3</option>
         </select>
-        <input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} className="border rounded px-2 py-1 w-20" />
-        <button onClick={() => setRefresh(!refresh)} className="w-8 h-8 bg-accent-3 rounded-full flex justify-center items-center">
+        <input
+          type="number"
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          className="border rounded px-2 py-1 w-20"
+        />
+        <button
+          onClick={() => setRefresh(!refresh)}
+          className="w-8 h-8 bg-accent-3 rounded-full flex justify-center items-center"
+        >
           <RefreshCcw className="stroke-primary" />
         </button>
-        <button onClick={() => setOrder(order === "asc" ? "desc" : "asc")} className="w-8 h-8 bg-accent-3 rounded-full flex justify-center items-center">
-          {order === "asc" ? <SortDesc className="stroke-primary" /> : <SortAsc className="stroke-primary" />}
+        <button
+          onClick={() => setOrder(order === "asc" ? "desc" : "asc")}
+          className="w-8 h-8 bg-accent-3 rounded-full flex justify-center items-center"
+        >
+          {order === "asc" ? (
+            <SortDesc className="stroke-primary" />
+          ) : (
+            <SortAsc className="stroke-primary" />
+          )}
         </button>
         <button
           onClick={() => setShowResultModal(true)}
@@ -121,7 +184,11 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
 
       <Table columns={columns} renderRow={renderRow} data={results} />
 
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
 
       {/* --- Modal --- */}
       {showResultModal && (
@@ -131,31 +198,15 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                try {
-                  const res = await apiClient.post("/exam-results", {
-                    studentId,
-                    subjectId: newResult.subjectId,
-                    examId: newResult.examId,
-                    score: parseFloat(newResult.score),
-                    remarks: newResult.remarks,
-                  });
-                  if (res.status === 201) {
-                    toast.success("Result added successfully");
-                    setShowResultModal(false);
-                    setRefresh(!refresh);
-                  } else {
-                    toast.error(res.data.message || "Failed to add result");
-                  }
-                } catch (err) {
-                  console.error(err);
-                  toast.error("Error adding result");
-                }
+                handleAddResult();
               }}
               className="flex flex-col gap-3"
             >
               <select
                 value={newResult.examId}
-                onChange={(e) => setNewResult({ ...newResult, examId: e.target.value })}
+                onChange={(e) =>
+                  setNewResult({ ...newResult, examId: e.target.value })
+                }
                 className="border p-2 rounded"
                 required
               >
@@ -169,7 +220,9 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
 
               <select
                 value={newResult.subjectId}
-                onChange={(e) => setNewResult({ ...newResult, subjectId: e.target.value })}
+                onChange={(e) =>
+                  setNewResult({ ...newResult, subjectId: e.target.value })
+                }
                 className="border p-2 rounded"
                 required
               >
@@ -185,7 +238,9 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
                 type="number"
                 placeholder="Score"
                 value={newResult.score}
-                onChange={(e) => setNewResult({ ...newResult, score: e.target.value })}
+                onChange={(e) =>
+                  setNewResult({ ...newResult, score: e.target.value })
+                }
                 className="border p-2 rounded"
                 required
               />
@@ -193,7 +248,9 @@ export default function StudentPerformanceFull({ studentId }: { studentId: strin
                 type="text"
                 placeholder="Remarks"
                 value={newResult.remarks}
-                onChange={(e) => setNewResult({ ...newResult, remarks: e.target.value })}
+                onChange={(e) =>
+                  setNewResult({ ...newResult, remarks: e.target.value })
+                }
                 className="border p-2 rounded"
               />
 

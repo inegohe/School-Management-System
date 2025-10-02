@@ -99,7 +99,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
  */
 export const POST = withAuthRoute(async (req: Request, user) => {
   try {
-    const { studentId, subjectId, examId, score, grade, remarks, term, year } = await req.json();
+    const { studentId, subjectId, examId, score, grade, remarks } = await req.json();
 
     if (!studentId || !subjectId || !examId || score === undefined) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -113,8 +113,6 @@ export const POST = withAuthRoute(async (req: Request, user) => {
         score: parseFloat(score),
         grade: grade || calculateGrade(score),
         remarks: remarks || "",
-        term,
-        year: year || new Date().getFullYear(),
       },
     });
 
