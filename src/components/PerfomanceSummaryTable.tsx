@@ -3,9 +3,15 @@
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/apiclient";
 import toast from "react-hot-toast";
-import { Card, Button } from "@/components/ui";
+import { Card } from "./ui/card";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
-export default function StudentPerformanceSummary({ studentId }: { studentId: string }) {
+export default function StudentPerformanceSummary({
+  studentId,
+}: {
+  studentId: string;
+}) {
   const [summary, setSummary] = useState<any>(null);
   const [term, setTerm] = useState("Term 1");
   const [year, setYear] = useState(new Date().getFullYear());
@@ -34,7 +40,9 @@ export default function StudentPerformanceSummary({ studentId }: { studentId: st
 
   return (
     <Card className="p-4 mb-4">
-      <h2 className="text-lg font-semibold mb-2">Performance Summary ({term}, {year})</h2>
+      <h2 className="text-lg font-semibold mb-2">
+        Performance Summary ({term}, {year})
+      </h2>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-gray-500">Average Score</p>
@@ -53,9 +61,9 @@ export default function StudentPerformanceSummary({ studentId }: { studentId: st
           <p className="font-bold text-xl">{summary.grade}</p>
         </div>
       </div>
-      <Button className="mt-4" href={`/students/${studentId}/performance`}>
+      <Link href={`/students/${studentId}/performance`} className="button mt-4">
         View Full Performance
-      </Button>
+      </Link>
     </Card>
   );
 }

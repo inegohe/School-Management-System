@@ -48,7 +48,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
             const lastPayment = termPayments[0];
 
             const classTermFee = await prisma.classTermFee.findUnique({
-              where: { className_term_schoolId: { className: student.class, term } },
+              where: { className_term_schoolId: { className: student.class, term, schoolId: user.schoolId } },
             });
 
             const totalFee = classTermFee ? classTermFee.totalFee : 0;

@@ -119,7 +119,7 @@ const Menu = () => {
         <h1
           title={school.name}
           aria-label={school.name}
-          aria-description={school.name}
+          aria-describedby={school.name}
           className="font-bold hidden md:block group-hover:block w-40 truncate"
         >
           {school.name || ""}

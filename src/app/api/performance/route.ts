@@ -17,7 +17,10 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const subjectId = searchParams.get("subjectid");
     const examId = searchParams.get("examid");
     const term = searchParams.get("term");
-    const year = parseInt(searchParams.get("year") || new Date().getFullYear());
+    const year = parseInt(
+      searchParams.get("year") || new Date().getFullYear().toString(),
+      10
+    );
     const summary = searchParams.get("summary") === "true";
 
     // Summary mode
@@ -32,9 +35,11 @@ export const GET = withAuthRoute(async (req: Request, user) => {
       const results = await prisma.examResult.findMany({
         where: {
           studentId,
-          term,
-          year,
-          exam: { schoolId: user.schoolId },
+          exam: {
+            schoolId: user.schoolId,
+            ...(term ? { term } : {}), // moved inside exam
+            year,
+          },
         },
         include: { subject: true },
       });
