@@ -16,7 +16,6 @@ export const GET = withAuthRoute(async (req: Request, user) => {
     const studentId = searchParams.get("studentid");
     const subjectId = searchParams.get("subjectid");
     const examId = searchParams.get("examid");
-    const className = searchParams.get("class");
     const term = searchParams.get("term");
     const year = parseInt(searchParams.get("year") || new Date().getFullYear());
     const summary = searchParams.get("summary") === "true";
@@ -32,7 +31,7 @@ export const GET = withAuthRoute(async (req: Request, user) => {
           studentId,
           term,
           year,
-          schoolId: user.schoolId,
+          exam: { schoolId: user.schoolId },
         },
         include: { subject: true },
       });
@@ -56,7 +55,9 @@ export const GET = withAuthRoute(async (req: Request, user) => {
 
     // Full results mode
     const skip = (page - 1) * limit;
-    const whereClause: any = { schoolId: user.schoolId };
+    const whereClause: any = {
+      exam: { schoolId: user.schoolId },
+    };
 
     if (studentId) whereClause.studentId = studentId;
     if (subjectId) whereClause.subjectId = subjectId;
@@ -114,7 +115,6 @@ export const POST = withAuthRoute(async (req: Request, user) => {
         remarks: remarks || "",
         term,
         year: year || new Date().getFullYear(),
-        schoolId: user.schoolId,
       },
     });
 

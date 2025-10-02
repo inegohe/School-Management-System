@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { LoaderCircle, RefreshCcw, SortAsc, SortDesc } from "lucide-react";
 
 const columns = [
-  { header: "Student Info" },
+  { header: "Student Name" },
   { header: "Class" },
   { header: "Average Score" },
   { header: "Best Subject" },
@@ -19,7 +19,7 @@ const columns = [
 ];
 
 const PerformanceSummaryPageInner = () => {
-  const [performances, setPerformances] = useState([]);
+  const [performances, setPerformances] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [term, setTerm] = useState("Term 1");
@@ -32,13 +32,49 @@ const PerformanceSummaryPageInner = () => {
     try {
       toast.loading("Fetching performance data...", { id: "fetch" });
       const res = await apiClient.get(
-        `/performance?page=${page}&limit=10&term=${term}&year=${year}&search=${encodeURIComponent(
-          search
-        )}&sort=${order}`
+        `/performance?page=${page}&limit=50&term=${term}&year=${year}&search=${encodeURIComponent(search)}`
       );
+
       if (res.status === 200) {
-        setPerformances(res.data.performances);
-        setTotalPages(res.data.totalPages);
+        const results = res.data.results;
+
+        // --- Aggregate per student ---
+        const studentMap = new Map<string, any>();
+        results.forEach((r: any) => {
+          const id = r.student.id;
+          if (!studentMap.has(id)) {
+            studentMap.set(id, {
+              studentId: id,
+              studentName: r.student.name,
+              class: r.student.class,
+              totalScore: r.score,
+              count: 1,
+              bestSubject: r.subject.name,
+              weakSubject: r.subject.name,
+            });
+          } else {
+            const s = studentMap.get(id);
+            s.totalScore += r.score;
+            s.count += 1;
+            if (r.score > s.totalScore / s.count) s.bestSubject = r.subject.name;
+            if (r.score < s.totalScore / s.count) s.weakSubject = r.subject.name;
+          }
+        });
+
+        const aggregated = Array.from(studentMap.values()).map((s: any) => ({
+          studentId: s.studentId,
+          studentName: s.studentName,
+          class: s.class,
+          averageScore: s.totalScore / s.count,
+          bestSubject: s.bestSubject,
+          weakSubject: s.weakSubject,
+        }));
+
+        // --- Sort by averageScore ---
+        aggregated.sort((a, b) => (order === "asc" ? a.averageScore - b.averageScore : b.averageScore - a.averageScore));
+
+        setPerformances(aggregated);
+        setTotalPages(Math.ceil(aggregated.length / 10)); // simple pagination
         toast.dismiss("fetch");
       } else {
         toast.dismiss("fetch");
@@ -56,13 +92,8 @@ const PerformanceSummaryPageInner = () => {
   }, [page, term, year, order, refresh, search]);
 
   const renderRow = (item: any) => (
-    <tr key={item.id} className="even:bg-primary-light text-sm hover:cursor-pointer">
-      <td className="flex p-3 h-full flex-col">
-        <Link href={`/students/${item.studentId}`}>
-          <h3 className="font-semibold">{item.studentName}</h3>
-        </Link>
-        <p className="text-xs text-gray-500 truncate w-32">{item.studentEmail}</p>
-      </td>
+    <tr key={item.studentId} className="even:bg-primary-light text-sm hover:cursor-pointer">
+      <td className="p-3">{item.studentName}</td>
       <td>{item.class}</td>
       <td>{item.averageScore.toFixed(2)}%</td>
       <td>{item.bestSubject}</td>
@@ -84,11 +115,7 @@ const PerformanceSummaryPageInner = () => {
         <h1 className="text-lg font-semibold">Student Performance Summary</h1>
         <div className="flex items-center gap-4">
           <TableSearch value={search} onChange={setSearch} />
-          <select
-            className="border rounded px-2 py-1"
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-          >
+          <select className="border rounded px-2 py-1" value={term} onChange={(e) => setTerm(e.target.value)}>
             <option>Term 1</option>
             <option>Term 2</option>
             <option>Term 3</option>
@@ -99,8 +126,11 @@ const PerformanceSummaryPageInner = () => {
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
           />
-          <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
-            <RefreshCcw className={`stroke-primary ${refresh && "animate-spin"}`} onClick={() => setRefresh(!refresh)} />
+          <button
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3"
+            onClick={() => setRefresh(!refresh)}
+          >
+            <RefreshCcw className={`stroke-primary ${refresh && "animate-spin"}`} />
           </button>
           <button className="w-8 h-8 flex items-center justify-center rounded-full bg-accent-3">
             {order !== "asc" ? (
