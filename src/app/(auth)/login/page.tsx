@@ -124,29 +124,30 @@ const LoginPage = () => {
               Login to your account
             </p>
           </div>
-          {Object.keys(schema.shape).map((key, i) => {
-            return (
-              <div className="mb-4 w-full" key={i}>
-                <Label htmlFor={key} className="capitalize">
-                  {key.replace(/([A-Z])/g, " $1")}
-                </Label>
-                <input
-                  {...(key === "password" && { type: key })}
-                  {...register(key as keyof FormData)}
-                  className="input w-full p-2 border rounded-lg outline-none"
-                />
-                {errors[key as keyof FormData] && (
-                  <p className="text-red-500 text-xs">
-                    {errors[key as keyof FormData]?.message}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+
+          {Object.keys(schema.shape).map((key, i) => (
+            <div className="mb-4 w-full" key={i}>
+              <Label htmlFor={key} className="capitalize">
+                {key.replace(/([A-Z])/g, " $1")}
+              </Label>
+              <input
+                {...(key === "password" && { type: key })}
+                {...register(key as keyof FormData)}
+                className="input w-full p-2 border rounded-lg outline-none"
+              />
+              {errors[key as keyof FormData] && (
+                <p className="text-red-500 text-xs">
+                  {errors[key as keyof FormData]?.message}
+                </p>
+              )}
+            </div>
+          ))}
+
           {error && <p className="text-red-500 text-xs">{error}</p>}
           {pns && pnsNote && (
             <p className="text-green-600 font-semibold text-xs">{pnsNote}</p>
           )}
+
           <div className="text-xs flex gap-1 self-end">
             Forgot password?
             <p
@@ -160,30 +161,52 @@ const LoginPage = () => {
               Set new password
             </p>
           </div>
+
           <button type="submit" className="button w-full justify-center">
             {loading && <LoaderCircle className="animate-spin stroke-black" />}
             {pns ? "Set Password" : "Login"}
           </button>
-          <p className="text-sm mt-10 mx-auto">
-            New here?
+        </form>
+
+        {/* Footer links outside the form */}
+        <div className="text-center text-xs mt-6">
+          <p>
+            New here?{" "}
             <a
-              href="/create"
-              className="ml-2 text-accent underline font-semibold"
+              href={`mailto:ivanksolutions@gmail.com?subject=${encodeURIComponent(
+                "Kankoko System Login Assistance Request"
+              )}`}
+              className="text-accent underline font-semibold"
             >
-              Create new school
+              Contact Kankoko
             </a>
           </p>
-        </form>
-        <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary mt-10">
-          By clicking continue, you agree to our{" "}
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+
+          <p className="mt-2">
+            By logging in, you agree to our{" "}
+            <a
+              href="https://drive.google.com/file/d/13QBNMoOStMp-68E3uhBHA808veuxQN5q/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://drive.google.com/file/d/1xkoXzDdeN3-PxCdqT2n4rc5d3_TxaJTn/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              Privacy Policy
+            </a>
+            .
+          </p>
         </div>
       </div>
-      <Toaster
-        toastOptions={{
-          className: "!bg-primary !text-secondary",
-        }}
-      />
+
+      <Toaster toastOptions={{ className: "!bg-primary !text-secondary" }} />
     </div>
   );
 };
