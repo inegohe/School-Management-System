@@ -188,7 +188,7 @@ const LoginPage = () => {
               href="https://drive.google.com/file/d/13QBNMoOStMp-68E3uhBHA808veuxQN5q/view?usp=drive_link"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              className="text-white hover:underline"
             >
               Terms of Service
             </a>{" "}
@@ -197,7 +197,7 @@ const LoginPage = () => {
               href="https://drive.google.com/file/d/1xkoXzDdeN3-PxCdqT2n4rc5d3_TxaJTn/view?usp=drive_link"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              className="text-white hover:underline"
             >
               Privacy Policy
             </a>
