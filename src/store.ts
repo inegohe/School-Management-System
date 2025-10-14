@@ -158,10 +158,10 @@ export const useRecents = create<RecentsStoreType>((set) => ({
 }));
 
 export const BACKGROUND_IMAGES: string[] = [
-  "https://unsplash.com/photos/books-on-brown-wooden-shelf-2JIvboGLeho",
-  "https://unsplash.com/photos/boy-in-green-sweater-writing-on-white-paper-GDokEYnOfnE",
-  "https://unsplash.com/photos/boy-in-red-long-sleeve-shirt-sitting-on-chair-hs98_9hzTcU",
-  "https://unsplash.com/photos/group-of-children-inside-room-OIuCXxx08yg",
-  "https://unsplash.com/photos/a-group-of-young-children-standing-in-a-window-7MD4DR9jbP0",
-  "https://unsplash.com/photos/a-man-holding-a-child-on-his-back-KqERg6JywDk",
+  "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1472",
+  "https://images.unsplash.com/photo-1620969910995-4bbe4eaa32c1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1296",
+  "https://images.unsplash.com/photo-1567057419565-4349c49d8a04?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1472",
+  "https://images.unsplash.com/photo-1521493959102-bdd6677fdd81?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1655720362145-2d8bc6718239?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
 ];
