@@ -158,10 +158,10 @@ export const useRecents = create<RecentsStoreType>((set) => ({
 }));
 
 export const BACKGROUND_IMAGES: string[] = [
-  "https://img.freepik.com/free-photo/african-schoolboy-smiling-classroom_23-2149874562.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/group-african-children-school-uniforms-studying-classroom_181624-50289.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/teacher-helping-kids-with-classwork_23-2149005420.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/cheerful-african-students-class_181624-49267.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/group-african-children-doing-homework-together_181624-49265.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/teacher-standing-classroom-teaching-african-kids_181624-49270.jpg?semt=ais_hybrid&w=740",
+  "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1472",
+  "https://images.unsplash.com/photo-1620969910995-4bbe4eaa32c1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1296",
+  "https://images.unsplash.com/photo-1567057419565-4349c49d8a04?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1472",
+  "https://images.unsplash.com/photo-1521493959102-bdd6677fdd81?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
+  "https://images.unsplash.com/photo-1655720362145-2d8bc6718239?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470",
 ];
