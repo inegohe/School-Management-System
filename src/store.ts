@@ -158,10 +158,10 @@ export const useRecents = create<RecentsStoreType>((set) => ({
 }));
 
 export const BACKGROUND_IMAGES: string[] = [
-  "https://img.freepik.com/free-photo/african-schoolboy-smiling-classroom_23-2149874562.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/group-african-children-school-uniforms-studying-classroom_181624-50289.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/teacher-helping-kids-with-classwork_23-2149005420.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/cheerful-african-students-class_181624-49267.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/group-african-children-doing-homework-together_181624-49265.jpg?semt=ais_hybrid&w=740",
-  "https://img.freepik.com/free-photo/teacher-standing-classroom-teaching-african-kids_181624-49270.jpg?semt=ais_hybrid&w=740",
+  "https://unsplash.com/photos/books-on-brown-wooden-shelf-2JIvboGLeho",
+  "https://unsplash.com/photos/boy-in-green-sweater-writing-on-white-paper-GDokEYnOfnE",
+  "https://unsplash.com/photos/boy-in-red-long-sleeve-shirt-sitting-on-chair-hs98_9hzTcU",
+  "https://unsplash.com/photos/group-of-children-inside-room-OIuCXxx08yg",
+  "https://unsplash.com/photos/a-group-of-young-children-standing-in-a-window-7MD4DR9jbP0",
+  "https://unsplash.com/photos/a-man-holding-a-child-on-his-back-KqERg6JywDk",
 ];
