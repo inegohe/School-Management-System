@@ -8,8 +8,7 @@ import TableSearch from "@/components/TableSearch";
 import apiClient from "@/lib/apiclient";
 import toast from "react-hot-toast";
 import { RefreshCcw, SortAsc, SortDesc } from "lucide-react";
-import { useUserData } from "@/store";
-
+import { useUserData, useSchool } from "@/store";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -38,6 +37,7 @@ export default function StudentPerformanceFull() {
   const [search, setSearch] = useState("");
   const [student, setStudent] = useState<any>(null);
   const { userData: admin } = useUserData();
+  const { school: school } = useSchool();
 
   // --- Modal State ---
   const [showResultModal, setShowResultModal] = useState(false);
@@ -142,7 +142,19 @@ export default function StudentPerformanceFull() {
     }
   };
 
-  const handleGenerateReport = () => {
+  const getBase64Image = async (url :String) => {
+    const res = await fetch(url as string);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  const handleGenerateReport = async () => {
+    const imgData = await getBase64Image('/avatar.png')
+    console.log(school);
     if (!results || results.length === 0) {
       toast.error("No results available to generate report");
       return;
@@ -152,76 +164,354 @@ export default function StudentPerformanceFull() {
       return;
     }
 
-    const doc = new jsPDF("p", "pt", "a4");
-    const margin = 40;
-    let y = margin;
-
-    // --- Header ---
-    doc.setFontSize(14);
-    doc.text("Student Performance Report", 210, y, { align: "center" });
-    y += 30;
-
-    // --- Student & Guardian Details ---
-    doc.setFontSize(11);
-    doc.text(`Student Name: ${student.name}`, margin, y);
-    y += 15;
-    doc.text(`Class: ${student.class}`, margin, y);
-    y += 15;
-    doc.text(`Class Teacher: ${student.classTeacher || "-"}`, margin, y);
-    y += 15;
-    doc.text(
-      `Guardian: ${student.parentName} (${student.parentNo})`,
-      margin,
-      y
-    );
-    y += 20;
-
-    // --- Latest Term ---
-    const terms = Array.from(new Set(results.map((r) => r.exam.term)));
-    const latestTerm = terms.sort().pop();
-    const termResults = results.filter((r) => r.exam.term === latestTerm);
-
-    // --- Group by Exam ---
-    const examsMap: Record<string, any[]> = {};
-    termResults.forEach((r) => {
-      if (!examsMap[r.exam.name]) examsMap[r.exam.name] = [];
-      examsMap[r.exam.name].push(r);
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
     });
 
-    Object.keys(examsMap).forEach((examName) => {
-      if (y > 700) {
-        doc.addPage();
-        y = margin;
-      }
+    // === WATERMARK ===
 
-      doc.setFontSize(12);
-      doc.text(`${examName} (${latestTerm})`, margin, y);
-      y += 10;
+    doc.addImage(school.logo, "PNG", 30, 74, 150, 150);
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(255, 255, 255);
+    doc.setGState(new doc.GState({ opacity: 0.7}));
+    doc.rect(30, 74, 150, 150, "F");
+    doc.setGState(new doc.GState({ opacity: 1 }));
 
-      const tableData = examsMap[examName].map((r) => [
+    // === HEADER ===
+    doc.setFont("Arial", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`${school.name.toUpperCase()}`, 87, 20, { align: "right" });
+    doc.text(`${school.type.toUpperCase()} SCHOOL`, 123, 20, { align: "left" });
+    doc.addImage(school?.logo, "PNG", 90, 3, 30, 30);
+    doc.setFont("Arial", "normal");
+    doc.setFontSize(10);
+    doc.text(
+      "P.O. Box 212, Kampala | Tel: +256 776960740 | Email: info@sharebility.net | www.sharebility.net",
+      105,
+      33,
+      { align: "center" }
+    );
+    doc.setDrawColor(255, 0, 0); // R, G, B (0-255)
+    doc.setLineWidth(1);
+    doc.line(0, 36, 210, 36);
+    doc.setDrawColor(0, 0, 255); // R, G, B (0-255)
+    doc.line(0, 38, 210, 38);
+    doc.setDrawColor(0, 0, 0); // R, G, B (0-255)
+
+    // === REPORT TITLE ===
+    doc.setFont("Arial", "bold");
+    doc.setFontSize(13);
+    doc.text(`LEARNER’S END OF ${term.toUpperCase()} REPORT, ${year}`, 105, 43, {
+      align: "center",
+    });
+
+    // === STUDENT DETAILS ===
+    doc.setLineWidth(0);
+    doc.setFont("Arial", "normal");
+    doc.setFontSize(11);
+    doc.text("REG No:", 10, 50);
+    doc.setFont("Arial", "bold");
+    doc.text("UM0001", 25, 50);
+    doc.setFont("Arial", "normal");
+    doc.line(25, 51, 50, 51); // (x1, y1, x2, y2)
+
+    doc.text("NAME:", 10, 57);
+    doc.setFont("Arial", "bold");
+    doc.text(student.name.toUpperCase(), 25, 57);
+    doc.setFont("Arial", "normal");
+    doc.line(25, 58, 75, 58); // (x1, y1, x2, y2)
+
+    doc.text("CLASS:", 80, 50);
+    doc.setFont("Arial", "bold");
+    doc.text(student.class.toUpperCase(), 94, 50);
+    doc.setFont("Arial", "normal");
+    doc.line(94, 51, 120, 51); // (x1, y1, x2, y2)
+
+    doc.text("HOUSE:", 80, 57);
+    doc.setFont("Arial", "bold");
+    doc.text("RED", 94, 57);
+    doc.setFont("Arial", "normal");
+    doc.line(94, 58, 120, 58); // (x1, y1, x2, y2)
+
+    // === SUBJECT PERFORMANCE TABLE ===
+    doc.setFont("Arial", "bold");
+    doc.text(`END OF ${term.toUpperCase()} EXAM RESULTS`, 105, 65, { align: "center" });
+    doc.setFont("Arial", "normal");
+
+    // === STUDENT PASSPORT PHOTO ===
+    
+    doc.addImage(imgData, "PNG", 130, 45, 30, 40);
+
+    const EndOfTermData = results
+      .filter((r) => r.exam.name.split(" ")[0].toLowerCase() === "end")
+      .map((r) => [
         r.subject.name,
         r.score,
-        r.grade,
+        getGrade(r.score),
         r.remarks || "-",
+        r.subject.teachers[0] || "-",
       ]);
 
-      autoTable(doc, {
-        startY: y,
-        head: [["Subject", "Score", "Grade", "Remarks"]],
-        body: tableData,
-        margin: { left: margin, right: margin },
-        theme: "grid",
-        styles: { fontSize: 10 },
-      });
+    const MidTermData = results
+      .filter((r) => r.exam.name.split(" ")[0].toLowerCase() === "mid")
+      .map((r) => [
+        r.subject.name,
+        r.score,
+        getGrade(r.score),
+        0,
+        "",
+      ]);
 
-      y = (doc as any).lastAutoTable.finalY + 20;
+    function getGrade(score) {
+      if (score >= 80) return "D1";
+      if (score >= 75) return "D2";
+      if (score >= 65) return "C3";
+      if (score >= 60) return "C4";
+      if (score >= 55) return "C5";
+      if (score >= 50) return "C6";
+      if (score >= 40) return "P7";
+      if (score >= 30) return "P8";
+      return "F9";
+    }
+    
+    doc.setGState(new doc.GState({ opacity: 0.4}));
+
+    autoTable(doc, {
+      startY: 68,
+      margin: { left: 5 },
+      head: [["SUBJECT", "TOTAL MARK (100%)", "GRADE", "REMARK", "TEACHER"]],
+      body: EndOfTermData,
+      theme: "grid",
+      headStyles: {
+        fillColor: [255, 255, 255], // white background
+        textColor: [0, 0, 0], // black text
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+        fontStyle: "bold", // bold header text
+        halign: "center", // center align text,
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40, halign: "center" },
+        2: { cellWidth: 20, halign: "center" },
+        3: { cellWidth: 40 },
+      },
+      styles: {
+        fontSize: 10,
+        cellPadding: 2,
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+      },
+      tableWidth: 200,
+    });
+    
+    doc.setGState(new doc.GState({ opacity: 1}));
+
+    // Add extra bottom row
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY, // slightly below the previous table
+      margin: { left: 5 },
+      body: [
+        [
+          "AVERAGE MARK: 75",
+          "POSITION: 12 OUT OF 30",
+          "AGGREGATES: 11",
+          "DIVISION: 1",
+        ], // 4 columns
+      ],
+      theme: "grid",
+      styles: {
+        fillColor: [0, 0, 0], // Black fill
+        textColor: [255, 255, 255], // White text
+        fontSize: 10,
+        fontStyle: "bold", // bold header text
+        cellPadding: 2,
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+      },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { cellWidth: "auto" },
+        2: { cellWidth: "auto" },
+        3: { cellWidth: "auto" },
+      },
+      tableWidth: 200,
     });
 
-    // --- Footer ---
-    doc.setFontSize(10);
-    doc.text(`Report generated by Admin ${admin?.name || "Admin"}`, margin, 820);
+    // === MID TERM EXAMS TABLE ===
+    
+    doc.setGState(new doc.GState({ opacity: 0.4}));
+    doc.setFont("Arial", "bold");
+    doc.text(
+      `MID ${term.toUpperCase()} EXAM RESULTS`,
+      105,
+      (doc as any).lastAutoTable.finalY + 10,
+      { align: "center" }
+    );
+    doc.setFont("Arial", "normal");
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 12,
+      margin: { left: 5 },
+      head: [
+        [
+          { content: "SUBJECT", rowSpan: 2 },
+          { content: "SET ONE", colSpan: 2, styles: { halign: "center" } },
+          { content: "SET TWO", colSpan: 2, styles: { halign: "center" } },
+        ],
+        ["TOTAL MARK (100%)", "GRADE", "TOTAL MARK (100%)", "GRADE"], // second row of headers
+      ],
+      body: MidTermData,
+      theme: "grid",
+      headStyles: {
+        fillColor: [255, 255, 255], // white background
+        textColor: [0, 0, 0], // black text
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+        fontStyle: "bold", // bold header text
+        halign: "center", // center align text,
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40, halign: "center" },
+        2: { cellWidth: 40, halign: "center" },
+        3: { cellWidth: 40, halign: "center" },
+        4: { cellWidth: 40, halign: "center" },
+      },
+      styles: {
+        fontSize: 10,
+        cellPadding: 2,
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+      },
+      tableWidth: 200,
+    });
+    
+    doc.setGState(new doc.GState({ opacity: 1}));
 
-    doc.save(`${student.name}_report.pdf`);
+    // Add extra bottom row
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY, // slightly below the previous table
+      margin: { left: 5 },
+      body: [
+        [
+          "",
+          "AVERAGE: 75",
+          "AGG: 13  DIVISION: 1",
+          "AVERAGE: 75",
+          "AGG: 13  DIVISION: 1",
+        ], // 4 columns
+      ],
+      theme: "grid",
+      styles: {
+        fillColor: [0, 0, 0], // Black fill
+        textColor: [255, 255, 255], // White text
+        fontSize: 10,
+        fontStyle: "bold", // bold header text
+        cellPadding: 2,
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [0, 0, 0], // black lines
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 40 },
+      },
+      tableWidth: 200,
+    });
+
+    doc.setDrawColor(0, 0, 0); // border color (black)
+
+    // === TEACHER COMMENT ===
+    const afterTableY = (doc as any).lastAutoTable.finalY + 10;
+    doc.rect(5, afterTableY - 5, 200, 20); // add padding
+
+    doc.setGState(new doc.GState({ opacity: 0.4}));
+    autoTable(doc, {
+      startY: afterTableY + 20,
+      margin: { left: 5 },
+      body: [
+        [
+          "Class Teacher's Comment",
+          "Good performance overall. Aim higher next term. I believe in you",
+          "Were Sam",
+        ],
+        [
+          "Head Teacher's Comment",
+          "Excellent progress! Keep up the great work.",
+          `${school?.principal}`,
+        ],
+      ],
+      theme: "grid",
+      styles: {
+        textColor: [0, 0, 0], // White text
+        cellPadding: 2,
+        fontSize: 10,
+        lineWidth: 0.2, // thin grid lines
+        lineColor: [255, 0, 0], // black lines
+      },
+      columnStyles: {
+        0: { cellWidth: 50 },
+        1: { cellWidth: 100, overflow: "linebreak" },
+        2: { cellWidth: 50 },
+      },
+      tableWidth: 200,
+    });
+
+    // === GRADING SCHEME ===
+    const gradeY = afterTableY;
+    doc.setFontSize(10);
+    doc.text("GRADING SCHEME:", 15, gradeY);
+    const grading = [
+      [
+        "80+ D1",
+        "75–79 D2",
+        "65–74 C3",
+        "60–64 C4",
+        "55–59 C5",
+        "50–54 C6",
+        "40–49 P7",
+        "30–39 P8",
+        "0–29 F9",
+      ],
+    ];
+    let gY = gradeY + 5;
+    grading.forEach((row) => {
+      doc.text(row.join("    "), 15, gY);
+      gY += 5;
+    });
+   
+    doc.setGState(new doc.GState({ opacity: 1}));
+
+    // === FOOTER ===
+    const lastTable = (doc as any).lastAutoTable.finalY;
+    doc.text(
+      "Date of Issue: " + new Date().toLocaleDateString(),
+      5,
+      lastTable + 5
+    );
+    doc.text("Next Term Begins: ____________________", 50, lastTable + 5);
+    doc.text(
+      "School Requirements: Broom, Ream, Uniform, Box file",
+      5,
+      lastTable + 10
+    );
+    doc.setDrawColor(255, 0, 0); // R, G, B (0-255)
+    doc.setLineWidth(1);
+    doc.line(0, 288, 210, 288);
+    doc.text(
+      `School Motto: ${school?.slogan}`,
+      105,
+      293,
+      { align: "center" }
+    );
+
+    // === SAVE PDF ===
+    doc.save(`${student.name || "student"}_report.pdf`);
   };
 
   useEffect(() => {
