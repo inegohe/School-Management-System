@@ -243,7 +243,7 @@ export default function StudentPerformanceFull() {
 
     // === STUDENT PASSPORT PHOTO ===
     
-    doc.addImage(imgData, "PNG", 130, 45, 30, 40);
+   // doc.addImage(imgData, "PNG", 130, 45, 30, 40);
 
     const EndOfTermData = results
       .filter((r) => r.exam.name.split(" ")[0].toLowerCase() === "end")
