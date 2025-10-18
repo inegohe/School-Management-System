@@ -175,9 +175,9 @@ export default function StudentPerformanceFull() {
     doc.addImage(school.logo, "PNG", 30, 74, 150, 150);
     doc.setFillColor(255, 255, 255);
     doc.setDrawColor(255, 255, 255);
-    doc.setGState(new doc.GState({ opacity: 0.7}));
+    doc.setGState(doc.GState({ opacity: 0.7}));
     doc.rect(30, 74, 150, 150, "F");
-    doc.setGState(new doc.GState({ opacity: 1 }));
+    doc.setGState(doc.GState({ opacity: 1 }));
 
     // === HEADER ===
     doc.setFont("Arial", "bold");
@@ -277,7 +277,7 @@ export default function StudentPerformanceFull() {
       return "F9";
     }
     
-    doc.setGState(new doc.GState({ opacity: 0.4}));
+    doc.setGState(doc.GState({ opacity: 0.4}));
 
     autoTable(doc, {
       startY: 68,
@@ -308,7 +308,7 @@ export default function StudentPerformanceFull() {
       tableWidth: 200,
     });
     
-    doc.setGState(new doc.GState({ opacity: 1}));
+    doc.setGState(doc.GState({ opacity: 1}));
 
     // Add extra bottom row
     autoTable(doc, {
@@ -343,7 +343,7 @@ export default function StudentPerformanceFull() {
 
     // === MID TERM EXAMS TABLE ===
     
-    doc.setGState(new doc.GState({ opacity: 0.4}));
+    doc.setGState(doc.GState({ opacity: 0.4}));
     doc.setFont("Arial", "bold");
     doc.text(
       `MID ${term.toUpperCase()} EXAM RESULTS`,
@@ -389,7 +389,7 @@ export default function StudentPerformanceFull() {
       tableWidth: 200,
     });
     
-    doc.setGState(new doc.GState({ opacity: 1}));
+    doc.setGState(doc.GState({ opacity: 1}));
 
     // Add extra bottom row
     autoTable(doc, {
@@ -430,7 +430,7 @@ export default function StudentPerformanceFull() {
     const afterTableY = (doc as any).lastAutoTable.finalY + 10;
     doc.rect(5, afterTableY - 5, 200, 20); // add padding
 
-    doc.setGState(new doc.GState({ opacity: 0.4}));
+    doc.setGState(doc.GState({ opacity: 0.4}));
     autoTable(doc, {
       startY: afterTableY + 20,
       margin: { left: 5 },
@@ -485,7 +485,7 @@ export default function StudentPerformanceFull() {
       gY += 5;
     });
    
-    doc.setGState(new doc.GState({ opacity: 1}));
+    doc.setGState(doc.GState({ opacity: 1}));
 
     // === FOOTER ===
     const lastTable = (doc as any).lastAutoTable.finalY;
