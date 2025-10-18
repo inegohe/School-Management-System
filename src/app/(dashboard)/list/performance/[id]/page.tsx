@@ -265,7 +265,7 @@ export default function StudentPerformanceFull() {
         "",
       ]);
 
-    function getGrade(score) {
+    function getGrade(score : Number) {
       if (score >= 80) return "D1";
       if (score >= 75) return "D2";
       if (score >= 65) return "C3";
